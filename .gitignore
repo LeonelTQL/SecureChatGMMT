@@ -1,0 +1,285 @@
+# =========================================================
+# JAVA / MAVEN
+# =========================================================
+
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# Maven
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+dependency-reduced-pom.xml
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+# Logs de Maven
+*.log
+maven-debug.log*
+maven-error.log*
+
+
+# =========================================================
+# IDE - INTELLIJ IDEA
+# =========================================================
+
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+
+# =========================================================
+# IDE - ECLIPSE
+# =========================================================
+
+.classpath
+.project
+.settings/
+.metadata/
+bin/
+
+
+# =========================================================
+# VISUAL STUDIO CODE
+# =========================================================
+
+.vscode/
+
+# Si quieres compartir configuraciones específicas de VS Code,
+# puedes reemplazar ".vscode/" por:
+#
+# .vscode/*
+# !.vscode/settings.json
+# !.vscode/extensions.json
+
+
+# =========================================================
+# NETBEANS
+# =========================================================
+
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+
+# =========================================================
+# WEBLOGIC
+# =========================================================
+
+servers/
+tmp/
+cache/
+stage/
+logs/
+data/
+security/SerializedSystemIni.dat
+
+*.lok
+*.lck
+
+# Directorios generados por dominio WebLogic
+user_projects/domains/*/servers/
+user_projects/domains/*/tmp/
+user_projects/domains/*/cache/
+user_projects/domains/*/logs/
+
+
+# =========================================================
+# CONFIGURACIÓN LOCAL / SECRETOS
+# =========================================================
+
+.env
+.env.*
+!.env.example
+.env.example
+
+*.secret
+*.secrets
+secrets/
+credentials/
+
+# Configuración local
+application-local.properties
+application-local.yml
+application-local.yaml
+
+application-dev.properties
+application-dev.yml
+application-dev.yaml
+
+config-local.properties
+local.properties
+
+# En tu caso, si conf.properties contiene rutas/passwords locales
+conf.properties
+
+
+# =========================================================
+# CERTIFICADOS / FIRMAS ELECTRÓNICAS
+# =========================================================
+
+*.p12
+*.pfx
+*.pem
+*.key
+*.jks
+*.keystore
+*.cer
+*.crt
+
+certificates/
+certs/
+keystores/
+
+
+# =========================================================
+# ARCHIVOS TEMPORALES
+# =========================================================
+
+*.tmp
+*.temp
+*.bak
+*.backup
+*.swp
+*.swo
+*~
+~$*
+
+
+# =========================================================
+# SISTEMA OPERATIVO - WINDOWS
+# =========================================================
+
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Desktop.ini
+
+$RECYCLE.BIN/
+
+
+# =========================================================
+# SISTEMA OPERATIVO - MACOS
+# =========================================================
+
+.DS_Store
+.AppleDouble
+.LSOverride
+
+
+# =========================================================
+# LINUX
+# =========================================================
+
+.directory
+.Trash-*
+
+
+# =========================================================
+# LOGS
+# =========================================================
+
+logs/
+log/
+*.log
+*.log.*
+
+# Evitar ignorar archivos necesarios de librerías:
+!src/**/*.java
+
+
+# =========================================================
+# COBERTURA / TEST
+# =========================================================
+
+coverage/
+jacoco.exec
+jacoco/
+site/jacoco/
+
+surefire-reports/
+failsafe-reports/
+
+
+# =========================================================
+# SONAR
+# =========================================================
+
+.sonar/
+.scannerwork/
+
+
+# =========================================================
+# ARCHIVOS GENERADOS
+# =========================================================
+
+generated/
+generated-sources/
+generated-test-sources/
+
+*.generated
+
+
+# =========================================================
+# FRONTEND - SI EL REPO LLEGA A TENER NODE
+# =========================================================
+
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+dist/
+.next/
+.nuxt/
+
+
+# =========================================================
+# ARCHIVOS COMPRIMIDOS / EXPORTACIONES
+# =========================================================
+
+*.zip
+*.rar
+*.7z
+*.tar
+*.gz
+
+
+# =========================================================
+# BASES DE DATOS / DUMPS
+# =========================================================
+
+*.db
+*.sqlite
+*.sqlite3
+*.dump
+*.dmp
+
+
+# =========================================================
+# POSTMAN / DATOS LOCALES
+# =========================================================
+
+postman-local/
+*.postman_environment.json
+
+
+# =========================================================
+# ARCHIVOS CON INFORMACIÓN SENSIBLE
+# =========================================================
+
+passwords.txt
+credentials.txt
+tokens.txt
+private-config/

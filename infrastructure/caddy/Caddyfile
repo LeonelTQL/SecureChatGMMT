@@ -1,0 +1,25 @@
+:80 {
+    encode zstd gzip
+    @auth path /api/auth /api/auth/*
+    handle @auth {
+        uri strip_prefix /api/auth
+        reverse_proxy auth-service:3001
+    }
+    @files path /api/files /api/files/*
+    handle @files {
+        uri strip_prefix /api/files
+        reverse_proxy file-service:3003
+    }
+    @chat path /api/chat /api/chat/*
+    handle @chat {
+        uri strip_prefix /api/chat
+        reverse_proxy chat-service:3002
+    }
+    @socket path /socket.io /socket.io/*
+    handle @socket {
+        reverse_proxy chat-service:3002
+    }
+    handle {
+        reverse_proxy web:3000
+    }
+}

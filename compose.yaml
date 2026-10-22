@@ -1,0 +1,129 @@
+name: chat-seguro
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-chatseguro}
+      POSTGRES_USER: ${POSTGRES_USER:-chatseguro}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks: [private]
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+  valkey:
+    image: valkey/valkey:8-alpine
+    restart: unless-stopped
+    command: ["valkey-server", "--appendonly", "yes"]
+    volumes: ["valkey_data:/data"]
+    networks: [private]
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+  auth-service:
+    build: ./apps/auth-service
+    restart: unless-stopped
+    environment:
+      PORT: 3001
+      DATABASE_URL: postgres://${POSTGRES_USER:-chatseguro}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-chatseguro}
+      VALKEY_URL: redis://valkey:6379
+    depends_on:
+      postgres: {condition: service_healthy}
+      valkey: {condition: service_healthy}
+    networks: [private]
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3001/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+  chat-service:
+    build: ./apps/chat-service
+    restart: unless-stopped
+    environment:
+      PORT: 3002
+      DATABASE_URL: postgres://${POSTGRES_USER:-chatseguro}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-chatseguro}
+      VALKEY_URL: redis://valkey:6379
+    depends_on:
+      postgres: {condition: service_healthy}
+      valkey: {condition: service_healthy}
+    networks: [private]
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3002/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+  file-service:
+    build: ./apps/file-service
+    restart: unless-stopped
+    environment:
+      PORT: 3003
+      DATABASE_URL: postgres://${POSTGRES_USER:-chatseguro}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-chatseguro}
+      VALKEY_URL: redis://valkey:6379
+      ANALYZER_URL: http://file-analyzer:8000
+    volumes:
+      - quarantine_data:/app/storage/quarantine
+      - approved_data:/app/storage/approved
+    depends_on:
+      postgres: {condition: service_healthy}
+      valkey: {condition: service_healthy}
+    networks: [private]
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3003/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+  file-analyzer:
+    build: ./services/file-analyzer
+    restart: unless-stopped
+    environment:
+      ANALYZER_MODE: scaffold
+    networks: [private]
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: [ALL]
+    read_only: true
+    tmpfs: ["/tmp:rw,noexec,nosuid,size=64m"]
+    pids_limit: 100
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health',timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+  web:
+    build: ./apps/web
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+    networks: [private]
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${APP_PORT:-8080}:80"
+    volumes:
+      - ./infrastructure/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+    depends_on:
+      web: {condition: service_healthy}
+      auth-service: {condition: service_healthy}
+      chat-service: {condition: service_healthy}
+      file-service: {condition: service_healthy}
+    networks: [private]
+networks:
+  private:
+    driver: bridge
+volumes:
+  postgres_data:
+  valkey_data:
+  quarantine_data:
+  approved_data:
