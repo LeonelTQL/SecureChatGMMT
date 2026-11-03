@@ -1,0 +1,12 @@
+{
+  "info": { "name": "Leonel Tipan - Autenticación", "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json" },
+  "variable": [{ "key": "base_url", "value": "http://localhost:8080/api" }, { "key": "access_token", "value": "" }],
+  "item": [
+    { "name": "1. Registrar usuario (201; repetido 409)", "request": { "method": "POST", "url": "{{base_url}}/auth/register", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"email\":\"leonel@example.com\",\"password\":\"ClaveDePrueba123!\"}" } } },
+    { "name": "2. Login y guardar JWT", "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Login 200', () => pm.response.to.have.status(200));", "if (pm.response.code === 200) pm.collectionVariables.set('access_token', pm.response.json().access_token);" ] } }], "request": { "method": "POST", "url": "{{base_url}}/auth/login", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"email\":\"leonel@example.com\",\"password\":\"ClaveDePrueba123!\"}" } } },
+    { "name": "3. Verificar JWT (200)", "request": { "method": "POST", "url": "{{base_url}}/auth/verify", "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }] } },
+    { "name": "4. Contraseña incorrecta (401)", "request": { "method": "POST", "url": "{{base_url}}/auth/login", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"email\":\"leonel@example.com\",\"password\":\"Incorrecta12345!\"}" } } },
+    { "name": "5. JWT inválido (401)", "request": { "method": "POST", "url": "{{base_url}}/auth/verify", "header": [{ "key": "Authorization", "value": "Bearer invalid" }] } },
+    { "name": "6. Salud", "request": { "method": "GET", "url": "{{base_url}}/auth/health" } }
+  ]
+}

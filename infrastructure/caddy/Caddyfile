@@ -1,8 +1,12 @@
 :80 {
     encode zstd gzip
+    handle /api/auth/health {
+        rewrite * /health
+        reverse_proxy auth-service:3001
+    }
     @auth path /api/auth /api/auth/*
     handle @auth {
-        uri strip_prefix /api/auth
+        uri strip_prefix /api
         reverse_proxy auth-service:3001
     }
     @files path /api/files /api/files/*

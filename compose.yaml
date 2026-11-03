@@ -31,6 +31,7 @@ services:
     restart: unless-stopped
     environment:
       PORT: 3001
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET with at least 32 random bytes in .env}
       DATABASE_URL: postgres://${POSTGRES_USER:-chatseguro}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-chatseguro}
       VALKEY_URL: redis://valkey:6379
     depends_on:

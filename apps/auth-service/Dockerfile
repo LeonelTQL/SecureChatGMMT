@@ -1,14 +1,13 @@
-FROM node:22-alpine AS build
+FROM node:22-bookworm-slim
+RUN apt-get update && apt-get install -y --no-install-recommends openssl && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY package*.json ./
-RUN npm install --no-audit --no-fund
-COPY tsconfig.json nest-cli.json ./
+RUN npm ci
+COPY prisma ./prisma
+RUN npm run generate
+COPY tsconfig.json ./
 COPY src ./src
 RUN npm run build
-FROM node:22-alpine
-ENV NODE_ENV=production
-WORKDIR /app
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/dist ./dist
+EXPOSE 3001
 USER node
-CMD ["node", "dist/main.js"]
+CMD ["sh", "-c", "npm run migrate && npm run start:prod"]
