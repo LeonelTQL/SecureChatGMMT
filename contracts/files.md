@@ -18,10 +18,20 @@ El servicio NestJS `apps/file-service` sigue siendo una plantilla para fases fut
 
 IDs UUID. Errores con `detail`: **413** archivo/cuerpo demasiado grande,
 **415** extensión distinta de JPG/JPEG/PNG, **422** archivo vacío, campo ausente
-o UUID inválido, **400** multipart inválido. Límite predeterminado 10 MiB
-(`MAX_FILE_BYTES`). El cuerpo multipart admite 64 KiB adicionales de cabeceras
+o UUID inválido, **400** multipart inválido. Límite global predeterminado 10 MiB
+(`MAX_FILE_BYTES`) y límite específico de imágenes 5 MiB (`IMAGE_MAX_BYTES`);
+se aplica el menor. Ambos excesos devuelven **413** y eliminan el objeto parcial.
+El cuerpo multipart admite 64 KiB adicionales de cabeceras
 y delimitadores. La extensión es un filtro de recepción; la validación del
-formato real corresponde al motor de Diana y no confía en el MIME del cliente.
+formato real se ejecuta antes del motor de Diana y no confía en el MIME del cliente.
+Firma, extensión y formato decodificado deben concordar. El MIME determinado
+por contenido se conserva en `analysis.validation.mime`. Una cabecera MIME del
+cliente incorrecta no invalida por sí sola una imagen cuyo contenido y extensión
+son coherentes. Los archivos corruptos o incompatibles aceptados inicialmente
+con **202** terminan en cuarentena con motivo controlado, sin ejecutar LSB.
+**202** sólo confirma recepción; la consulta de estado muestra la validación final.
+Los JPEG válidos quedan `INCONCLUSIVE / jpeg_detector_not_available`, con
+clasificación original `NO_CONCLUYENTE`; no existe todavía un detector JPEG.
 
 ## Estados y contrato con Diana
 
@@ -55,6 +65,9 @@ original completo: `technique`, `classification`, `reason`, `channels`, `policy`
 motivo controlado; una excepción inesperada se registra como `detector_failed`,
 sin texto de la excepción. Los analizadores de prueba sin este campo siguen
 siendo compatibles. No se altera el contrato de llamada `analyze(path, sha256)`.
+El campo adicional `analysis.validation` conserva resultado, motivo, formato,
+MIME por contenido, dimensiones y límites de validación. Si no se ejecutó LSB,
+la técnica informada es `IMAGE_VALIDATION_V1`, sin indicadores LSB ficticios.
 Los resultados simulados existen únicamente en las pruebas; ninguna opción de
 entorno permite aprobar archivos sin un analizador real. No hay callback público
 para cambiar estados ni aprobar archivos desde Postman.
