@@ -1,5 +1,7 @@
 # Contratos AUTH–STEGO y detector
 
+La entrega de transferencia importada desde `main` mantiene su contrato original en `files.md`, `files.openapi.json` y `postman/Paul-files.postman_collection.json`. Esos endpoints pertenecen al componente `services/file-analyzer`, conservado sin despliegue activo. El Compose utiliza `services/stego`, que exige JWT y una decisión vigente; el contrato histórico de carga no sustituye esa autorización.
+
 ## Autorización por operación
 
 STEGO verifica localmente RS256, issuer `ms-users-auth`, audience `chat-seguro`, expiración, vida máxima de 900 segundos, UUID de `sub` y `jti`. Luego invoca por HTTPS con validación de CA y hostname:

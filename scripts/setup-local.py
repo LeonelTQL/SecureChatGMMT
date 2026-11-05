@@ -20,7 +20,8 @@ for folder in [secret_dir, secret_dir / "auth", secret_dir / "stego", secret_dir
 
 def write(path, data):
     path.write_bytes(data if isinstance(data, bytes) else data.encode())
-    # La carpeta padre 0700 protege al usuario local; los contenedores leen archivos montados.
+    # La carpeta padre 0700 protege al usuario local. Compose monta cada archivo
+    # individualmente: montar el directorio impediría el acceso a UIDs distintos en Linux.
     os.chmod(path, 0o644)
 
 

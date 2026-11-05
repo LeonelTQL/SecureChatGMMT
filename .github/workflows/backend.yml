@@ -19,9 +19,16 @@ jobs:
         working-directory: apps/auth-service
       - run: pip install -r services/stego/requirements.lock.txt
       - run: python -m pytest services/stego/tests -q
+      - run: python -m pytest -c services/file-analyzer/pytest.ini services/file-analyzer/tests -q
       - run: python scripts/setup-local.py
       - run: docker compose -f compose.yaml up -d --build --wait
+      - run: python scripts/check-container-permissions.py
       - run: docker compose -f compose.yaml exec -T auth-service node dist/database/seed.js
       - run: python scripts/integration.py --failure-demo
+      - name: Diagnóstico de contenedores si falla la integración
+        if: failure()
+        run: |
+          docker compose -f compose.yaml ps -a || true
+          docker compose -f compose.yaml logs --no-color --tail 100 auth-service stego caddy || true
       - if: always()
         run: docker compose -f compose.yaml down

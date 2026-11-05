@@ -22,8 +22,12 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:-chatseguro}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-chatseguro}
       STEGO_SERVICE_TOKEN: ${STEGO_SERVICE_TOKEN:?Ejecuta scripts/setup-local.py}
     volumes:
-      - ./secrets/auth:/run/keys:ro
-      - ./secrets/public:/run/public:ro
+      - ./secrets/auth/jwt-private.pem:/run/keys/jwt-private.pem:ro
+      - ./secrets/auth/tls-key.pem:/run/keys/tls-key.pem:ro
+      - ./secrets/auth/tls-cert.pem:/run/keys/tls-cert.pem:ro
+      - ./secrets/auth/bootstrap.json:/run/keys/bootstrap.json:ro
+      - ./secrets/public/jwt-public.pem:/run/public/jwt-public.pem:ro
+      - ./secrets/public/ca.pem:/run/public/ca.pem:ro
     ports: ["127.0.0.1:3001:3001"]
     depends_on:
       postgres: {condition: service_healthy}
@@ -44,8 +48,10 @@ services:
       STEGO_SERVICE_TOKEN: ${STEGO_SERVICE_TOKEN:?Ejecuta scripts/setup-local.py}
       STORAGE_PATH: /app/storage
     volumes:
-      - ./secrets/stego:/run/keys:ro
-      - ./secrets/public:/run/public:ro
+      - ./secrets/stego/tls-key.pem:/run/keys/tls-key.pem:ro
+      - ./secrets/stego/tls-cert.pem:/run/keys/tls-cert.pem:ro
+      - ./secrets/public/jwt-public.pem:/run/public/jwt-public.pem:ro
+      - ./secrets/public/ca.pem:/run/public/ca.pem:ro
       - stego_data:/app/storage
     ports: ["127.0.0.1:8000:8000"]
     networks: [services]
