@@ -44,3 +44,21 @@ Las pruebas usan persistencia simulada y Argon2/JWT reales: registro, duplicados
 También se prueba el flujo HTTP con NestJS y Supertest. Validación local: compilación y pruebas aprobadas; Compose valida correctamente. El arranque con PostgreSQL quedó pendiente porque Docker Desktop devolvió un error interno 500. La revisión de dependencias actualizó NestJS a 12; quedan alertas en dependencias de herramientas de Prisma 6 (`deepmerge-ts` y `effect`), que requieren revisión antes de desplegar.
 
 Documentación técnica utilizada: [Prisma 6 Migrate](https://www.prisma.io/docs/orm/v6/prisma-migrate/getting-started) y [node-argon2](https://www.npmjs.com/package/argon2).
+
+
+---
+
+## Autorización basada en roles (RBAC) 
+
+Implementación del control de acceso basado en roles (`ADMIN` y `USER`) dentro de `src/rbac/`:
+
+- **Roles (`src/rbac/enums/role.enum.ts`):** Define `Role.ADMIN` y `Role.USER`.
+- **Decorador `@Roles()` (`src/rbac/decorators/roles.decorator.ts`):** Registra en metadatos los roles requeridos por cada endpoint.
+- **`JwtAuthGuard` (`src/rbac/guards/jwt-auth.guard.ts`):** Verifica criptográficamente el token `Bearer` (`HS256`, `issuer: 'ms-users-auth'`, `audience: 'chat-seguro'`), valida los claims (`sub`, `email`, `exp`, `role`) y adjunta el usuario autenticado en `request.user`. Responde `401 Unauthorized` si el token falta, es inválido o expiró.
+- **`RolesGuard` (`src/rbac/guards/roles.guard.ts`):** Compara los roles requeridos en `@Roles(...)` con `request.user.role`. Responde `403 Forbidden` cuando el usuario está autenticado pero no posee el rol requerido.
+- **Endpoint protegido (`src/rbac/controllers/admin.controller.ts`):**
+  - `GET /admin/protected` (o `/api/auth/admin/protected` vía gateway):
+    - Sin JWT o JWT inválido/expirado → `401 Unauthorized`
+    - JWT válido con rol `USER` → `403 Forbidden`
+    - JWT válido con rol `ADMIN` → `200 OK`
+- **Pruebas (`test/rbac.test.cjs`):** Pruebas unitarias y de integración HTTP ejecutadas junto con `npm test`.
