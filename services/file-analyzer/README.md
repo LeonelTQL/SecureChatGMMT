@@ -20,6 +20,10 @@ La instancia por defecto usa `StegoAnalyzer`, que ejecuta el detector PNG/LSB re
 No libera archivos: devuelve `SUSPICIOUS` o `INCONCLUSIVE`, conservando el informe
 original en `analysis`. Incluso `SIN_INDICIOS` requiere otras verificaciones.
 Consultar [integración LSB](STEGO_INTEGRACION.md) para correspondencias y pruebas.
+La validación previa comprueba contenido PNG/JPEG, extensión coherente,
+decodificación y límites de recursos. El MIME del cliente no determina el formato.
+El máximo de imágenes es 5 MiB (`IMAGE_MAX_BYTES`), separado de `MAX_FILE_BYTES`.
+Ver [validación de imágenes](IMAGE_VALIDACION.md) para parámetros y resultados.
 No habilitar un resultado simulado CLEAN en despliegues.
 
 ## Verificación

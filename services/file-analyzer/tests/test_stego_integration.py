@@ -40,8 +40,8 @@ def upload_and_status(client, data, filename="image.png"):
     ("original", "INCONCLUSIVE", "additional_security_checks_required"),
     ("lsb_full", "SUSPICIOUS", "lsb_suspicious"),
     ("tiny", "INCONCLUSIVE", "lsb_inconclusive"),
-    ("corrupt", "INCONCLUSIVE", "lsb_analysis_error"),
-    ("jpeg", "INCONCLUSIVE", "lsb_analysis_error"),
+    ("corrupt", "INCONCLUSIVE", "image_malformed"),
+    ("jpeg", "INCONCLUSIVE", "jpeg_detector_not_available"),
 ])
 def test_real_upload_analysis_persistence_and_blocking(tmp_path, corpus, name, classification, reason):
     data = corpus[name]
@@ -52,7 +52,13 @@ def test_real_upload_analysis_persistence_and_blocking(tmp_path, corpus, name, c
         assert record["status"] == "QUARANTINED"
         assert record["classification"] == classification
         assert record["reason"] == reason
-        assert record["analysis"] == expected
+        report = dict(record["analysis"])
+        validation = report.pop("validation")
+        assert validation["valid"] is (name != "corrupt")
+        if name not in {"corrupt", "jpeg"}:
+            assert report == expected
+        else:
+            assert report["classification"] == ("ERROR" if name == "corrupt" else "NO_CONCLUYENTE")
         assert (tmp_path / "objects" / record["id"]).read_bytes() == data
         assert client.get(f'/files/{record["id"]}/content').status_code == 423
     with TestClient(create_app(tmp_path)) as restarted:

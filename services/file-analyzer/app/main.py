@@ -15,6 +15,7 @@ from starlette.formparsers import MultiPartException
 
 from .analyzer import Analyzer, Classification
 from .stego_adapter import StegoAnalyzer
+from .image_validation import ImageLimits, ValidatedImageAnalyzer
 from .storage import Storage
 
 
@@ -69,12 +70,13 @@ class FileStatus(BaseModel):
 
 
 def create_app(storage_root: Path | None = None, analyzer: Analyzer | None = None,
-               max_file_bytes: int | None = None) -> FastAPI:
+               max_file_bytes: int | None = None, image_limits: ImageLimits | None = None) -> FastAPI:
     root = storage_root if storage_root is not None else Path(os.getenv("FILE_STORAGE_ROOT", "storage"))
     limit = max_file_bytes if max_file_bytes is not None else int(os.getenv("MAX_FILE_BYTES", "10485760"))
     if limit <= 0:
         raise ValueError("MAX_FILE_BYTES must be positive")
     engine = analyzer if analyzer is not None else StegoAnalyzer()
+    image_policy = image_limits if image_limits is not None else ImageLimits.from_env()
 
     @asynccontextmanager
     async def lifespan(application):
@@ -121,6 +123,8 @@ def create_app(storage_root: Path | None = None, analyzer: Analyzer | None = Non
                         size += len(chunk)
                         if size > limit:
                             raise HTTPException(413, "file_too_large")
+                        if size > image_policy.max_bytes:
+                            raise HTTPException(413, "image_too_large")
                         sha.update(chunk)
                         destination.write(chunk)
                     if not size:
@@ -131,7 +135,7 @@ def create_app(storage_root: Path | None = None, analyzer: Analyzer | None = Non
             except BaseException:
                 path.unlink(missing_ok=True)
                 raise
-        tasks.add_task(store.process, file_id, engine)
+        tasks.add_task(store.process, file_id, ValidatedImageAnalyzer(engine, filename, image_policy))
         # Relativo al path de carga: funciona también tras /api del proxy.
         response.headers["Location"] = f"./{file_id}/status"
         return record

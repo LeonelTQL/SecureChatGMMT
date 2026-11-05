@@ -9,7 +9,10 @@ analizadores de prueba. El detector, umbrales y muestras originales no se cambia
 1. La carga existente valida multipart, extensión y tamaño. Guarda los bytes en
    el almacén privado de Paul con UUID, calcula SHA-256 y registra `PENDING`.
 2. La tarea existente reclama `ANALYZING` y verifica el hash antes de analizar.
-3. El adaptador llama a `stego_lsb.analyze_png(path, config)`. La ruta del objeto
+3. `ValidatedImageAnalyzer` valida extensión/contenido, firma, MIME real,
+   estructura, decodificación y límites; sólo un PNG válido pasa al adaptador.
+   Los JPEG válidos se conservan como no concluyentes. Ver [validación](IMAGE_VALIDACION.md).
+   El adaptador llama a `stego_lsb.analyze_png(path, config)`. La ruta del objeto
    no tiene extensión; la firma, CRC, dimensiones y decodificación validan el contenido.
 4. Convierte el resultado al contrato `Analyzer.analyze(path, sha256) -> AnalysisResult`.
 5. El almacén comprueba nuevamente SHA-256, persiste el resultado y su informe,
@@ -26,8 +29,9 @@ analizadores de prueba. El detector, umbrales y muestras originales no se cambia
 | Excepción inesperada | INCONCLUSIVE, informe ERROR | lsb_detector_failed |
 
 El motivo original permanece en `analysis.reason`; para una excepción se usa
-`detector_failed`, sin filtrar detalles internos. Un JPEG o archivo que no sea PNG
-produce un error controlado del detector; un PNG decodificable fuera del alcance
+`detector_failed`, sin filtrar detalles internos. Un JPEG válido produce
+`INCONCLUSIVE / jpeg_detector_not_available` antes del detector. Los archivos
+inválidos se bloquean en la validación previa; un PNG decodificable fuera del alcance
 RGB/RGBA estático de 8 bits conserva NO_CONCLUYENTE. Ninguno se descarga.
 
 ## Compatibilidad y persistencia
@@ -48,8 +52,9 @@ de integridad, se descartan las métricas del análisis y prevalece `integrity_m
 Las dependencias Docker adicionales son Pillow y SciPy, con NumPy transitivo,
 reutilizando `requirements-stego.txt` desde `requirements.txt`. No se incluyen
 pytest/httpx en la imagen. Se mantienen usuario sin privilegios y demás ajustes.
-El límite de carga `MAX_FILE_BYTES` y los límites propios de `LSBConfig` siguen
-siendo controles independientes; sobrepasar cualquiera mantiene el bloqueo.
+El límite global de carga `MAX_FILE_BYTES`, los de `ImageLimits` (5 MiB por
+defecto) y los propios de `LSBConfig` son controles independientes;
+sobrepasar cualquiera impide aprobación.
 
 ## Verificación ejecutada
 
@@ -64,7 +69,9 @@ $env:TMP = $env:TEMP
 .venv-stego/Scripts/python.exe -m pytest -c services/file-analyzer/pytest.ini services/file-analyzer/tests -q --basetemp=.venv-stego/integration-run1
 ```
 
-Resultado: **53 aprobadas, 0 fallidas; 14 subcasos aprobados**, en 7.00 s:
+Resultado de la integración inicial: **53 aprobadas, 0 fallidas; 14 subcasos aprobados**, en 7.00 s.
+La ejecución posterior con validación JPG/PNG dio **90 aprobadas**, como se
+documenta en [la evidencia actual](IMAGE_VALIDACION.md). La suite inicial comprendía:
 
 - Las **31 pruebas originales** del detector, sin modificaciones.
 - Las **12 pruebas de transferencia** de Paul. Sólo se ajustó la prueba del motor
