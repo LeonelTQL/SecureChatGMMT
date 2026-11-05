@@ -1,4 +1,6 @@
 **
+!scripts/
+!scripts/Dockerfile.tools
 !services/
 !services/stego/
 !services/stego/Dockerfile

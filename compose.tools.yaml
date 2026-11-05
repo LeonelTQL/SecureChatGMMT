@@ -1,0 +1,17 @@
+# Independiente del Compose principal: funciona antes de crear .env y secrets/.
+name: chat-seguro-tools
+services:
+  tools:
+    build:
+      context: .
+      dockerfile: scripts/Dockerfile.tools
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+    network_mode: none
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: [ALL]

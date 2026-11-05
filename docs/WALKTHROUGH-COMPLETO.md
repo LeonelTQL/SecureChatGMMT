@@ -8,18 +8,17 @@ Guía para el proyecto local propio. Los resultados indicados corresponden al c�
 
 Ejecutar desde `SecureChatGMMT` con Docker Desktop iniciado:
 
-```powershell
+En una copia nueva, sigue primero los pasos 1 y 2 del [README](../README.md) para construir las herramientas y generar la configuración con Docker, sin instalar Python local.
+
+```bash
 docker compose -f compose.yaml config --quiet
 docker compose -f compose.yaml up -d --build --wait
 docker compose -f compose.yaml exec -T auth-service node dist/database/seed.js
 docker compose -f compose.yaml ps
-services/stego/.venv/Scripts/python.exe scripts/generate-test-fixtures.py
-
-##para caso de linux reemplazar el ultimo comando con este
-services/stego/.venv/bin/python scripts/generate-test-fixtures.py
+docker compose -f compose.tools.yaml run --rm tools scripts/generate-test-fixtures.py
 ```
 
-Si es una copia nueva sin secretos: crea primero el entorno virtual, instala `services/stego/requirements.lock.txt` y ejecuta `scripts/setup-local.py`, como indica el README. No repitas setup si `secrets/` ya existe ni elimines volúmenes para corregir credenciales.
+No repitas setup si `secrets/` ya existe ni elimines volúmenes para corregir credenciales.
 
 AUTH: `https://localhost:3001`; STEGO: `https://localhost:8000`; proxy local: `http://localhost:8080`. Swagger: `/docs` en cada API directa. Salud: `/health`. Las rutas de negocio ya incluyen `/api`; no dupliques ese prefijo.
 

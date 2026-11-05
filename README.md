@@ -2,43 +2,27 @@
 
 ## Levantar todo paso a paso
 
-Ejecuta los comandos desde la raíz `SecureChatGMMT`. Necesitas Git, Node 22+, Python 3.10+ y Docker con Docker Compose. En Windows, inicia Docker Desktop con contenedores Linux. En Linux, comprueba que Docker esté iniciado y tu usuario pueda ejecutar `docker info`.
+Ejecuta los comandos desde la raíz `SecureChatGMMT` (la carpeta que contiene `compose.yaml`). Para instalar y levantar el proyecto solo necesitas Git y Docker con Docker Compose. No necesitas instalar Python, Node ni crear un entorno virtual en tu equipo. En Windows inicia Docker Desktop con contenedores Linux; en Linux comprueba que `docker info` funciona.
 
-### 1. Preparar Python y las dependencias locales
+### 1. Construir las herramientas de instalación
 
-Estos comandos preparan los scripts de configuración, imágenes y pruebas. Los servicios se ejecutan dentro de Docker; no necesitas iniciar cada backend por separado.
-
-**Linux (Bash):**
+Los backends ya corren en Docker. El contenedor de herramientas también ejecuta el setup y los generadores con Python 3.12 y las dependencias fijadas en `requirements.lock.txt`. Los siguientes comandos sirven en Linux y Windows:
 
 ```bash
-python3 -m venv services/stego/.venv
-services/stego/.venv/bin/python -m pip install -r services/stego/requirements.lock.txt
+docker compose -f compose.tools.yaml build tools
 ```
 
-**Windows (PowerShell):**
-
-```powershell
-python -m venv services/stego/.venv
-services/stego/.venv/Scripts/python.exe -m pip install -r services/stego/requirements.lock.txt
-```
+En Linux el contenedor escribe con UID/GID 1000 por defecto. Si tu usuario tiene otros identificadores (`id -u` / `id -g`), añade `--user UID:GID` después de `run --rm` en los comandos siguientes, sustituyendo esos valores por tus números. Esto evita crear archivos propiedad de root. También puedes configurar `LOCAL_UID` y `LOCAL_GID` en tu entorno.
 
 ### 2. Crear la configuración inicial (solo en una copia nueva)
 
 Si todavía no existe `secrets/`, genera los certificados, claves, credenciales y archivos de entorno:
 
-**Linux:**
-
 ```bash
-services/stego/.venv/bin/python scripts/setup-local.py
+docker compose -f compose.tools.yaml run --rm tools scripts/setup-local.py
 ```
 
-**Windows:**
-
-```powershell
-services/stego/.venv/Scripts/python.exe scripts/setup-local.py
-```
-
-Si `secrets/` ya existe, omite este paso. El script conserva esa carpeta y se detiene sin sobrescribirla. No la borres para volver a iniciar el proyecto.
+Si `secrets/` ya existe, omite este paso. El script conserva esa carpeta y se detiene sin sobrescribirla. No la borres para volver a iniciar el proyecto. El Compose de herramientas es independiente del principal para funcionar incluso antes de que exista `.env`.
 
 ### 3. Construir e iniciar todos los servicios
 
@@ -55,16 +39,8 @@ Esto levanta PostgreSQL, AUTH, STEGO y el proxy Caddy. `--wait` espera a que los
 
 ### 4. Generar las imágenes y los archivos de prueba
 
-**Linux:**
-
 ```bash
-services/stego/.venv/bin/python scripts/generate-test-fixtures.py
-```
-
-**Windows:**
-
-```powershell
-services/stego/.venv/Scripts/python.exe scripts/generate-test-fixtures.py
+docker compose -f compose.tools.yaml run --rm tools scripts/generate-test-fixtures.py
 ```
 
 El script genera 13 muestras en `.local/test-fixtures/` y un `manifest.json` con sus tamaños y hashes SHA-256:
@@ -77,16 +53,14 @@ Las muestras son inofensivas y quedan fuera de Git. El generador conserva una mu
 
 Las [muestras del informe](docs/anexos/muestras/LEEME.txt) también están incluidas en `docs/anexos/muestras/`, listas para seleccionar en Postman sin ejecutar un generador. Son nueve imágenes sintéticas: controles (`original.png`, `tiny.png`, `flat.png`, `hidden_source.png`), cargas LSB (`lsb_full.png`, `lsb_small.png`), ruido sin carga (`noise_without_payload.png`) e inserciones multibit (`hidden_2bit.png`, `hidden_4bit.png`). Estas últimas documentan falsos negativos conocidos; el ruido permite demostrar un falso positivo. El [manifiesto](docs/anexos/muestras/manifest.json) registra el tamaño y SHA-256 de cada PNG.
 
-Los generadores originales están en `services/file-analyzer/tools/stego_samples.py` y `services/file-analyzer/tools/stego_multibit_samples.py`. Para regenerarlas desde la raíz en Linux:
+Los generadores originales están en `services/file-analyzer/tools/stego_samples.py` y `services/file-analyzer/tools/stego_multibit_samples.py`. Para regenerarlas desde la raíz, en Linux o Windows:
 
 ```bash
-cd services/file-analyzer
-../stego/.venv/bin/python -m tools.stego_samples ../../.local/informe-muestras
-../stego/.venv/bin/python -m tools.stego_multibit_samples ../../.local/informe-muestras
-cd ../..
+docker compose -f compose.tools.yaml run --rm -w /workspace/services/file-analyzer tools -m tools.stego_samples /workspace/.local/informe-muestras
+docker compose -f compose.tools.yaml run --rm -w /workspace/services/file-analyzer tools -m tools.stego_multibit_samples /workspace/.local/informe-muestras
 ```
 
-En Windows sustituye `../stego/.venv/bin/python` por `../stego/.venv/Scripts/python.exe`. Estos comandos generan los PNG en `.local/informe-muestras`; el manifiesto incluido corresponde a los archivos del informe conservados en `docs/anexos/muestras/`.
+Estos comandos generan los PNG en `.local/informe-muestras`; el manifiesto incluido corresponde a los archivos del informe conservados en `docs/anexos/muestras/`.
 
 ### 5. Acceder a las APIs
 
@@ -119,7 +93,7 @@ docker compose -f compose.yaml logs --tail 100 auth-service stego
 
 `setup-local.py` genera pares RSA JWT y TLS distintos, CA local y credencial entre servicios. Conserva un `.env` existente y nunca sobrescribe `secrets/`. Si ya existe `.env`, verifica que `POSTGRES_PASSWORD` coincida con tu volumen PostgreSQL; cambiar esa variable no cambia la contraseña de un volumen inicializado. No borres volúmenes para corregir credenciales.
 
-Los `.env.example` y `.env` están ignorados por Git. El script incluye los valores de configuración necesarios para preparar una copia nueva aunque no existan ejemplos. También genera `apps/auth-service/.env` y `services/stego/.env` con valores reales para el entorno de contenedores, sin sobrescribir archivos existentes. Para generarlos sobre una instalación ya preparada: `python scripts/configure-env.py`. Compose toma el `.env` raíz; los archivos por servicio reflejan esa configuración y usan nombres/rutas internos de Docker.
+Los `.env.example` y `.env` están ignorados por Git. El script incluye los valores de configuración necesarios para preparar una copia nueva aunque no existan ejemplos. También genera `apps/auth-service/.env` y `services/stego/.env` con valores reales para el entorno de contenedores, sin sobrescribir archivos existentes. Para generarlos sobre una instalación ya preparada: `docker compose -f compose.tools.yaml run --rm tools scripts/configure-env.py`. Compose toma el `.env` raíz; los archivos por servicio reflejan esa configuración y usan nombres/rutas internos de Docker.
 
 El administrador inicial usa las credenciales de `secrets/auth/bootstrap.json`. Abre ese archivo localmente para iniciar sesión; no lo compartas ni lo subas a Git. El seed crea ADMIN/ANALYST/USER y una cuenta nueva; no promueve cuentas existentes ni restablece contraseñas. Solo se ejecuta explícitamente.
 
@@ -151,6 +125,16 @@ El archivo `docker-compose.yml` incluye `compose.yaml`, por lo que `docker compo
 Registro público crea usuarios **sin roles**. La administración de roles exige ADMIN. Roles en constantes expresan la política, mientras usuarios y asignaciones se consultan exclusivamente desde PostgreSQL.
 
 ## Pruebas
+
+Las pruebas Python de STEGO también pueden ejecutarse sin Python local:
+
+```bash
+docker compose -f compose.tools.yaml run --rm tools -m pytest -p no:cacheprovider services/stego/tests -q
+```
+
+Esta imagen no incluye los motores CLI ClamAV/YARA/ExifTool: las seis pruebas que requieren motores reales se omiten; los motores siguen incluidos en el servicio STEGO.
+
+El contenedor de herramientas no tiene acceso a la red ni al socket de Docker. Los scripts de integración que controlan Compose siguen requiriendo Python local y Docker CLI; son verificaciones opcionales de desarrollo, no pasos de instalación. Para ejecutarlos localmente instala Python 3.12, crea `services/stego/.venv` e instala `services/stego/requirements.lock.txt`. Las pruebas AUTH locales requieren Node 22+.
 
 Con los servicios activos y el seed completado, puedes ejecutar los scripts de verificación. Son opcionales para iniciar el proyecto.
 
