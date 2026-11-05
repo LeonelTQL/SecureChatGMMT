@@ -1,22 +1,121 @@
 # Chat Seguro — Backend V1
 
-## Preparación en Windows
+## Levantar todo paso a paso
 
-Requisitos: Git, Node 22+, Python 3.10+ y Docker Desktop con contenedores Linux; Docker Compose 2.20+ si usas el alias `docker-compose.yml`.
+Ejecuta los comandos desde la raíz `SecureChatGMMT`. Necesitas Git, Node 22+, Python 3.10+ y Docker con Docker Compose. En Windows, inicia Docker Desktop con contenedores Linux. En Linux, comprueba que Docker esté iniciado y tu usuario pueda ejecutar `docker info`.
 
-Clona el repositorio y abre su carpeta `SecureChatGMMT`. Los comandos siguientes se ejecutan desde esa raíz:
+### 1. Preparar Python y las dependencias locales
+
+Estos comandos preparan los scripts de configuración, imágenes y pruebas. Los servicios se ejecutan dentro de Docker; no necesitas iniciar cada backend por separado.
+
+**Linux (Bash):**
+
+```bash
+python3 -m venv services/stego/.venv
+services/stego/.venv/bin/python -m pip install -r services/stego/requirements.lock.txt
+```
+
+**Windows (PowerShell):**
 
 ```powershell
 python -m venv services/stego/.venv
 services/stego/.venv/Scripts/python.exe -m pip install -r services/stego/requirements.lock.txt
+```
+
+### 2. Crear la configuración inicial (solo en una copia nueva)
+
+Si todavía no existe `secrets/`, genera los certificados, claves, credenciales y archivos de entorno:
+
+**Linux:**
+
+```bash
+services/stego/.venv/bin/python scripts/setup-local.py
+```
+
+**Windows:**
+
+```powershell
 services/stego/.venv/Scripts/python.exe scripts/setup-local.py
+```
+
+Si `secrets/` ya existe, omite este paso. El script conserva esa carpeta y se detiene sin sobrescribirla. No la borres para volver a iniciar el proyecto.
+
+### 3. Construir e iniciar todos los servicios
+
+Los comandos son iguales en Linux y Windows. Espera a que termine cada uno antes de continuar; si alguno falla, corrige el error antes de ejecutar el siguiente.
+
+```bash
 docker compose -f compose.yaml config --quiet
-docker compose -f compose.yaml up -d --build
+docker compose -f compose.yaml up -d --build --wait
 docker compose -f compose.yaml exec -T auth-service node dist/database/seed.js
 docker compose -f compose.yaml ps
 ```
 
-En Linux usa `services/stego/.venv/bin/python` en lugar de `Scripts/python.exe`.
+Esto levanta PostgreSQL, AUTH, STEGO y el proxy Caddy. `--wait` espera a que los servicios estén disponibles según sus comprobaciones de salud. El seed prepara los roles y el administrador inicial.
+
+### 4. Generar las imágenes y los archivos de prueba
+
+**Linux:**
+
+```bash
+services/stego/.venv/bin/python scripts/generate-test-fixtures.py
+```
+
+**Windows:**
+
+```powershell
+services/stego/.venv/Scripts/python.exe scripts/generate-test-fixtures.py
+```
+
+El script genera 13 muestras en `.local/test-fixtures/` y un `manifest.json` con sus tamaños y hashes SHA-256:
+
+- Imágenes válidas: `valida.png`, `valida.bmp` y `no_admitida.jpg` (el nombre de esta última procede del recorrido histórico; el backend actual admite JPEG).
+- Archivos inválidos o disfrazados: `marcador.txt`, `texto_disfrazado.png`, `solo_firma.png`, `corrupta.png`, `vacia.png` y `bmp_disfrazado.png`.
+- Casos de límites y contenido extra: `exactamente_5MiB.png`, `excede_5MiB.png`, `excede_pixeles.png` y `png_con_marcador_extra.png`.
+
+Las muestras son inofensivas y quedan fuera de Git. El generador conserva una muestra modificada y avisa si no puede regenerarla. Para probar una carga en Postman, usa Body → form-data, campo `file` de tipo File, selecciona `.local/test-fixtures/valida.png` y utiliza un JWT ADMIN o ANALYST. Deja que Postman genere el Content-Type multipart.
+
+Las [muestras del informe](docs/anexos/muestras/LEEME.txt) también están incluidas en `docs/anexos/muestras/`, listas para seleccionar en Postman sin ejecutar un generador. Son nueve imágenes sintéticas: controles (`original.png`, `tiny.png`, `flat.png`, `hidden_source.png`), cargas LSB (`lsb_full.png`, `lsb_small.png`), ruido sin carga (`noise_without_payload.png`) e inserciones multibit (`hidden_2bit.png`, `hidden_4bit.png`). Estas últimas documentan falsos negativos conocidos; el ruido permite demostrar un falso positivo. El [manifiesto](docs/anexos/muestras/manifest.json) registra el tamaño y SHA-256 de cada PNG.
+
+Los generadores originales están en `services/file-analyzer/tools/stego_samples.py` y `services/file-analyzer/tools/stego_multibit_samples.py`. Para regenerarlas desde la raíz en Linux:
+
+```bash
+cd services/file-analyzer
+../stego/.venv/bin/python -m tools.stego_samples ../../.local/informe-muestras
+../stego/.venv/bin/python -m tools.stego_multibit_samples ../../.local/informe-muestras
+cd ../..
+```
+
+En Windows sustituye `../stego/.venv/bin/python` por `../stego/.venv/Scripts/python.exe`. Estos comandos generan los PNG en `.local/informe-muestras`; el manifiesto incluido corresponde a los archivos del informe conservados en `docs/anexos/muestras/`.
+
+### 5. Acceder a las APIs
+
+Abre AUTH en `https://localhost:3001/docs` o STEGO en `https://localhost:8000/docs`. Consulta las credenciales del administrador localmente en `secrets/auth/bootstrap.json`. En Postman importa `secrets/public/ca.pem` como CA de confianza y mantén activa la verificación TLS.
+
+Importa la colección `postman/Backend-V1.postman_collection.json`. Para los resultados esperados del detector actual, consulta [validación real del Backend V1](docs/VALIDACION_BACKEND_V1.md). El [walkthrough manual](docs/WALKTHROUGH-COMPLETO.md) contiene casos históricos que describen un detector ausente; esos resultados 503 y el rechazo de JPEG no corresponden al detector integrado actual.
+
+### 6. Volver a iniciar o bajar todo
+
+En una instalación ya preparada, estos son los comandos habituales de inicio (no repitas la creación del entorno ni el setup):
+
+```bash
+docker compose -f compose.yaml up -d --build --wait
+docker compose -f compose.yaml ps
+```
+
+El seed y el generador de muestras se ejecutan explícitamente cuando los necesites. Para bajar todo conservando los datos:
+
+```bash
+docker compose -f compose.yaml down
+```
+
+Para ver los registros:
+
+```bash
+docker compose -f compose.yaml logs --tail 100 auth-service stego
+```
+
+### Detalles de configuración
 
 `setup-local.py` genera pares RSA JWT y TLS distintos, CA local y credencial entre servicios. Conserva un `.env` existente y nunca sobrescribe `secrets/`. Si ya existe `.env`, verifica que `POSTGRES_PASSWORD` coincida con tu volumen PostgreSQL; cambiar esa variable no cambia la contraseña de un volumen inicializado. No borres volúmenes para corregir credenciales.
 
@@ -53,6 +152,24 @@ Registro público crea usuarios **sin roles**. La administración de roles exige
 
 ## Pruebas
 
+Con los servicios activos y el seed completado, puedes ejecutar los scripts de verificación. Son opcionales para iniciar el proyecto.
+
+**Linux:**
+
+```bash
+npm --prefix apps/auth-service ci
+npm --prefix apps/auth-service run generate
+npm --prefix apps/auth-service test
+services/stego/.venv/bin/python -m pytest services/stego/tests -q
+services/stego/.venv/bin/python scripts/integration.py
+services/stego/.venv/bin/python scripts/validate-backend-v1.py
+services/stego/.venv/bin/python scripts/check-container-permissions.py
+```
+
+`validate-backend-v1.py` genera sus propias imágenes de prueba y guarda evidencia en `docs/evidence/backend-v1-live.json`; no necesitas crear esas imágenes manualmente. La integración y la validación crean cuentas de prueba y las deshabilitan al finalizar correctamente. `check-container-permissions.py` verifica los permisos de los contenedores.
+
+**Windows (PowerShell):**
+
 ```powershell
 cd apps/auth-service
 npm.cmd ci
@@ -61,6 +178,8 @@ npm.cmd test
 cd ../..
 services/stego/.venv/Scripts/python.exe -m pytest services/stego/tests -q
 services/stego/.venv/Scripts/python.exe scripts/integration.py
+services/stego/.venv/Scripts/python.exe scripts/validate-backend-v1.py
+services/stego/.venv/Scripts/python.exe scripts/check-container-permissions.py
 ```
 
 Para reproducir el fallo seguro T08, el comando siguiente detiene y reinicia AUTH temporalmente:
@@ -103,12 +222,3 @@ Los certificados TLS de desarrollo duran 90 días. Para rotar: conserva respaldo
 
 Límites: imagen de 5 MiB, 20 millones de píxeles, dos procesamientos simultáneos, detector con timeout y límites Linux, almacenamiento de 256 MiB. Login tiene límites locales a una réplica; varias réplicas requieren contadores compartidos. AUTH actualiza Prisma a 6.19.3 y fija deepmerge-ts 8 únicamente para su herramienta de configuración, corrigiendo la alerta de recursión; se verifican generación y migración. Repite la auditoría de dependencias antes de desplegar.
 
-## Documentación
-
-- `docs/ARQUITECTURA.md`: límites de confianza, ER y permisos.
-- `docs/RIESGOS.md`: activos, amenazas y controles.
-- `docs/PRUEBAS.md`: escenarios mínimos y responsabilidades.
-- `docs/auth.openapi.json` y `docs/stego.openapi.json`: contratos exportados.
-- `contracts/README.md`: decisión interna y adaptador para Diana.
-
-Se toman principios de Zero Trust, Secure by Design y Shift Left Security como referencias de diseño; no se afirma certificación ni cumplimiento integral de ISO/IEC 27001 o 27034.

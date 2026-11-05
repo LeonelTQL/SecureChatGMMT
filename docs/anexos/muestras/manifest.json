@@ -1,0 +1,47 @@
+[
+  {
+    "file": "original.png",
+    "bytes": 172917,
+    "sha256": "b3ce72875128204d384de9e80a1c9d38bbde9ab47080d172bc0e431e9fe0ce7c"
+  },
+  {
+    "file": "lsb_full.png",
+    "bytes": 197035,
+    "sha256": "91f915f46a4799b256c3111fe8d066b9fe46b0055b9f71df2a962fdb244a8f9e"
+  },
+  {
+    "file": "lsb_small.png",
+    "bytes": 172993,
+    "sha256": "9d4f118a722ebaa457b9db823c722876b9073ba369f7e10d3e6c7bdf87d26dfc"
+  },
+  {
+    "file": "noise_without_payload.png",
+    "bytes": 197141,
+    "sha256": "3bbc00c133db2a85d817e58f4bcb930e42c8957820819f927d299def474b01b4"
+  },
+  {
+    "file": "tiny.png",
+    "bytes": 811,
+    "sha256": "40514543f84ee555f1d9708f0e9b8fc221c41cb8302892f698b318fc8a7a77a4"
+  },
+  {
+    "file": "flat.png",
+    "bytes": 758,
+    "sha256": "0450a3ca2ac200aa8eb5161791e275e2dc6ca74b237492067ebb0f141a1ac712"
+  },
+  {
+    "file": "hidden_source.png",
+    "bytes": 881,
+    "sha256": "e85c4ca89d19f19c199fc74989ef30a7f1be2fadfa85d4e145276de235ced624"
+  },
+  {
+    "file": "hidden_2bit.png",
+    "bytes": 166125,
+    "sha256": "55719c7d522b8549baa0fefba1796dfcb619c96fcd96297517a8026ce87958f9"
+  },
+  {
+    "file": "hidden_4bit.png",
+    "bytes": 120362,
+    "sha256": "eef43190feadac784134f2afaff05798bd5f536d19e3fe2e05536511d727fcea"
+  }
+]

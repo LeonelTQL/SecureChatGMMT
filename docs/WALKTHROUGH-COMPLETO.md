@@ -14,6 +14,9 @@ docker compose -f compose.yaml up -d --build --wait
 docker compose -f compose.yaml exec -T auth-service node dist/database/seed.js
 docker compose -f compose.yaml ps
 services/stego/.venv/Scripts/python.exe scripts/generate-test-fixtures.py
+
+##para caso de linux reemplazar el ultimo comando con este
+services/stego/.venv/bin/python scripts/generate-test-fixtures.py
 ```
 
 Si es una copia nueva sin secretos: crea primero el entorno virtual, instala `services/stego/requirements.lock.txt` y ejecuta `scripts/setup-local.py`, como indica el README. No repitas setup si `secrets/` ya existe ni elimines volúmenes para corregir credenciales.

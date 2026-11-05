@@ -1,0 +1,8 @@
+Muestras sintéticas propias, sin ejecutables.
+Regenerar desde esta carpeta con Pillow instalado:
+python -m tools.stego_samples salida
+python -m tools.stego_multibit_samples salida
+original: control de valores pares; lsb_full: carga pseudoaleatoria completa; lsb_small: mensaje literal de 20 bytes.
+noise_without_payload: ruido sin carga para demostrar falso positivo. tiny/flat: muestra insuficiente.
+hidden_source: imagen de bloques RGB; hidden_2bit/hidden_4bit: inserción compatible con sus generadores, falsos negativos conocidos del detector PoV.
+manifest.json registra el SHA-256 de cada PNG.
