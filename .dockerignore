@@ -1,0 +1,12 @@
+**
+!services/
+!services/stego/
+!services/stego/Dockerfile
+!services/stego/requirements.lock.txt
+!services/stego/app/
+!services/stego/app/**
+!services/file-analyzer/
+!services/file-analyzer/app/
+!services/file-analyzer/app/**
+**/__pycache__/
+**/*.pyc
