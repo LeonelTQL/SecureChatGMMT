@@ -1,6 +1,6 @@
 # STEGO — Transferencia y gestión de Paul
 
-**Estado actual:** Alejandro todavía no ha incorporado su endpoint de autorización. STEGO devuelve 503 para operaciones con un JWT válido porque no puede obtener una decisión vigente de AUTH; no lee ni procesa archivos en ese caso. Los módulos de Paul y sus pruebas de contrato se conservan para integrar posteriormente autorización y detector.
+**Estado actual:** AUTH ya ofrece decisiones vigentes y STEGO exige JWT y privilegios actuales antes de consumir archivos. Sin detector real, una imagen valida autorizada queda en cuarentena con registro error y HTTP 503. Los rechazos por permisos insuficientes son 403.
 
 FastAPI independiente. JWT RS256 mediante clave pública, autorización actual por HTTPS hacia AUTH, SQLite privado, SHA-256 y archivos aislados. No recibe credenciales PostgreSQL ni clave privada JWT.
 

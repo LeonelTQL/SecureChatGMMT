@@ -14,11 +14,11 @@ add('01 Registro', 'POST', '{{auth_url}}/api/auth/register', { ...credentials, u
 add('02 Login', 'POST', '{{auth_url}}/api/auth/login', credentials, false, true);
 add('03 Perfil', 'GET', '{{auth_url}}/api/auth/profile');
 add('04 Verificar JWT', 'POST', '{{auth_url}}/api/auth/verify');
-add('05 Administración bloqueada hasta integrar Alejandro', 'GET', '{{auth_url}}/api/users', null, true, false, 503);
-add('06 STEGO bloqueado sin decisión de autorización', 'POST', '{{stego_url}}/api/steganography/analyze', null, true, false, 503);
+add('05 Usuario sin ADMIN: administracion denegada', 'GET', '{{auth_url}}/api/users', null, true, false, 403);
+add('06 Usuario sin ANALYST: analisis denegado', 'POST', '{{stego_url}}/api/steganography/analyze', null, true, false, 403);
 add('07 Logout', 'POST', '{{auth_url}}/api/auth/logout', null, true, false, 204);
 add('08 JWT revocado', 'GET', '{{auth_url}}/api/auth/profile', null, true, false, 401);
 add('09 Sin autenticación', 'POST', '{{stego_url}}/api/steganography/analyze', null, false, false, 401);
 const variables = { auth_url: 'https://localhost:3001', stego_url: 'https://localhost:8000', username: 'postman_user', email: 'postman@example.com', password: '', access_token: '' };
-const collection = { info: { name: 'Backend V1 — Leonel y Paul; Alejandro pendiente', schema: 'https://schema.getpostman.com/json/collection/v2.1.0/collection.json', description: 'Importar CA secrets/public/ca.pem. Registrar con contraseña local de 12–128 caracteres. Los endpoints de Alejandro fueron retirados; STEGO no analiza sin autorización.' }, variable: Object.entries(variables).map(([key, value]) => ({ key, value })), item: items };
+const collection = { info: { name: 'Backend V1 - autenticacion, RBAC y STEGO', schema: 'https://schema.getpostman.com/json/collection/v2.1.0/collection.json', description: 'Importar CA secrets/public/ca.pem. Configurar password local de 12-128 caracteres. RBAC activo: las cuentas nuevas no tienen roles y reciben 403 en administracion y analisis. Detector pendiente.' }, variable: Object.entries(variables).map(([key, value]) => ({ key, value })), item: items };
 fs.writeFileSync(path.join(__dirname, '../postman/Backend-V1.postman_collection.json'), JSON.stringify(collection, null, 2) + '\n');

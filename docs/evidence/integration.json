@@ -1,6 +1,6 @@
 {
-  "executed_at": "2026-11-05T04:25:01.967951+00:00",
-  "scope": "Leonel y bloqueo seguro de Paul; Alejandro retirado",
+  "executed_at": "2026-11-05T04:52:46.463550+00:00",
+  "scope": "Leonel, Alejandro (RBAC) y Paul (STEGO)",
   "environment": "Docker y PostgreSQL reales; TLS verificado",
   "tests": [
     {
@@ -54,39 +54,159 @@
       "http": 401
     },
     {
-      "test": "Administraci\u00f3n bloqueada sin RBAC: GET",
+      "test": "Administraci\u00f3n protegida por RBAC: GET",
+      "status": "passed",
+      "http": 403
+    },
+    {
+      "test": "Administraci\u00f3n protegida por RBAC: POST",
+      "status": "passed",
+      "http": 403
+    },
+    {
+      "test": "Administraci\u00f3n protegida por RBAC: PATCH",
+      "status": "passed",
+      "http": 403
+    },
+    {
+      "test": "Ruta protegida para no-ADMIN: /api/roles",
+      "status": "passed",
+      "http": 403
+    },
+    {
+      "test": "Ruta protegida para no-ADMIN: /api/user-roles",
+      "status": "passed",
+      "http": 403
+    },
+    {
+      "test": "Ruta protegida para no-ADMIN: /api/admin/protected",
+      "status": "passed",
+      "http": 403
+    },
+    {
+      "test": "Decisi\u00f3n interna exige X-Service-Token",
+      "status": "passed",
+      "http": 401
+    },
+    {
+      "test": "Login ADMIN bootstrap",
+      "status": "passed",
+      "http": 200
+    },
+    {
+      "test": "ADMIN listar roles",
+      "status": "passed",
+      "http": 200
+    },
+    {
+      "test": "ADMIN acceso protegido",
+      "status": "passed",
+      "http": 200
+    },
+    {
+      "test": "Crear segundo usuario N:M",
+      "status": "passed",
+      "http": 201
+    },
+    {
+      "test": "T05 mismo rol para dos usuarios",
+      "status": "passed",
+      "http": 201
+    },
+    {
+      "test": "T05 mismo rol para dos usuarios",
+      "status": "passed",
+      "http": 201
+    },
+    {
+      "test": "T04 USER no puede analizar",
+      "status": "passed",
+      "http": 403
+    },
+    {
+      "test": "T05 segundo rol en mismo usuario",
+      "status": "passed",
+      "http": 201
+    },
+    {
+      "test": "T06 asignaci\u00f3n duplicada",
+      "status": "passed",
+      "http": 409
+    },
+    {
+      "test": "FK impide rol inexistente",
+      "status": "passed",
+      "http": 400
+    },
+    {
+      "test": "Mismo JWT obtiene roles actuales",
+      "status": "passed",
+      "http": 200
+    },
+    {
+      "test": "ANALYST autorizado; sin detector queda en cuarentena",
       "status": "passed",
       "http": 503
     },
     {
-      "test": "Administraci\u00f3n bloqueada sin RBAC: POST",
+      "test": "Propietario consulta resultado",
       "status": "passed",
-      "http": 503
+      "http": 200
     },
     {
-      "test": "Administraci\u00f3n bloqueada sin RBAC: PATCH",
+      "test": "ADMIN consulta resultado",
       "status": "passed",
-      "http": 503
+      "http": 200
     },
     {
-      "test": "M\u00f3dulo retirado: /api/roles",
+      "test": "Asignar ANALYST al segundo usuario",
       "status": "passed",
-      "http": 404
+      "http": 201
     },
     {
-      "test": "M\u00f3dulo retirado: /api/user-roles",
+      "test": "Login segundo ANALYST",
       "status": "passed",
-      "http": 404
+      "http": 200
     },
     {
-      "test": "M\u00f3dulo retirado: /api/admin/protected",
+      "test": "T11 ANALYST no consulta resultado ajeno",
       "status": "passed",
-      "http": 404
+      "http": 403
     },
     {
-      "test": "Decisi\u00f3n interna retirada",
+      "test": "T07 retirar ANALYST",
       "status": "passed",
-      "http": 404
+      "http": 204
+    },
+    {
+      "test": "T07 mismo JWT pierde privilegio inmediatamente",
+      "status": "passed",
+      "http": 403
+    },
+    {
+      "test": "Resultado inaccesible tras revocar privilegio",
+      "status": "passed",
+      "http": 403
+    },
+    {
+      "test": "ADMIN deshabilita usuario",
+      "status": "passed",
+      "http": 200
+    },
+    {
+      "test": "Cuenta deshabilitada rechaza JWT anterior",
+      "status": "passed",
+      "http": 401
+    },
+    {
+      "test": "T10 imagen corrupta",
+      "status": "passed",
+      "http": 415
+    },
+    {
+      "test": "T10 carga excesiva",
+      "status": "passed",
+      "http": 413
     },
     {
       "test": "STEGO sin JWT",
@@ -94,7 +214,12 @@
       "http": 401
     },
     {
-      "test": "STEGO bloqueado sin autorizaci\u00f3n vigente",
+      "test": "STEGO deniega usuario sin rol ANALYST/ADMIN",
+      "status": "passed",
+      "http": 403
+    },
+    {
+      "test": "STEGO rechaza con AUTH ca\u00eddo",
       "status": "passed",
       "http": 503
     },
@@ -107,6 +232,11 @@
       "test": "Sesi\u00f3n revocada",
       "status": "passed",
       "http": 401
+    },
+    {
+      "test": "Deshabilitar cuenta de prueba",
+      "status": "passed",
+      "http": 200
     }
   ]
 }

@@ -1,6 +1,6 @@
 # Arquitectura y modelo de identidad
 
-**Arquitectura objetivo del PDF:** los módulos RBAC y de decisión interna aquí descritos se retiraron temporalmente para que Alejandro aporte su entrega. El estado actual tiene autenticación y bloqueo seguro, con el esquema persistido compartido conservado. Consulta `REINTEGRAR-ALEJANDRO.md`.
+**Estado actual:** los modulos RBAC y el endpoint interno estan activos desde la fusion de la entrega en main. La arquitectura descrita se verifica mediante las pruebas de integracion; el algoritmo detector sigue pendiente.
 
 ## Límites de confianza
 
