@@ -1,0 +1,543 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "AUTH Backend V1",
+    "version": "2.0.0",
+    "description": "JWT RS256, sesiones revocables y autorización sobre asignaciones actuales. ADMIN administra identidad; USER consulta perfil; ANALYST analiza y consulta resultados propios."
+  },
+  "servers": [
+    {
+      "url": "https://localhost:3001"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "service": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Service-Token"
+      }
+    },
+    "schemas": {
+      "Login": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 254
+          },
+          "password": {
+            "type": "string",
+            "minLength": 12,
+            "maxLength": 128,
+            "writeOnly": true
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "Register": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "username": {
+            "type": "string",
+            "pattern": "^[a-z0-9._-]{3,50}$"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 254
+          },
+          "password": {
+            "type": "string",
+            "minLength": 12,
+            "maxLength": 128,
+            "writeOnly": true
+          }
+        },
+        "required": [
+          "username",
+          "email",
+          "password"
+        ]
+      },
+      "User": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "username": {
+            "type": "string",
+            "pattern": "^[a-z0-9._-]{3,50}$"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 254
+          },
+          "status": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": []
+      },
+      "UserPatch": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "username": {
+            "type": "string",
+            "pattern": "^[a-z0-9._-]{3,50}$"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 254
+          },
+          "status": {
+            "type": "boolean"
+          }
+        },
+        "required": []
+      },
+      "Token": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "access_token": {
+            "type": "string"
+          },
+          "token_type": {
+            "type": "string",
+            "enum": [
+              "Bearer"
+            ]
+          },
+          "expires_in": {
+            "type": "integer",
+            "enum": [
+              900
+            ]
+          }
+        },
+        "required": []
+      },
+      "Profile": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "username": {
+            "type": "string",
+            "pattern": "^[a-z0-9._-]{3,50}$"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 254
+          }
+        },
+        "required": []
+      },
+      "Identity": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "sub": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "username": {
+            "type": "string",
+            "pattern": "^[a-z0-9._-]{3,50}$"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 254
+          },
+          "jti": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "exp": {
+            "type": "integer"
+          }
+        },
+        "required": []
+      }
+    }
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Disponibilidad de AUTH y PostgreSQL",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Operación completada"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "401": {
+            "description": "Autenticación inválida o sesión revocada"
+          },
+          "403": {
+            "description": "Rol vigente insuficiente"
+          },
+          "404": {
+            "description": "Recurso inexistente"
+          },
+          "409": {
+            "description": "Valor único o asignación duplicada"
+          },
+          "429": {
+            "description": "Límite de intentos"
+          },
+          "500": {
+            "description": "Error interno sin información sensible"
+          }
+        }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "summary": "Registro público sin privilegios",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Register"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Operación completada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "401": {
+            "description": "Autenticación inválida o sesión revocada"
+          },
+          "403": {
+            "description": "Rol vigente insuficiente"
+          },
+          "404": {
+            "description": "Recurso inexistente"
+          },
+          "409": {
+            "description": "Valor único o asignación duplicada"
+          },
+          "429": {
+            "description": "Límite de intentos"
+          },
+          "500": {
+            "description": "Error interno sin información sensible"
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "Credenciales; máximo 10 intentos/correo y 30/IP por minuto",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Login"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Operación completada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "401": {
+            "description": "Autenticación inválida o sesión revocada"
+          },
+          "403": {
+            "description": "Rol vigente insuficiente"
+          },
+          "404": {
+            "description": "Recurso inexistente"
+          },
+          "409": {
+            "description": "Valor único o asignación duplicada"
+          },
+          "429": {
+            "description": "Límite de intentos"
+          },
+          "500": {
+            "description": "Error interno sin información sensible"
+          }
+        }
+      }
+    },
+    "/api/auth/profile": {
+      "get": {
+        "summary": "Perfil de la sesión y roles actuales",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación completada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Profile"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "401": {
+            "description": "Autenticación inválida o sesión revocada"
+          },
+          "403": {
+            "description": "Rol vigente insuficiente"
+          },
+          "404": {
+            "description": "Recurso inexistente"
+          },
+          "409": {
+            "description": "Valor único o asignación duplicada"
+          },
+          "429": {
+            "description": "Límite de intentos"
+          },
+          "500": {
+            "description": "Error interno sin información sensible"
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "summary": "Revocar la sesión actual inmediatamente",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Operación completada"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "401": {
+            "description": "Autenticación inválida o sesión revocada"
+          },
+          "403": {
+            "description": "Rol vigente insuficiente"
+          },
+          "404": {
+            "description": "Recurso inexistente"
+          },
+          "409": {
+            "description": "Valor único o asignación duplicada"
+          },
+          "429": {
+            "description": "Límite de intentos"
+          },
+          "500": {
+            "description": "Error interno sin información sensible"
+          }
+        }
+      }
+    },
+    "/api/auth/verify": {
+      "post": {
+        "summary": "Verificar JWT, sesión, usuario y roles vigentes",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación completada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Identity"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "401": {
+            "description": "Autenticación inválida o sesión revocada"
+          },
+          "403": {
+            "description": "Rol vigente insuficiente"
+          },
+          "404": {
+            "description": "Recurso inexistente"
+          },
+          "409": {
+            "description": "Valor único o asignación duplicada"
+          },
+          "429": {
+            "description": "Límite de intentos"
+          },
+          "500": {
+            "description": "Error interno sin información sensible"
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "post": {
+        "summary": "Bloqueado hasta integrar autorizaci?n: crear usuario sin roles",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Register"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Autenticaci?n requerida"
+          },
+          "503": {
+            "description": "Autorizaci?n de Alejandro pendiente; operaci?n bloqueada"
+          }
+        }
+      },
+      "get": {
+        "summary": "Bloqueado hasta integrar autorizaci?n: listar hasta 100 usuarios",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000000
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Autenticaci?n requerida"
+          },
+          "503": {
+            "description": "Autorizaci?n de Alejandro pendiente; operaci?n bloqueada"
+          }
+        }
+      }
+    },
+    "/api/users/{id}": {
+      "patch": {
+        "summary": "Bloqueado hasta integrar autorizaci?n: actualizar o deshabilitar usuario; deshabilitar revoca sus sesiones",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserPatch"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Autenticaci?n requerida"
+          },
+          "503": {
+            "description": "Autorizaci?n de Alejandro pendiente; operaci?n bloqueada"
+          }
+        }
+      }
+    }
+  }
+}

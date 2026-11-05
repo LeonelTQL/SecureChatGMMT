@@ -1,0 +1,25 @@
+ALTER TABLE "User" RENAME TO users;
+ALTER TABLE users RENAME COLUMN "passwordHash" TO password_hash;
+ALTER TABLE users RENAME COLUMN "createdAt" TO created_at;
+ALTER TABLE users ADD COLUMN username VARCHAR(50);
+UPDATE users SET username = 'user_' || REPLACE(id::text, '-', '');
+ALTER TABLE users ALTER COLUMN username SET NOT NULL;
+CREATE UNIQUE INDEX users_username_key ON users(username);
+ALTER TABLE users ADD COLUMN status BOOLEAN NOT NULL DEFAULT true;
+ALTER TABLE users ADD COLUMN updated_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
+CREATE TABLE roles (
+ id UUID PRIMARY KEY, name VARCHAR(40) NOT NULL UNIQUE, description VARCHAR(250) NOT NULL,
+ status BOOLEAN NOT NULL DEFAULT true, created_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ updated_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE user_roles (
+ id UUID PRIMARY KEY, user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+ role_id UUID NOT NULL REFERENCES roles(id) ON DELETE CASCADE,
+ assigned_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ CONSTRAINT user_roles_user_id_role_id_key UNIQUE(user_id, role_id)
+);
+CREATE TABLE sessions (
+ id UUID PRIMARY KEY, user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+ expires_at TIMESTAMP(3) NOT NULL, revoked BOOLEAN NOT NULL DEFAULT false
+);
+CREATE INDEX sessions_user_id_idx ON sessions(user_id);

@@ -6,125 +6,78 @@ services:
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-chatseguro}
       POSTGRES_USER: ${POSTGRES_USER:-chatseguro}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks: [private]
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Configura POSTGRES_PASSWORD}
+    volumes: [postgres_data:/var/lib/postgresql/data]
+    networks: [identity]
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB']
-      interval: 10s
-      timeout: 5s
-      retries: 10
-  valkey:
-    image: valkey/valkey:8-alpine
-    restart: unless-stopped
-    command: ["valkey-server", "--appendonly", "yes"]
-    volumes: ["valkey_data:/data"]
-    networks: [private]
-    healthcheck:
-      test: ["CMD", "valkey-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
+      test: [CMD-SHELL, 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB']
+      interval: 5s
+      timeout: 3s
+      retries: 15
   auth-service:
     build: ./apps/auth-service
     restart: unless-stopped
     environment:
       PORT: 3001
-      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET with at least 32 random bytes in .env}
-      DATABASE_URL: postgres://${POSTGRES_USER:-chatseguro}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-chatseguro}
-      VALKEY_URL: redis://valkey:6379
-    depends_on:
-      postgres: {condition: service_healthy}
-      valkey: {condition: service_healthy}
-    networks: [private]
-    healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3001/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
-      interval: 15s
-      timeout: 5s
-      retries: 5
-  chat-service:
-    build: ./apps/chat-service
-    restart: unless-stopped
-    environment:
-      PORT: 3002
-      DATABASE_URL: postgres://${POSTGRES_USER:-chatseguro}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-chatseguro}
-      VALKEY_URL: redis://valkey:6379
-    depends_on:
-      postgres: {condition: service_healthy}
-      valkey: {condition: service_healthy}
-    networks: [private]
-    healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3002/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
-      interval: 15s
-      timeout: 5s
-      retries: 5
-  file-service:
-    build: ./apps/file-service
-    restart: unless-stopped
-    environment:
-      PORT: 3003
-      DATABASE_URL: postgres://${POSTGRES_USER:-chatseguro}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-chatseguro}
-      VALKEY_URL: redis://valkey:6379
-      ANALYZER_URL: http://file-analyzer:8000
-    depends_on:
-      postgres: {condition: service_healthy}
-      valkey: {condition: service_healthy}
-    networks: [private]
-    healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3003/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
-      interval: 15s
-      timeout: 5s
-      retries: 5
-  file-analyzer:
-    build: ./services/file-analyzer
-    restart: unless-stopped
-    environment:
-      FILE_STORAGE_ROOT: /app/storage
-      MAX_FILE_BYTES: ${MAX_FILE_BYTES:-10485760}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-chatseguro}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-chatseguro}
+      STEGO_SERVICE_TOKEN: ${STEGO_SERVICE_TOKEN:?Ejecuta scripts/setup-local.py}
     volumes:
-      - file_storage_data:/app/storage
-    networks: [private]
+      - ./secrets/auth/jwt-private.pem:/run/keys/jwt-private.pem:ro
+      - ./secrets/auth/tls-key.pem:/run/keys/tls-key.pem:ro
+      - ./secrets/auth/tls-cert.pem:/run/keys/tls-cert.pem:ro
+      - ./secrets/auth/bootstrap.json:/run/keys/bootstrap.json:ro
+      - ./secrets/public/jwt-public.pem:/run/public/jwt-public.pem:ro
+      - ./secrets/public/ca.pem:/run/public/ca.pem:ro
+    ports: ["127.0.0.1:3001:3001"]
+    depends_on:
+      postgres: {condition: service_healthy}
+    networks: [identity, services]
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: [ALL]
+    pids_limit: 128
+    healthcheck:
+      test: [CMD, node, -e, "require('https').get('https://localhost:3001/health',{ca:require('fs').readFileSync('/run/public/ca.pem')},r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+  stego:
+    build: ./services/stego
+    restart: unless-stopped
+    environment:
+      AUTH_URL: https://auth-service:3001
+      STEGO_SERVICE_TOKEN: ${STEGO_SERVICE_TOKEN:?Ejecuta scripts/setup-local.py}
+      STORAGE_PATH: /app/storage
+    volumes:
+      - ./secrets/stego/tls-key.pem:/run/keys/tls-key.pem:ro
+      - ./secrets/stego/tls-cert.pem:/run/keys/tls-cert.pem:ro
+      - ./secrets/public/jwt-public.pem:/run/public/jwt-public.pem:ro
+      - ./secrets/public/ca.pem:/run/public/ca.pem:ro
+      - stego_data:/app/storage
+    ports: ["127.0.0.1:8000:8000"]
+    networks: [services]
     security_opt: ["no-new-privileges:true"]
     cap_drop: [ALL]
     read_only: true
-    tmpfs: ["/tmp:rw,noexec,nosuid,size=64m"]
-    pids_limit: 100
+    tmpfs: ["/tmp:rw,noexec,nosuid,size=32m"]
+    pids_limit: 64
+    mem_limit: 768m
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health',timeout=3)"]
-      interval: 15s
+      test: [CMD, python, -c, "import ssl,urllib.request; urllib.request.urlopen('https://localhost:8000/health',context=ssl.create_default_context(cafile='/run/public/ca.pem'),timeout=3)"]
+      interval: 10s
       timeout: 5s
-      retries: 5
-  web:
-    build: ./apps/web
-    restart: unless-stopped
-    environment:
-      NODE_ENV: production
-      PORT: 3000
-    networks: [private]
-    healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
-      interval: 15s
-      timeout: 5s
-      retries: 5
+      retries: 10
   caddy:
     image: caddy:2-alpine
     restart: unless-stopped
-    ports:
-      - "127.0.0.1:${APP_PORT:-8080}:80"
+    ports: ["127.0.0.1:${APP_PORT:-8080}:80"]
     volumes:
       - ./infrastructure/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
-    depends_on:
-      web: {condition: service_healthy}
-      auth-service: {condition: service_healthy}
-      chat-service: {condition: service_healthy}
-      file-service: {condition: service_healthy}
-      file-analyzer: {condition: service_healthy}
-    networks: [private]
+      - ./secrets/public/ca.pem:/etc/caddy/ca.pem:ro
+    networks: [services]
 networks:
-  private:
-    driver: bridge
+  identity:
+    internal: true
+  services:
 volumes:
   postgres_data:
-  valkey_data:
-  file_storage_data:
+  stego_data:

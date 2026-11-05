@@ -7,6 +7,7 @@ COPY prisma ./prisma
 RUN npm run generate
 COPY tsconfig.json ./
 COPY src ./src
+COPY scripts ./scripts
 RUN npm run build
 EXPOSE 3001
 USER node

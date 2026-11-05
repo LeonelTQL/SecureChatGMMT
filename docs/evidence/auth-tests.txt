@@ -1,0 +1,53 @@
+﻿
+> ms-users-auth@1.0.0 test
+> npm run build && node --test test/*.test.cjs
+
+
+> ms-users-auth@1.0.0 prebuild
+> node scripts/clean.cjs
+
+
+> ms-users-auth@1.0.0 build
+> tsc -p tsconfig.json
+
+✔ registro: hash Argon2id, sin secretos, duplicado 409 (367.1639ms)
+{"event":"login.allowed","user_id":"77884337-ba0f-4b83-93e7-d1bcce4051e7","timestamp":"2026-11-05T04:13:38.738Z"}
+✔ login RS256: firma, claims, duración, sesión y ausencia de roles en token (280.1821ms)
+{"event":"login.denied","timestamp":"2026-11-05T04:13:39.019Z"}
+{"event":"login.denied","timestamp":"2026-11-05T04:13:39.108Z"}
+{"event":"login.denied","timestamp":"2026-11-05T04:13:39.197Z"}
+✔ credenciales incorrectas, usuario inexistente y cuenta deshabilitada: 401 genérico (457.5361ms)
+✔ JWT inválido, expirado, audiencia/emisor/firma incorrectos y claims ausentes: 401 (132.7549ms)
+{"event":"login.allowed","user_id":"996b169c-5aec-46bb-b6cd-2ea28b0d0bb9","timestamp":"2026-11-05T04:13:39.610Z"}
+✔ logout revoca JWT y usuario inactivo rechaza sesión (280.8415ms)
+{"event":"request.rejected","status":400,"timestamp":"2026-11-05T04:13:39.993Z"}
+{"event":"request.rejected","status":400,"timestamp":"2026-11-05T04:13:40.000Z"}
+{"event":"request.rejected","status":400,"timestamp":"2026-11-05T04:13:40.003Z"}
+{"event":"login.allowed","user_id":"56a1bee0-5df7-498d-9842-8c16322377dc","timestamp":"2026-11-05T04:13:40.186Z"}
+{"event":"request.rejected","status":401,"timestamp":"2026-11-05T04:13:40.189Z"}
+{"event":"request.rejected","status":503,"timestamp":"2026-11-05T04:13:40.195Z"}
+{"event":"request.rejected","status":503,"timestamp":"2026-11-05T04:13:40.197Z"}
+{"event":"request.rejected","status":503,"timestamp":"2026-11-05T04:13:40.200Z"}
+{"timestamp":"2026-11-05T04:13:40.202Z","service":"AUTH","event":"session.revoked","user_id":"56a1bee0-5df7-498d-9842-8c16322377dc"}
+{"event":"request.rejected","status":401,"timestamp":"2026-11-05T04:13:40.204Z"}
+✔ HTTP: validación, normalización, perfil y logout (593.7442ms)
+{"event":"request.rejected","status":400,"timestamp":"2026-11-05T04:13:40.431Z"}
+{"event":"request.rejected","status":400,"timestamp":"2026-11-05T04:13:40.434Z"}
+{"event":"request.rejected","status":400,"timestamp":"2026-11-05T04:13:40.436Z"}
+{"event":"request.rejected","status":400,"timestamp":"2026-11-05T04:13:40.439Z"}
+{"event":"request.rejected","status":400,"timestamp":"2026-11-05T04:13:40.441Z"}
+{"event":"request.rejected","status":400,"timestamp":"2026-11-05T04:13:40.443Z"}
+{"event":"request.rejected","status":400,"timestamp":"2026-11-05T04:13:40.445Z"}
+{"event":"request.rejected","status":400,"timestamp":"2026-11-05T04:13:40.447Z"}
+{"event":"request.rejected","status":400,"timestamp":"2026-11-05T04:13:40.449Z"}
+{"event":"request.rejected","status":400,"timestamp":"2026-11-05T04:13:40.451Z"}
+{"event":"request.rejected","status":429,"timestamp":"2026-11-05T04:13:40.453Z"}
+✔ login tiene límite de intentos y no confía en X-Forwarded-For del cliente (249.0715ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3222.4494
