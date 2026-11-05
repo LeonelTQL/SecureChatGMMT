@@ -100,8 +100,7 @@ user_projects/domains/*/logs/
 
 .env
 .env.*
-!.env.example
-.env.example
+*.env*example*
 
 *.secret
 *.secrets
@@ -282,4 +281,10 @@ postman-local/
 passwords.txt
 credentials.txt
 tokens.txt
+secrets/
+.local/
+.venv/
+__pycache__/
+.pytest_cache/
+storage/
 private-config/

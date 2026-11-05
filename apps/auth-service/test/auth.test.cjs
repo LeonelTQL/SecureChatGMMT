@@ -51,6 +51,7 @@ test('registro: hash Argon2id, sin secretos, duplicado 409', async () => {
 test('login RS256: firma, claims, duración, sesión y ausencia de roles en token', async () => {
   const f = await fixture(); await f.auth.register(credentials);
   const result = await f.auth.login(loginDto); const p = jwt.decode(result.access_token);
+  await assert.rejects(f.auth.verify(result.access_token + 'x'), e => e.getStatus() === 401);
   assert.equal(p.exp - p.iat, 900); assert.equal(p.roles, undefined); assert.equal(p.passwordHash, undefined);
   assert.equal((await f.auth.verify(result.access_token)).sub, f.user.id);
 });

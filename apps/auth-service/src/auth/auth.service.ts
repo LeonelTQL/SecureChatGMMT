@@ -29,6 +29,9 @@ export class AuthService implements OnModuleInit {
   async verify(token: string): Promise<AuthenticatedUser> {
     let p: Record<string, any>;
     try {
+      const segments = token.split('.');
+      if (segments.length !== 3 || segments.some(segment => !/^[A-Za-z0-9_-]+$/.test(segment) ||
+          Buffer.from(segment, 'base64url').toString('base64url') !== segment)) throw new Error('Invalid JWT encoding');
       p = await this.jwt.verifyAsync(token, { algorithms: ['RS256'], issuer: 'ms-users-auth', audience: 'chat-seguro' });
       const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
       if (typeof p.sub !== 'string' || !uuid.test(p.sub) || typeof p.jti !== 'string' || !uuid.test(p.jti) ||

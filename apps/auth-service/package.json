@@ -6,6 +6,7 @@
     "@prisma/config": { "deepmerge-ts": "8.0.0" }
   },
   "scripts": {
+    "prebuild": "node scripts/clean.cjs",
     "build": "tsc -p tsconfig.json",
     "start": "node --env-file=.env dist/main.js",
     "start:prod": "node dist/main.js",
