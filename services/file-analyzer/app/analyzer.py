@@ -3,7 +3,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Protocol
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, JsonValue
 
 
 class Classification(str, Enum):
@@ -17,6 +17,8 @@ class AnalysisResult(BaseModel):
     sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
     classification: Classification
     reason: str = Field(min_length=1, max_length=200)
+    # Informe opcional del motor; los analizadores existentes siguen siendo válidos.
+    analysis: dict[str, JsonValue] | None = None
 
 
 class Analyzer(Protocol):

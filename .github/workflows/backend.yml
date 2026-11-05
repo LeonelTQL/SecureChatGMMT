@@ -18,6 +18,11 @@ jobs:
       - run: npm ci && npm run generate && npm test
         working-directory: apps/auth-service
       - run: pip install -r services/stego/requirements.lock.txt
+      - name: Instalar ExifTool
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libimage-exiftool-perl
+          exiftool -ver
       - run: python -m pytest services/stego/tests -q
       - run: python -m pytest -c services/file-analyzer/pytest.ini services/file-analyzer/tests -q
       - run: python scripts/setup-local.py
@@ -30,5 +35,11 @@ jobs:
         run: |
           docker compose -f compose.yaml ps -a || true
           docker compose -f compose.yaml logs --no-color --tail 100 auth-service stego caddy || true
-      - if: always()
-        run: docker compose -f compose.yaml down
+      - name: Limpiar contenedores
+        if: always()
+        run: |
+          if [ -f .env ]; then
+            docker compose -f compose.yaml down
+          else
+            echo "Se omite la limpieza: entorno local no inicializado."
+          fi

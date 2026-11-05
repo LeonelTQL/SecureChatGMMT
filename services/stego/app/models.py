@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Literal
 from uuid import UUID
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, JsonValue
 
 
 class AnalysisRecord(BaseModel):
@@ -16,3 +16,5 @@ class AnalysisRecord(BaseModel):
     status: Literal["pending", "sin_indicios", "sospechoso", "no_concluyente", "error"]
     action: Literal["cuarentena", "advertencia"]
     limitations: str
+    reason: str | None = None
+    reports: dict[str, JsonValue] | None = None

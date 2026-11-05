@@ -220,6 +220,20 @@
             ],
             "title": "Reason"
           },
+          "analysis": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/JsonValue"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Analysis"
+          },
           "created_at": {
             "type": "string",
             "title": "Created At"
@@ -256,6 +270,7 @@
         "type": "object",
         "title": "HTTPValidationError"
       },
+      "JsonValue": {},
       "ValidationError": {
         "properties": {
           "loc": {

@@ -1,0 +1,563 @@
+{
+  "scope": "Real standalone statistical detector; synthetic reproducible PNG, not full antimalware/HTTP replay. No external images.",
+  "samples": {
+    "original": {
+      "classification": "SIN_INDICIOS",
+      "reason": "equiprobabilidad_rechazada_en_tres_canales",
+      "policy": {
+        "max_bytes": 10485760,
+        "max_width": 4096,
+        "max_height": 4096,
+        "max_pixels": 4000000,
+        "min_pixels": 4096,
+        "min_pair_count": 10,
+        "min_pairs": 32,
+        "min_coverage": 0.9,
+        "suspicious_p": 0.05,
+        "no_indications_p": 0.001
+      },
+      "channels": [
+        {
+          "channel": "R",
+          "samples": 65536,
+          "eligible_pairs": 128,
+          "coverage": 1.0,
+          "chi_square": 65536.0,
+          "degrees_of_freedom": 128,
+          "p_value": 0.0,
+          "lsb_one_fraction": 0.0,
+          "sufficient": true
+        },
+        {
+          "channel": "G",
+          "samples": 65536,
+          "eligible_pairs": 128,
+          "coverage": 1.0,
+          "chi_square": 65536.0,
+          "degrees_of_freedom": 128,
+          "p_value": 0.0,
+          "lsb_one_fraction": 0.0,
+          "sufficient": true
+        },
+        {
+          "channel": "B",
+          "samples": 65536,
+          "eligible_pairs": 128,
+          "coverage": 1.0,
+          "chi_square": 65536.0,
+          "degrees_of_freedom": 128,
+          "p_value": 0.0,
+          "lsb_one_fraction": 0.0,
+          "sufficient": true
+        }
+      ],
+      "width": 256,
+      "height": 256,
+      "technique": "LSB_POV_CHI_SQUARE_RGB_V1",
+      "limitations": [
+        "Un p alto indica compatibilidad con pares equiprobables; no probabilidad de esteganografía.",
+        "Ruido natural, imágenes sintéticas y procesadas pueden producir falsos positivos.",
+        "Cargas pequeñas, localizadas, sesgadas o métodos adaptativos pueden pasar inadvertidos.",
+        "Píxeles correlacionados limitan la aproximación Chi-cuadrado; umbrales heurísticos sin calibración poblacional.",
+        "Sólo RGB/RGBA de 8 bits y un fotograma; no se examinan alfa, metadatos ni contenido del mensaje.",
+        "SIN_INDICIOS no garantiza ausencia de esteganografía, malware ni seguridad del archivo."
+      ]
+    },
+    "lsb_full": {
+      "classification": "SOSPECHOSO",
+      "reason": "pares_equiprobables_en_al_menos_dos_canales",
+      "policy": {
+        "max_bytes": 10485760,
+        "max_width": 4096,
+        "max_height": 4096,
+        "max_pixels": 4000000,
+        "min_pixels": 4096,
+        "min_pair_count": 10,
+        "min_pairs": 32,
+        "min_coverage": 0.9,
+        "suspicious_p": 0.05,
+        "no_indications_p": 0.001
+      },
+      "channels": [
+        {
+          "channel": "R",
+          "samples": 65536,
+          "eligible_pairs": 128,
+          "coverage": 1.0,
+          "chi_square": 115.40380489914214,
+          "degrees_of_freedom": 128,
+          "p_value": 0.7801335382780753,
+          "lsb_one_fraction": 0.5028839111328125,
+          "sufficient": true
+        },
+        {
+          "channel": "G",
+          "samples": 65536,
+          "eligible_pairs": 128,
+          "coverage": 1.0,
+          "chi_square": 107.1651566551289,
+          "degrees_of_freedom": 128,
+          "p_value": 0.9095728096236689,
+          "lsb_one_fraction": 0.501739501953125,
+          "sufficient": true
+        },
+        {
+          "channel": "B",
+          "samples": 65536,
+          "eligible_pairs": 128,
+          "coverage": 1.0,
+          "chi_square": 114.41665048356907,
+          "degrees_of_freedom": 128,
+          "p_value": 0.7992471888438138,
+          "lsb_one_fraction": 0.4989166259765625,
+          "sufficient": true
+        }
+      ],
+      "width": 256,
+      "height": 256,
+      "technique": "LSB_POV_CHI_SQUARE_RGB_V1",
+      "limitations": [
+        "Un p alto indica compatibilidad con pares equiprobables; no probabilidad de esteganografía.",
+        "Ruido natural, imágenes sintéticas y procesadas pueden producir falsos positivos.",
+        "Cargas pequeñas, localizadas, sesgadas o métodos adaptativos pueden pasar inadvertidos.",
+        "Píxeles correlacionados limitan la aproximación Chi-cuadrado; umbrales heurísticos sin calibración poblacional.",
+        "Sólo RGB/RGBA de 8 bits y un fotograma; no se examinan alfa, metadatos ni contenido del mensaje.",
+        "SIN_INDICIOS no garantiza ausencia de esteganografía, malware ni seguridad del archivo."
+      ]
+    },
+    "lsb_small": {
+      "classification": "SIN_INDICIOS",
+      "reason": "equiprobabilidad_rechazada_en_tres_canales",
+      "policy": {
+        "max_bytes": 10485760,
+        "max_width": 4096,
+        "max_height": 4096,
+        "max_pixels": 4000000,
+        "min_pixels": 4096,
+        "min_pair_count": 10,
+        "min_pairs": 32,
+        "min_coverage": 0.9,
+        "suspicious_p": 0.05,
+        "no_indications_p": 0.001
+      },
+      "channels": [
+        {
+          "channel": "R",
+          "samples": 65536,
+          "eligible_pairs": 128,
+          "coverage": 1.0,
+          "chi_square": 65440.21937068286,
+          "degrees_of_freedom": 128,
+          "p_value": 0.0,
+          "lsb_one_fraction": 0.0003662109375,
+          "sufficient": true
+        },
+        {
+          "channel": "G",
+          "samples": 65536,
+          "eligible_pairs": 128,
+          "coverage": 1.0,
+          "chi_square": 65436.22641961998,
+          "degrees_of_freedom": 128,
+          "p_value": 0.0,
+          "lsb_one_fraction": 0.0003814697265625,
+          "sufficient": true
+        },
+        {
+          "channel": "B",
+          "samples": 65536,
+          "eligible_pairs": 128,
+          "coverage": 1.0,
+          "chi_square": 65452.207083332025,
+          "degrees_of_freedom": 128,
+          "p_value": 0.0,
+          "lsb_one_fraction": 0.0003204345703125,
+          "sufficient": true
+        }
+      ],
+      "width": 256,
+      "height": 256,
+      "technique": "LSB_POV_CHI_SQUARE_RGB_V1",
+      "limitations": [
+        "Un p alto indica compatibilidad con pares equiprobables; no probabilidad de esteganografía.",
+        "Ruido natural, imágenes sintéticas y procesadas pueden producir falsos positivos.",
+        "Cargas pequeñas, localizadas, sesgadas o métodos adaptativos pueden pasar inadvertidos.",
+        "Píxeles correlacionados limitan la aproximación Chi-cuadrado; umbrales heurísticos sin calibración poblacional.",
+        "Sólo RGB/RGBA de 8 bits y un fotograma; no se examinan alfa, metadatos ni contenido del mensaje.",
+        "SIN_INDICIOS no garantiza ausencia de esteganografía, malware ni seguridad del archivo."
+      ]
+    },
+    "noise_without_payload": {
+      "classification": "SOSPECHOSO",
+      "reason": "pares_equiprobables_en_al_menos_dos_canales",
+      "policy": {
+        "max_bytes": 10485760,
+        "max_width": 4096,
+        "max_height": 4096,
+        "max_pixels": 4000000,
+        "min_pixels": 4096,
+        "min_pair_count": 10,
+        "min_pairs": 32,
+        "min_coverage": 0.9,
+        "suspicious_p": 0.05,
+        "no_indications_p": 0.001
+      },
+      "channels": [
+        {
+          "channel": "R",
+          "samples": 65536,
+          "eligible_pairs": 128,
+          "coverage": 1.0,
+          "chi_square": 139.35769212689289,
+          "degrees_of_freedom": 128,
+          "p_value": 0.23230808782071052,
+          "lsb_one_fraction": 0.5025482177734375,
+          "sufficient": true
+        },
+        {
+          "channel": "G",
+          "samples": 65536,
+          "eligible_pairs": 128,
+          "coverage": 1.0,
+          "chi_square": 148.6793449505214,
+          "degrees_of_freedom": 128,
+          "p_value": 0.1020586766991106,
+          "lsb_one_fraction": 0.5019989013671875,
+          "sufficient": true
+        },
+        {
+          "channel": "B",
+          "samples": 65536,
+          "eligible_pairs": 128,
+          "coverage": 1.0,
+          "chi_square": 170.3991944701485,
+          "degrees_of_freedom": 128,
+          "p_value": 0.0072606313247541975,
+          "lsb_one_fraction": 0.499176025390625,
+          "sufficient": true
+        }
+      ],
+      "width": 256,
+      "height": 256,
+      "technique": "LSB_POV_CHI_SQUARE_RGB_V1",
+      "limitations": [
+        "Un p alto indica compatibilidad con pares equiprobables; no probabilidad de esteganografía.",
+        "Ruido natural, imágenes sintéticas y procesadas pueden producir falsos positivos.",
+        "Cargas pequeñas, localizadas, sesgadas o métodos adaptativos pueden pasar inadvertidos.",
+        "Píxeles correlacionados limitan la aproximación Chi-cuadrado; umbrales heurísticos sin calibración poblacional.",
+        "Sólo RGB/RGBA de 8 bits y un fotograma; no se examinan alfa, metadatos ni contenido del mensaje.",
+        "SIN_INDICIOS no garantiza ausencia de esteganografía, malware ni seguridad del archivo."
+      ]
+    },
+    "tiny": {
+      "classification": "NO_CONCLUYENTE",
+      "reason": "muestra_o_cobertura_insuficiente",
+      "policy": {
+        "max_bytes": 10485760,
+        "max_width": 4096,
+        "max_height": 4096,
+        "max_pixels": 4000000,
+        "min_pixels": 4096,
+        "min_pair_count": 10,
+        "min_pairs": 32,
+        "min_coverage": 0.9,
+        "suspicious_p": 0.05,
+        "no_indications_p": 0.001
+      },
+      "channels": [
+        {
+          "channel": "R",
+          "samples": 256,
+          "eligible_pairs": 0,
+          "coverage": 0.0,
+          "chi_square": 0,
+          "degrees_of_freedom": 0,
+          "p_value": null,
+          "lsb_one_fraction": 0.0,
+          "sufficient": false
+        },
+        {
+          "channel": "G",
+          "samples": 256,
+          "eligible_pairs": 0,
+          "coverage": 0.0,
+          "chi_square": 0,
+          "degrees_of_freedom": 0,
+          "p_value": null,
+          "lsb_one_fraction": 0.0,
+          "sufficient": false
+        },
+        {
+          "channel": "B",
+          "samples": 256,
+          "eligible_pairs": 0,
+          "coverage": 0.0,
+          "chi_square": 0,
+          "degrees_of_freedom": 0,
+          "p_value": null,
+          "lsb_one_fraction": 0.0,
+          "sufficient": false
+        }
+      ],
+      "width": 16,
+      "height": 16,
+      "technique": "LSB_POV_CHI_SQUARE_RGB_V1",
+      "limitations": [
+        "Un p alto indica compatibilidad con pares equiprobables; no probabilidad de esteganografía.",
+        "Ruido natural, imágenes sintéticas y procesadas pueden producir falsos positivos.",
+        "Cargas pequeñas, localizadas, sesgadas o métodos adaptativos pueden pasar inadvertidos.",
+        "Píxeles correlacionados limitan la aproximación Chi-cuadrado; umbrales heurísticos sin calibración poblacional.",
+        "Sólo RGB/RGBA de 8 bits y un fotograma; no se examinan alfa, metadatos ni contenido del mensaje.",
+        "SIN_INDICIOS no garantiza ausencia de esteganografía, malware ni seguridad del archivo."
+      ]
+    },
+    "flat": {
+      "classification": "NO_CONCLUYENTE",
+      "reason": "muestra_o_cobertura_insuficiente",
+      "policy": {
+        "max_bytes": 10485760,
+        "max_width": 4096,
+        "max_height": 4096,
+        "max_pixels": 4000000,
+        "min_pixels": 4096,
+        "min_pair_count": 10,
+        "min_pairs": 32,
+        "min_coverage": 0.9,
+        "suspicious_p": 0.05,
+        "no_indications_p": 0.001
+      },
+      "channels": [
+        {
+          "channel": "R",
+          "samples": 65536,
+          "eligible_pairs": 1,
+          "coverage": 1.0,
+          "chi_square": 65536.0,
+          "degrees_of_freedom": 1,
+          "p_value": 0.0,
+          "lsb_one_fraction": 0.0,
+          "sufficient": false
+        },
+        {
+          "channel": "G",
+          "samples": 65536,
+          "eligible_pairs": 1,
+          "coverage": 1.0,
+          "chi_square": 65536.0,
+          "degrees_of_freedom": 1,
+          "p_value": 0.0,
+          "lsb_one_fraction": 0.0,
+          "sufficient": false
+        },
+        {
+          "channel": "B",
+          "samples": 65536,
+          "eligible_pairs": 1,
+          "coverage": 1.0,
+          "chi_square": 65536.0,
+          "degrees_of_freedom": 1,
+          "p_value": 0.0,
+          "lsb_one_fraction": 0.0,
+          "sufficient": false
+        }
+      ],
+      "width": 256,
+      "height": 256,
+      "technique": "LSB_POV_CHI_SQUARE_RGB_V1",
+      "limitations": [
+        "Un p alto indica compatibilidad con pares equiprobables; no probabilidad de esteganografía.",
+        "Ruido natural, imágenes sintéticas y procesadas pueden producir falsos positivos.",
+        "Cargas pequeñas, localizadas, sesgadas o métodos adaptativos pueden pasar inadvertidos.",
+        "Píxeles correlacionados limitan la aproximación Chi-cuadrado; umbrales heurísticos sin calibración poblacional.",
+        "Sólo RGB/RGBA de 8 bits y un fotograma; no se examinan alfa, metadatos ni contenido del mensaje.",
+        "SIN_INDICIOS no garantiza ausencia de esteganografía, malware ni seguridad del archivo."
+      ]
+    },
+    "hidden_source": {
+      "classification": "NO_CONCLUYENTE",
+      "reason": "muestra_o_cobertura_insuficiente",
+      "policy": {
+        "max_bytes": 10485760,
+        "max_width": 4096,
+        "max_height": 4096,
+        "max_pixels": 4000000,
+        "min_pixels": 4096,
+        "min_pair_count": 10,
+        "min_pairs": 32,
+        "min_coverage": 0.9,
+        "suspicious_p": 0.05,
+        "no_indications_p": 0.001
+      },
+      "channels": [
+        {
+          "channel": "R",
+          "samples": 65536,
+          "eligible_pairs": 2,
+          "coverage": 1.0,
+          "chi_square": 65536.0,
+          "degrees_of_freedom": 2,
+          "p_value": 0.0,
+          "lsb_one_fraction": 0.0,
+          "sufficient": false
+        },
+        {
+          "channel": "G",
+          "samples": 65536,
+          "eligible_pairs": 2,
+          "coverage": 1.0,
+          "chi_square": 65536.0,
+          "degrees_of_freedom": 2,
+          "p_value": 0.0,
+          "lsb_one_fraction": 0.0,
+          "sufficient": false
+        },
+        {
+          "channel": "B",
+          "samples": 65536,
+          "eligible_pairs": 2,
+          "coverage": 1.0,
+          "chi_square": 65536.0,
+          "degrees_of_freedom": 2,
+          "p_value": 0.0,
+          "lsb_one_fraction": 0.0,
+          "sufficient": false
+        }
+      ],
+      "width": 256,
+      "height": 256,
+      "technique": "LSB_POV_CHI_SQUARE_RGB_V1",
+      "limitations": [
+        "Un p alto indica compatibilidad con pares equiprobables; no probabilidad de esteganografía.",
+        "Ruido natural, imágenes sintéticas y procesadas pueden producir falsos positivos.",
+        "Cargas pequeñas, localizadas, sesgadas o métodos adaptativos pueden pasar inadvertidos.",
+        "Píxeles correlacionados limitan la aproximación Chi-cuadrado; umbrales heurísticos sin calibración poblacional.",
+        "Sólo RGB/RGBA de 8 bits y un fotograma; no se examinan alfa, metadatos ni contenido del mensaje.",
+        "SIN_INDICIOS no garantiza ausencia de esteganografía, malware ni seguridad del archivo."
+      ]
+    },
+    "hidden_2bit": {
+      "classification": "SIN_INDICIOS",
+      "reason": "equiprobabilidad_rechazada_en_tres_canales",
+      "policy": {
+        "max_bytes": 10485760,
+        "max_width": 4096,
+        "max_height": 4096,
+        "max_pixels": 4000000,
+        "min_pixels": 4096,
+        "min_pair_count": 10,
+        "min_pairs": 32,
+        "min_coverage": 0.9,
+        "suspicious_p": 0.05,
+        "no_indications_p": 0.001
+      },
+      "channels": [
+        {
+          "channel": "R",
+          "samples": 65536,
+          "eligible_pairs": 128,
+          "coverage": 1.0,
+          "chi_square": 65536.0,
+          "degrees_of_freedom": 128,
+          "p_value": 0.0,
+          "lsb_one_fraction": 0.0,
+          "sufficient": true
+        },
+        {
+          "channel": "G",
+          "samples": 65536,
+          "eligible_pairs": 128,
+          "coverage": 1.0,
+          "chi_square": 65536.0,
+          "degrees_of_freedom": 128,
+          "p_value": 0.0,
+          "lsb_one_fraction": 0.0,
+          "sufficient": true
+        },
+        {
+          "channel": "B",
+          "samples": 65536,
+          "eligible_pairs": 128,
+          "coverage": 1.0,
+          "chi_square": 65536.0,
+          "degrees_of_freedom": 128,
+          "p_value": 0.0,
+          "lsb_one_fraction": 0.0,
+          "sufficient": true
+        }
+      ],
+      "width": 256,
+      "height": 256,
+      "technique": "LSB_POV_CHI_SQUARE_RGB_V1",
+      "limitations": [
+        "Un p alto indica compatibilidad con pares equiprobables; no probabilidad de esteganografía.",
+        "Ruido natural, imágenes sintéticas y procesadas pueden producir falsos positivos.",
+        "Cargas pequeñas, localizadas, sesgadas o métodos adaptativos pueden pasar inadvertidos.",
+        "Píxeles correlacionados limitan la aproximación Chi-cuadrado; umbrales heurísticos sin calibración poblacional.",
+        "Sólo RGB/RGBA de 8 bits y un fotograma; no se examinan alfa, metadatos ni contenido del mensaje.",
+        "SIN_INDICIOS no garantiza ausencia de esteganografía, malware ni seguridad del archivo."
+      ]
+    },
+    "hidden_4bit": {
+      "classification": "SIN_INDICIOS",
+      "reason": "equiprobabilidad_rechazada_en_tres_canales",
+      "policy": {
+        "max_bytes": 10485760,
+        "max_width": 4096,
+        "max_height": 4096,
+        "max_pixels": 4000000,
+        "min_pixels": 4096,
+        "min_pair_count": 10,
+        "min_pairs": 32,
+        "min_coverage": 0.9,
+        "suspicious_p": 0.05,
+        "no_indications_p": 0.001
+      },
+      "channels": [
+        {
+          "channel": "R",
+          "samples": 65536,
+          "eligible_pairs": 32,
+          "coverage": 1.0,
+          "chi_square": 65536.0,
+          "degrees_of_freedom": 32,
+          "p_value": 0.0,
+          "lsb_one_fraction": 0.0,
+          "sufficient": true
+        },
+        {
+          "channel": "G",
+          "samples": 65536,
+          "eligible_pairs": 32,
+          "coverage": 1.0,
+          "chi_square": 65536.0,
+          "degrees_of_freedom": 32,
+          "p_value": 0.0,
+          "lsb_one_fraction": 0.0,
+          "sufficient": true
+        },
+        {
+          "channel": "B",
+          "samples": 65536,
+          "eligible_pairs": 32,
+          "coverage": 1.0,
+          "chi_square": 65536.0,
+          "degrees_of_freedom": 32,
+          "p_value": 0.0,
+          "lsb_one_fraction": 0.0,
+          "sufficient": true
+        }
+      ],
+      "width": 256,
+      "height": 256,
+      "technique": "LSB_POV_CHI_SQUARE_RGB_V1",
+      "limitations": [
+        "Un p alto indica compatibilidad con pares equiprobables; no probabilidad de esteganografía.",
+        "Ruido natural, imágenes sintéticas y procesadas pueden producir falsos positivos.",
+        "Cargas pequeñas, localizadas, sesgadas o métodos adaptativos pueden pasar inadvertidos.",
+        "Píxeles correlacionados limitan la aproximación Chi-cuadrado; umbrales heurísticos sin calibración poblacional.",
+        "Sólo RGB/RGBA de 8 bits y un fotograma; no se examinan alfa, metadatos ni contenido del mensaje.",
+        "SIN_INDICIOS no garantiza ausencia de esteganografía, malware ni seguridad del archivo."
+      ]
+    }
+  }
+}

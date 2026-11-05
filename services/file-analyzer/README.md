@@ -16,8 +16,21 @@ python -m venv .venv
 ```
 
 Swagger: http://127.0.0.1:8000/docs. Solo para desarrollo local.
-La instancia por defecto no libera archivos: responde `INCONCLUSIVE` y
-`analyzer_not_configured` hasta integrar un motor real mediante `Analyzer`.
+La instancia por defecto usa `StegoAnalyzer`, que ejecuta el detector PNG/LSB real.
+No libera archivos: devuelve `SUSPICIOUS` o `INCONCLUSIVE`, conservando el informe
+original en `analysis`. Incluso `SIN_INDICIOS` requiere otras verificaciones.
+Consultar [integración LSB](STEGO_INTEGRACION.md) para correspondencias y pruebas.
+La validación previa comprueba contenido PNG/JPEG, extensión coherente,
+decodificación y límites de recursos. El MIME del cliente no determina el formato.
+El máximo de imágenes es 5 MiB (`IMAGE_MAX_BYTES`), separado de `MAX_FILE_BYTES`.
+Ver [validación de imágenes](IMAGE_VALIDACION.md) para parámetros y resultados.
+Después de validar se ejecutan ClamAV y YARA en procesos Linux limitados; sus
+resultados se conservan en `analysis.antimalware`. Ausencia, fallo o firmas
+vencidas mantienen el bloqueo. Consultar [antimalware](ANTIMALWARE.md) para reglas,
+límites, actualización de firmas y pruebas reales frente a simuladas.
+ExifTool extrae y evalúa campos permitidos en `analysis.metadata`, sin GPS,
+identificadores ni texto libre. Su ausencia o fallo conserva el bloqueo;
+carecer de EXIF no genera sospecha. Ver [metadatos](EXIFTOOL.md).
 No habilitar un resultado simulado CLEAN en despliegues.
 
 ## Verificación
@@ -26,9 +39,10 @@ No habilitar un resultado simulado CLEAN en despliegues.
 python -m pytest -q
 ```
 
-La misma suite admite `python -m unittest discover -s tests -v` cuando no
-se dispone de pytest. Requiere FastAPI, python-multipart y httpx instalados.
-Usa temporales aislados y resultados del analizador simulados: comprueba
+La suite original de transferencia admite `python -m unittest discover -s tests -v`;
+las pruebas del detector y de integración requieren pytest. Las dependencias
+completas se instalan con `requirements-dev.txt`.
+La suite de transferencia usa temporales aislados y resultados simulados: comprueba
 integridad, persistencia al reiniciar, bloqueo durante procesamiento,
 cuarentena, fallos del motor, manipulación antes/después del análisis y al
 descargar, límites, rutas privadas y ausencia de aprobación pública.

@@ -8,12 +8,16 @@ from uuid import UUID, uuid4
 from fastapi import BackgroundTasks, FastAPI, HTTPException, Request
 from fastapi.exception_handlers import http_exception_handler
 from fastapi.responses import JSONResponse, Response
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, JsonValue
 from starlette.datastructures import UploadFile
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.formparsers import MultiPartException
 
-from .analyzer import Analyzer, Classification, UnconfiguredAnalyzer
+from .analyzer import Analyzer, Classification
+from .stego_adapter import StegoAnalyzer
+from .image_validation import ImageLimits, ValidatedImageAnalyzer
+from .antimalware import MalwareChecks
+from .exiftool_scan import ExifToolInspector
 from .storage import Storage
 
 
@@ -62,21 +66,27 @@ class FileStatus(BaseModel):
     status: Literal["PENDING", "ANALYZING", "APPROVED", "QUARANTINED"]
     classification: Classification | None
     reason: str | None
+    analysis: dict[str, JsonValue] | None = None
     created_at: str
     updated_at: str
 
 
 def create_app(storage_root: Path | None = None, analyzer: Analyzer | None = None,
-               max_file_bytes: int | None = None) -> FastAPI:
+               max_file_bytes: int | None = None, image_limits: ImageLimits | None = None,
+               antimalware: MalwareChecks | None = None,
+               metadata: ExifToolInspector | None = None) -> FastAPI:
     root = storage_root if storage_root is not None else Path(os.getenv("FILE_STORAGE_ROOT", "storage"))
     limit = max_file_bytes if max_file_bytes is not None else int(os.getenv("MAX_FILE_BYTES", "10485760"))
     if limit <= 0:
         raise ValueError("MAX_FILE_BYTES must be positive")
-    engine = analyzer if analyzer is not None else UnconfiguredAnalyzer()
+    engine = analyzer if analyzer is not None else StegoAnalyzer()
+    image_policy = image_limits if image_limits is not None else ImageLimits.from_env()
 
     @asynccontextmanager
     async def lifespan(application):
         application.state.storage = Storage(root)
+        application.state.antimalware = antimalware if antimalware is not None else MalwareChecks()
+        application.state.metadata = metadata if metadata is not None else ExifToolInspector()
         yield
 
     application = FastAPI(title="SecureChat - Transferencia segura de archivos", lifespan=lifespan)
@@ -119,6 +129,8 @@ def create_app(storage_root: Path | None = None, analyzer: Analyzer | None = Non
                         size += len(chunk)
                         if size > limit:
                             raise HTTPException(413, "file_too_large")
+                        if size > image_policy.max_bytes:
+                            raise HTTPException(413, "image_too_large")
                         sha.update(chunk)
                         destination.write(chunk)
                     if not size:
@@ -129,7 +141,9 @@ def create_app(storage_root: Path | None = None, analyzer: Analyzer | None = Non
             except BaseException:
                 path.unlink(missing_ok=True)
                 raise
-        tasks.add_task(store.process, file_id, engine)
+        tasks.add_task(store.process, file_id, ValidatedImageAnalyzer(
+            engine, filename, image_policy, request.app.state.antimalware,
+            request.app.state.metadata))
         # Relativo al path de carga: funciona también tras /api del proxy.
         response.headers["Location"] = f"./{file_id}/status"
         return record

@@ -41,7 +41,9 @@ services:
       timeout: 5s
       retries: 10
   stego:
-    build: ./services/stego
+    build:
+      context: .
+      dockerfile: services/stego/Dockerfile
     restart: unless-stopped
     environment:
       AUTH_URL: https://auth-service:3001
@@ -60,7 +62,7 @@ services:
     read_only: true
     tmpfs: ["/tmp:rw,noexec,nosuid,size=32m"]
     pids_limit: 64
-    mem_limit: 768m
+    mem_limit: 3g
     healthcheck:
       test: [CMD, python, -c, "import ssl,urllib.request; urllib.request.urlopen('https://localhost:8000/health',context=ssl.create_default_context(cafile='/run/public/ca.pem'),timeout=3)"]
       interval: 10s

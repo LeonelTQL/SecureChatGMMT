@@ -1,0 +1,49 @@
+{
+  "initial_git_tree_clean": true,
+  "existing_root_configuration_byte_identical": true,
+  "missing_secrets_generated": true,
+  "preexisting_secrets_replaced": false,
+  "data_or_volumes_deleted": false,
+  "containers": [
+    {
+      "Service": "auth-service",
+      "State": "running",
+      "Health": "healthy",
+      "Image": "chat-seguro-auth-service",
+      "Ports": "127.0.0.1:3001->3001/tcp"
+    },
+    {
+      "Service": "caddy",
+      "State": "running",
+      "Health": "",
+      "Image": "caddy:2-alpine",
+      "Ports": "127.0.0.1:8080->80/tcp"
+    },
+    {
+      "Service": "postgres",
+      "State": "running",
+      "Health": "healthy",
+      "Image": "postgres:17-alpine",
+      "Ports": "5432/tcp"
+    },
+    {
+      "Service": "stego",
+      "State": "running",
+      "Health": "healthy",
+      "Image": "chat-seguro-stego",
+      "Ports": "127.0.0.1:8000->8000/tcp"
+    }
+  ],
+  "runtime": {
+    "python": "3.12.16"
+  },
+  "engines": {
+    "clamav": "ClamAV 1.4.3/28174/Thu Nov  5 06:26:24 2026",
+    "yara": "4.5.2",
+    "exiftool": "13.25"
+  },
+  "only_backend_applications": [
+    "auth-service",
+    "stego"
+  ]
+}

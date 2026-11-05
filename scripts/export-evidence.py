@@ -21,5 +21,7 @@ for line in output.splitlines():
         if isinstance(item, dict) and 'event' in item:
             records.append({key: value for key, value in item.items() if key in fields})
     except (ValueError, TypeError): pass
-(root / 'docs/evidence/audit.json').write_text(json.dumps(records[-40:], indent=2) + '\n', encoding='utf-8')
+# Las altas/limpiezas de cuentas y Postman pueden desplazar todos los eventos
+# analysis.completed en una ventana de 40. Mantener una muestra acotada útil.
+(root / 'docs/evidence/audit.json').write_text(json.dumps(records[-200:], indent=2) + '\n', encoding='utf-8')
 print('Contratos y auditoría depurada exportados')

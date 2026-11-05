@@ -1,0 +1,9 @@
+{
+  "users_table_present": true,
+  "roles_table_present": true,
+  "user_roles_table_present": true,
+  "user_roles_foreign_keys": 2,
+  "user_roles_unique_indexes": 2,
+  "active_v1_test_accounts": 0,
+  "unrevoked_sessions_of_disabled_v1_accounts": 0
+}

@@ -1,4 +1,5 @@
 import hashlib
+from io import BytesIO
 import threading
 import tempfile
 import unittest
@@ -7,15 +8,18 @@ from pathlib import Path
 from uuid import uuid4
 
 from fastapi.testclient import TestClient
+from PIL import Image
 
-from app.analyzer import AnalysisResult
+from app.analyzer import AnalysisResult, UnconfiguredAnalyzer
 from app.main import create_app
 from app.storage import Storage
 
 
-# La validación real de imágenes pertenece a Diana: estas muestras prueban
-# transferencia e integridad de bytes con resultados del motor controlados.
-SAMPLE = b"\x89PNG\r\n\x1a\ntransfer-test"
+# PNG válido para atravesar la nueva validación previa. Se conserva el motor
+# simulado para comprobar los estados e integridad propios de transferencia.
+_sample = BytesIO()
+Image.new("RGB", (1, 1)).save(_sample, format="PNG")
+SAMPLE = _sample.getvalue()
 
 
 class SimulatedAnalyzer:
@@ -70,7 +74,8 @@ def check_non_clean_results_are_quarantined(tmp_path, classification):
 
 
 def check_no_analyzer_never_approves(tmp_path):
-    with TestClient(create_app(tmp_path)) as client:
+    # La instancia real usa LSB; se conserva la prueba del fallback explícito.
+    with TestClient(create_app(tmp_path, UnconfiguredAnalyzer())) as client:
         file_id = upload(client).json()["id"]
         record = client.get(f"/files/{file_id}/status").json()
         assert record["status"] == "QUARANTINED"

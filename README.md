@@ -43,7 +43,10 @@ El archivo `docker-compose.yml` incluye `compose.yaml`, por lo que `docker compo
 2. Un usuario inicia sesión: recibe JWT RS256 de 15 minutos y una sesión persistida.
 3. STEGO valida el JWT con la clave pública y consulta a AUTH por HTTPS con `X-Service-Token`, antes de leer el cuerpo.
 4. AUTH comprueba sesión, usuario y roles actuales. USER no analiza; ANALYST analiza y consulta resultados propios; ADMIN también consulta resultados ajenos.
-5. STEGO valida PNG/BMP, calcula SHA-256 y guarda en cuarentena usando UUID. Ejecuta el adaptador del detector con límites; no expone archivos por HTTP.
+5. STEGO valida PNG/JPG/JPEG o BMP, calcula SHA-256 y guarda de forma privada
+   usando UUID. El detector integra validación segura, ClamAV/YARA, ExifTool y LSB
+   para PNG, con límites y hash antes/después. JPEG/BMP sin técnica aplicable
+   permanecen no concluyentes. No expone archivos por HTTP.
 6. Una asignación retirada o un rol desactivado bloquea la próxima operación sin esperar expiración del JWT. Logout revoca solo la sesión actual; deshabilitar un usuario revoca todas sus sesiones.
 
 Registro público crea usuarios **sin roles**. La administración de roles exige ADMIN. Roles en constantes expresan la política, mientras usuarios y asignaciones se consultan exclusivamente desde PostgreSQL.
@@ -66,9 +69,21 @@ Para reproducir el fallo seguro T08, el comando siguiente detiene y reinicia AUT
 services/stego/.venv/Scripts/python.exe scripts/integration.py --failure-demo
 ```
 
-La integración usa PostgreSQL real, genera usuarios de prueba con nombres únicos y los deshabilita al terminar. Guarda resultados depurados en `docs/evidence/integration.json`. Sin el detector real comprueba explícitamente error y cuarentena; no sustituye la demostración esteganográfica.
+La integración usa PostgreSQL real, genera usuarios de prueba con nombres únicos
+y los deshabilita al terminar. Guarda resultados depurados en
+`docs/evidence/integration.json`. El script ahora exige métricas del detector
+real y verificaciones completas sobre la muestra pequeña, que permanece no
+concluyente. La pila completa AUTH/STEGO/PostgreSQL ya se verificó con cuentas
+de prueba, revocación real, fallos de AUTH y motores reales. Los resultados,
+correcciones y límites están en [validación real del Backend V1](docs/VALIDACION_BACKEND_V1.md).
+`scripts/validate-backend-v1.py` reproduce los escenarios ampliados sin borrar datos.
 
-Importa `postman/Backend-V1.postman_collection.json`; introduce contraseñas solo en variables locales no compartidas. Consulta `docs/PRUEBAS.md` para los escenarios del PDF.
+Importa `postman/Backend-V1.postman_collection.json`; introduce contraseñas solo
+en variables locales no compartidas. Sus nueve aserciones se verificaron con TLS
+activo. Consulta `docs/VALIDACION_BACKEND_V1.md` para escenarios y evidencia del PDF.
+La exportación depurada adicional es
+`postman/Backend-V1-demostracion.postman_collection.json`; su alcance y las
+variables privadas se explican en [guía de colecciones](postman/README.md).
 
 ## Operación
 

@@ -32,7 +32,7 @@ def create_app(settings=None, decider=None, detector=None):
     app = FastAPI(title="STEGO — Transferencia y gestión segura", version="1.0.0")
     app.state.storage = storage
     app.add_middleware(SecurityMiddleware, settings=settings, decider=decider or AuthClient(settings))
-    gate = asyncio.Semaphore(2)
+    gate = asyncio.Semaphore(1)
 
     @app.exception_handler(Denied)
     async def denied_handler(request, error):
@@ -48,21 +48,21 @@ def create_app(settings=None, decider=None, detector=None):
     @app.get("/health")
     def health():
         with storage.connect() as db: db.execute("SELECT 1")
-        return {"service": "STEGO", "status": "ok", "detector": "external_component_required"}
+        return {"service": "STEGO", "status": "ok", "detector": "diana_integrated_pipeline"}
 
     @app.post("/api/steganography/analyze", response_model=AnalysisRecord, responses={401: {}, 403: {}, 413: {}, 415: {}, 503: {}},
         openapi_extra={"security": [{"BearerAuth": []}]})
     async def analyze_image(request: Request, file: UploadFile = File(...)):
         identity = request.state.identity
-        # Máximo dos archivos en validación/procesamiento simultáneos.
+        # Una imagen por worker: no duplicar la memoria de firmas ClamAV.
         if gate.locked(): raise HTTPException(503, "Capacidad de procesamiento ocupada")
         async with gate:
             if storage.bytes_used() >= settings.max_storage_bytes: raise HTTPException(503, "Almacenamiento lleno")
             filename = (file.filename or "").replace("\\", "/").rsplit("/", 1)[-1]
             extension = Path(filename).suffix.lower()
-            expected = {".png": ("image/png", "PNG"), ".bmp": ("image/bmp", "BMP")}
-            if extension not in expected or file.content_type != expected[extension][0]:
-                raise HTTPException(415, "Solo PNG o BMP con MIME correspondiente")
+            expected = {".png": "PNG", ".bmp": "BMP", ".jpg": "JPEG", ".jpeg": "JPEG"}
+            if extension not in expected:
+                raise HTTPException(415, "Solo PNG, JPG/JPEG o BMP")
             data = await file.read(settings.max_file_bytes + 1)
             await file.close()
             if len(data) > settings.max_file_bytes: raise HTTPException(413, "Imagen demasiado grande")
@@ -71,7 +71,7 @@ def create_app(settings=None, decider=None, detector=None):
                 with warnings.catch_warnings():
                     warnings.simplefilter("error", Image.DecompressionBombWarning)
                     with Image.open(io.BytesIO(data)) as image:
-                        if image.format != expected[extension][1]: raise ValueError("Formato discordante")
+                        if image.format != expected[extension]: raise ValueError("Formato discordante")
                         if image.width * image.height > settings.max_pixels: raise HTTPException(413, "Demasiados píxeles")
                         image.verify()
                     # verify no decodifica todos los formatos; forzar decodificación con límite de píxeles.
@@ -88,8 +88,13 @@ def create_app(settings=None, decider=None, detector=None):
                 "sha256": hashlib.sha256(data).hexdigest(), "created_at": datetime.now(timezone.utc).isoformat(),
                 "technique": "pending", "indicators": {}, "status": "pending", "action": "cuarentena", "limitations": "Pendiente de análisis"}
             storage.save(record)
+            def digest():
+                with path.open("rb") as source:
+                    return hashlib.file_digest(source, "sha256").hexdigest()
             try:
+                if digest() != record["sha256"]: raise ValueError("integrity_mismatch")
                 result = validate_result(await detector(path))
+                if digest() != record["sha256"]: raise ValueError("integrity_mismatch")
                 record.update(result)
                 record["action"] = "advertencia" if result["status"] == "sin_indicios" else "cuarentena"
                 storage.save(record)
@@ -98,7 +103,9 @@ def create_app(settings=None, decider=None, detector=None):
                 return record
             except Exception as error:
                 record.update(status="error", technique="unavailable" if isinstance(error, DetectorUnavailable) else "failed",
-                    limitations="Detector no disponible o ejecución fallida; archivo permanece en cuarentena")
+                    reason="integrity_mismatch" if str(error) == "integrity_mismatch" else "analysis_failed",
+                    indicators={}, reports=None,
+                    limitations="Detector no disponible, integridad inválida o ejecución fallida; archivo permanece en cuarentena")
                 storage.save(record)
                 audit("analysis.failed", analysis_id=analysis_id, user_id=identity["subject_id"])
                 return JSONResponse(status_code=503, content=record)

@@ -1,5 +1,6 @@
 """Almacén privado persistente. Toda liberación pasa por estado e integridad."""
 import hashlib
+import json
 import sqlite3
 from contextlib import contextmanager
 from datetime import datetime, timezone
@@ -29,6 +30,10 @@ class Storage:
                 classification TEXT, reason TEXT,
                 created_at TEXT NOT NULL, updated_at TEXT NOT NULL
             )""")
+            # Migración aditiva: conserva objetos, registros y estados anteriores.
+            columns = {row["name"] for row in db.execute("PRAGMA table_info(files)")}
+            if "analysis_json" not in columns:
+                db.execute("ALTER TABLE files ADD COLUMN analysis_json TEXT")
             db.execute("""UPDATE files SET status='QUARANTINED',
                 classification='INCONCLUSIVE', reason='processing_interrupted',
                 updated_at=? WHERE status IN ('PENDING', 'ANALYZING')""", (now(),))
@@ -50,19 +55,28 @@ class Storage:
     def add(self, file_id: str, filename: str, size: int, sha256: str) -> dict:
         timestamp = now()
         with self.connection() as db:
-            db.execute("INSERT INTO files VALUES (?, ?, ?, ?, 'PENDING', NULL, NULL, ?, ?)",
+            db.execute("""INSERT INTO files
+                (id, filename, size, sha256, status, classification, reason, created_at, updated_at)
+                VALUES (?, ?, ?, ?, 'PENDING', NULL, NULL, ?, ?)""",
                        (file_id, filename, size, sha256, timestamp, timestamp))
         return self.get(file_id)
 
     def get(self, file_id: str) -> dict | None:
         with self.connection() as db:
             row = db.execute("SELECT * FROM files WHERE id=?", (file_id,)).fetchone()
-        return dict(row) if row else None
+        if row is None:
+            return None
+        record = dict(row)
+        serialized = record.pop("analysis_json")
+        record["analysis"] = json.loads(serialized) if serialized is not None else None
+        return record
 
-    def finish(self, file_id: str, status: str, classification: str | None, reason: str | None):
+    def finish(self, file_id: str, status: str, classification: str | None, reason: str | None,
+               analysis: dict | None = None):
+        serialized = json.dumps(analysis, ensure_ascii=False, allow_nan=False) if analysis is not None else None
         with self.connection() as db:
-            db.execute("""UPDATE files SET status=?, classification=?, reason=?, updated_at=?
-                WHERE id=?""", (status, classification, reason, now(), file_id))
+            db.execute("""UPDATE files SET status=?, classification=?, reason=?, updated_at=?, analysis_json=?
+                WHERE id=?""", (status, classification, reason, now(), serialized, file_id))
 
     def quarantine(self, file_id: str, reason: str):
         self.finish(file_id, "QUARANTINED", "INCONCLUSIVE", reason)
@@ -84,7 +98,7 @@ class Storage:
                 self.quarantine(file_id, "integrity_mismatch")
                 return
             status = "APPROVED" if result.classification == Classification.CLEAN else "QUARANTINED"
-            self.finish(file_id, status, result.classification.value, result.reason)
+            self.finish(file_id, status, result.classification.value, result.reason, result.analysis)
         except Exception:
             # No filtrar rutas, mensajes de herramientas ni detalles de excepciones.
             self.quarantine(file_id, "analysis_failed")

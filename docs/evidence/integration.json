@@ -1,5 +1,5 @@
 {
-  "executed_at": "2026-11-05T04:52:46.463550+00:00",
+  "executed_at": "2026-11-05T07:42:04.609351+00:00",
   "scope": "Leonel, Alejandro (RBAC) y Paul (STEGO)",
   "environment": "Docker y PostgreSQL reales; TLS verificado",
   "tests": [
@@ -144,9 +144,9 @@
       "http": 200
     },
     {
-      "test": "ANALYST autorizado; sin detector queda en cuarentena",
+      "test": "ANALYST autorizado; detector real sin evidencia suficiente",
       "status": "passed",
-      "http": 503
+      "http": 200
     },
     {
       "test": "Propietario consulta resultado",

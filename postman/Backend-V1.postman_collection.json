@@ -2,7 +2,7 @@
   "info": {
     "name": "Backend V1 - autenticacion, RBAC y STEGO",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "Importar CA secrets/public/ca.pem. Configurar password local de 12-128 caracteres. RBAC activo: las cuentas nuevas no tienen roles y reciben 403 en administracion y analisis. Detector pendiente."
+    "description": "Importar CA secrets/public/ca.pem. Configurar password local de 12-128 caracteres. RBAC activo: las cuentas nuevas no tienen roles y reciben 403 en administracion y analisis. STEGO activo integra el pipeline de Diana; esta secuencia comprueba denegacion sin roles, no un analisis autorizado."
   },
   "variable": [
     {
