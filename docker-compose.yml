@@ -1,0 +1,3 @@
+# Alias solicitado por la guía del curso; la configuración única está en compose.yaml.
+include:
+  - compose.yaml

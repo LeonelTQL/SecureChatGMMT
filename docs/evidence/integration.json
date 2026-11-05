@@ -1,0 +1,112 @@
+{
+  "executed_at": "2026-11-05T04:14:51.473220+00:00",
+  "scope": "Leonel y bloqueo seguro de Paul; Alejandro retirado",
+  "environment": "Docker y PostgreSQL reales; TLS verificado",
+  "tests": [
+    {
+      "test": "AUTH disponible",
+      "status": "passed",
+      "http": 200
+    },
+    {
+      "test": "STEGO disponible",
+      "status": "passed",
+      "http": 200
+    },
+    {
+      "test": "Registro",
+      "status": "passed",
+      "http": 201
+    },
+    {
+      "test": "Registro duplicado",
+      "status": "passed",
+      "http": 409
+    },
+    {
+      "test": "Login",
+      "status": "passed",
+      "http": 200
+    },
+    {
+      "test": "Credenciales incorrectas",
+      "status": "passed",
+      "http": 401
+    },
+    {
+      "test": "Perfil sin token",
+      "status": "passed",
+      "http": 401
+    },
+    {
+      "test": "Perfil autenticado",
+      "status": "passed",
+      "http": 200
+    },
+    {
+      "test": "Validar JWT",
+      "status": "passed",
+      "http": 200
+    },
+    {
+      "test": "JWT alterado",
+      "status": "passed",
+      "http": 401
+    },
+    {
+      "test": "Administraci\u00f3n bloqueada sin RBAC: GET",
+      "status": "passed",
+      "http": 503
+    },
+    {
+      "test": "Administraci\u00f3n bloqueada sin RBAC: POST",
+      "status": "passed",
+      "http": 503
+    },
+    {
+      "test": "Administraci\u00f3n bloqueada sin RBAC: PATCH",
+      "status": "passed",
+      "http": 503
+    },
+    {
+      "test": "M\u00f3dulo retirado: /api/roles",
+      "status": "passed",
+      "http": 404
+    },
+    {
+      "test": "M\u00f3dulo retirado: /api/user-roles",
+      "status": "passed",
+      "http": 404
+    },
+    {
+      "test": "M\u00f3dulo retirado: /api/admin/protected",
+      "status": "passed",
+      "http": 404
+    },
+    {
+      "test": "Decisi\u00f3n interna retirada",
+      "status": "passed",
+      "http": 404
+    },
+    {
+      "test": "STEGO sin JWT",
+      "status": "passed",
+      "http": 401
+    },
+    {
+      "test": "STEGO bloqueado sin autorizaci\u00f3n vigente",
+      "status": "passed",
+      "http": 503
+    },
+    {
+      "test": "Logout",
+      "status": "passed",
+      "http": 204
+    },
+    {
+      "test": "Sesi\u00f3n revocada",
+      "status": "passed",
+      "http": 401
+    }
+  ]
+}

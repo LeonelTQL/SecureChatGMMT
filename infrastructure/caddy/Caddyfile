@@ -1,29 +1,27 @@
 :80 {
-    encode zstd gzip
-    handle /api/auth/health {
-        rewrite * /health
-        reverse_proxy auth-service:3001
+    header {
+        X-Content-Type-Options nosniff
+        Cache-Control no-store
     }
-    @auth path /api/auth /api/auth/*
+    request_body {
+        max_size 6MB
+    }
+    @internal path /internal/*
+    respond @internal 404
+    @auth path /api/auth/* /api/users /api/users/* /api/roles /api/roles/* /api/user-roles /api/user-roles/* /api/admin/* /docs* /health
     handle @auth {
-        uri strip_prefix /api
-        reverse_proxy auth-service:3001
+        reverse_proxy https://auth-service:3001 {
+            transport http {
+                tls_trust_pool file /etc/caddy/ca.pem
+            }
+        }
     }
-    @files path /api/files /api/files/*
-    handle @files {
-        uri strip_prefix /api/files
-        reverse_proxy file-service:3003
+    handle /api/steganography/* {
+        reverse_proxy https://stego:8000 {
+            transport http {
+                tls_trust_pool file /etc/caddy/ca.pem
+            }
+        }
     }
-    @chat path /api/chat /api/chat/*
-    handle @chat {
-        uri strip_prefix /api/chat
-        reverse_proxy chat-service:3002
-    }
-    @socket path /socket.io /socket.io/*
-    handle @socket {
-        reverse_proxy chat-service:3002
-    }
-    handle {
-        reverse_proxy web:3000
-    }
+    respond 404
 }

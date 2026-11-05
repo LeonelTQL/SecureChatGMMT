@@ -2,7 +2,11 @@
   "name": "ms-users-auth",
   "version": "1.0.0",
   "private": true,
+  "overrides": {
+    "@prisma/config": { "deepmerge-ts": "8.0.0" }
+  },
   "scripts": {
+    "prebuild": "node scripts/clean.cjs",
     "build": "tsc -p tsconfig.json",
     "start": "node --env-file=.env dist/main.js",
     "start:prod": "node dist/main.js",
@@ -15,7 +19,8 @@
     "@nestjs/core": "^12.3.2",
     "@nestjs/jwt": "^12.0.3",
     "@nestjs/platform-express": "^12.3.2",
-    "@prisma/client": "6.19.0",
+    "@nestjs/swagger": "^12.1.0",
+    "@prisma/client": "^6.19.3",
     "argon2": "^0.44.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
@@ -24,7 +29,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.19.0",
-    "prisma": "6.19.0",
+    "prisma": "^6.19.3",
     "supertest": "^7.1.4",
     "typescript": "^5.9.3"
   }

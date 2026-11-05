@@ -1,46 +1,48 @@
-# Autenticación — Leonel Tipan
+# AUTH — Leonel y Alejandro
 
-Implementación de la primera entrega: NestJS, TypeScript, PostgreSQL, Prisma 6, Argon2id y JWT. Ubicación conservada en `apps/auth-service`; nombre lógico `ms-users-auth`.
+**Estado actual:** solo está disponible la autenticación de Leonel. Los módulos y guards RBAC de Alejandro fueron retirados para que los incorpore posteriormente. `users` conserva su código y estructura, pero sus rutas administrativas están bloqueadas con 503 por un guard temporal. Registro público, login, perfil, verificación de JWT y logout continúan disponibles. Los apartados que describen roles/autorización corresponden al diseño de integración pendiente. El seed prepara una cuenta sin crear ni asignar roles.
 
-Referencia local: `ms-users-nestjs-main/src/auth/auth.service.ts` para login y hash ficticio que reduce diferencias temporales; DTO de usuarios para normalización del correo y límites de contraseña. Se adapta persistencia a Prisma según la asignación. RBAC corresponde al integrante 2 y no se implementa aquí.
+Aplicación independiente NestJS. Prisma administra PostgreSQL y aplica migraciones antes de arrancar. Consulta el README raíz para Docker, certificados y bootstrap.
 
-## Ejecutar con el proyecto
+## Estructura por módulos
 
-Desde la raíz `SecureChatGMMT`, copia `.env.example` a `.env` si todavía no existe. Configura `POSTGRES_PASSWORD` y `JWT_SECRET`. Genera este último con `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"`. No publiques `.env`. Para evitar errores en la URL de conexión, usa una contraseña de PostgreSQL alfanumérica larga o codifica los caracteres especiales.
+Se sigue la organización de `ms-users` y `ms-users-nestjs-main`, conservando el modelo y las APIs del PDF:
 
-```powershell
-docker compose config --quiet
-docker compose up -d --build
+```text
+src/
+  app.module.ts
+  app.controller.ts
+  main.ts
+  users/          # users.module.ts, users.service.ts, users.controller.ts, dto/, entities/
+  roles/          # roles.module.ts, roles.service.ts, roles.controller.ts, dto/, entities/
+  user-roles/     # user-roles.module.ts, user-roles.service.ts, user-roles.controller.ts, dto/, entities/
+  auth/           # auth.module.ts, auth.service.ts, auth.controller.ts
+    dto/
+    decorators/
+    guards/
+    interfaces/
+    enums/
+  authorization/  # integración interna con STEGO: módulo, servicio, controlador y DTO
+  admin/
+  database/       # PrismaService, DatabaseModule y seed
+  config/         # configuración JWT y contrato OpenAPI
+  common/         # auditoría, validaciones, hashing, filtros y límite de intentos
 ```
 
-El contenedor de autenticación aplica la migración antes de arrancar. PostgreSQL conserva datos en el volumen existente. No uses `down -v` si quieres conservarlos.
+Los controladores reciben peticiones y delegan en servicios. Los servicios contienen las operaciones de persistencia y reglas de negocio. Cada módulo exporta solamente los proveedores necesarios; la aplicación registra los guards globales en orden: límite de intentos, autenticación y roles.
 
-## Postman
+Las carpetas `entities/` exponen los tipos de entidad generados por Prisma y, en usuarios, su selección pública sin contraseña. El mapeo físico sigue centralizado en `prisma/schema.prisma`, evitando definir un segundo modelo TypeORM incompatible. Se conserva el ID propio de `user_roles`, su restricción N:M única y la descripción de `roles` exigidos por el PDF; la referencia se usa para la estructura, no para reemplazar esos requisitos.
 
-Importa `postman/Leonel-auth.postman_collection.json` desde la raíz del proyecto. Por defecto apunta a `http://localhost:8080/api`. El login guarda automáticamente `access_token` en la colección.
+Desarrollo local: `npm.cmd ci`, `npm.cmd run generate`, `npm.cmd run build`; copia `.env.example` a `.env`, configura rutas y credenciales reales y ejecuta `npm.cmd run migrate` y `npm.cmd start`. PostgreSQL debe estar disponible en la URL indicada; el Compose no expone su puerto públicamente. Puedes publicar un puerto únicamente local en un override de desarrollo.
 
-| Método | Ruta mediante Caddy | Resultado |
-|---|---|---|
-| POST | `/api/auth/register` | 201, id/correo/fecha, sin contraseña |
-| POST | `/api/auth/login` | 200, access_token/token_type/expires_in |
-| POST | `/api/auth/verify` | 200, sub/email/exp |
-| GET | `/api/auth/health` | 200 |
+Endpoints y esquemas: `/docs` y `/docs-json`; contrato versionado `docs/auth.openapi.json`. Cada ruta protegida valida JWT RS256 y sesión persistida; los roles se leen de relaciones actuales. El endpoint interno requiere `X-Service-Token` por TLS. Las respuestas de error no incluyen SQL ni secretos.
 
-Registro y login reciben `{"email":"leonel@example.com","password":"ClaveDePrueba123!"}`. Contraseña de 12–128 caracteres y correo válido; se rechazan campos adicionales. Registro repetido: 409. Credenciales incorrectas: 401 con mensaje genérico. Validación: 400. Verify requiere `Authorization: Bearer <token>`; rechaza tokens inválidos o expirados con 401.
+`users`, `roles`, `user_roles` y `sessions` pertenecen solo a AUTH. La migración preserva usuarios anteriores y asigna usernames `user_<UUID_sin_guiones>` a las cuentas preexistentes; no les asigna privilegios.
 
-Rutas directas del servicio: `/auth/register`, `/auth/login`, `/auth/verify` y `/health`. JWT HS256 dura 900 segundos, issuer `ms-users-auth`, audience `chat-seguro`, claims `sub` y `email`. Para integración, el módulo exporta `AuthService.verify`; la clave compartida debe mantenerse privada. No se incluyen roles ni revocación: el token sigue válido hasta expirar.
+Logout revoca una sesión; deshabilitar usuarios revoca todas las sesiones existentes. Retirar asignación o desactivar rol afecta a la próxima solicitud protegida. La política ADMIN/ANALYST/USER es explícita; no existen usuarios o asignaciones codificados.
 
-## Pruebas y compilación
+El seed explícito `node dist/database/seed.js` lee `BOOTSTRAP_CONFIG_PATH` o `/run/keys/bootstrap.json`. No puede convertir una cuenta ya existente sin ADMIN en administrador.
 
-```powershell
-cd apps/auth-service
-npm.cmd ci
-npm.cmd run generate
-npm.cmd test
-```
+Pruebas: `npm.cmd test`. Las pruebas unitarias/HTTP simulan persistencia; `scripts/integration.py` comprueba PostgreSQL y ambos servicios reales.
 
-Las pruebas usan persistencia simulada y Argon2/JWT reales: registro, duplicados, login, errores, firma, expiración, emisor, audiencia y DTO. No requieren PostgreSQL. La comprobación completa de migración y persistencia requiere ejecutar Docker Compose y las solicitudes de Postman.
-
-También se prueba el flujo HTTP con NestJS y Supertest. Validación local: compilación y pruebas aprobadas; Compose valida correctamente. El arranque con PostgreSQL quedó pendiente porque Docker Desktop devolvió un error interno 500. La revisión de dependencias actualizó NestJS a 12; quedan alertas en dependencias de herramientas de Prisma 6 (`deepmerge-ts` y `effect`), que requieren revisión antes de desplegar.
-
-Documentación técnica utilizada: [Prisma 6 Migrate](https://www.prisma.io/docs/orm/v6/prisma-migrate/getting-started) y [node-argon2](https://www.npmjs.com/package/argon2).
+Referencias locales utilizadas: autenticación y DTOs de `ms-users-nestjs-main`; persistencia adaptada a Prisma y requisitos del PDF. Referencias oficiales: [Prisma 6 Migrate](https://www.prisma.io/docs/orm/v6/prisma-migrate/getting-started), [NestJS Guards](https://docs.nestjs.com/guards), [node-argon2](https://www.npmjs.com/package/argon2).
