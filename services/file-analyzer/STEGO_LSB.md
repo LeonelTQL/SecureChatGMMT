@@ -1,9 +1,9 @@
 # Detector PNG LSB de Diana
 
 Motor local reutilizable en `app/stego_lsb.py`, sin endpoints, carga, almacenamiento,
-hash persistente ni cuarentena. `app/main.py` y los archivos de Paul no se modifican.
-La rama parte de `main` (`2f30a0a`). La consulta remota confirmó ese mismo HEAD;
-el trabajo de Paul sólo estaba disponible en la referencia local `origin/paulMoreno`.
+hash persistente ni cuarentena propios. Tras el rebase con main, el motor se conecta
+al módulo de Paul mediante `app/stego_adapter.py`; ver [integración](STEGO_INTEGRACION.md).
+El detector y sus 31 pruebas originales se mantienen sin cambios.
 
 ## Alcance frente a la consigna y al equipo
 
@@ -17,12 +17,13 @@ con usuario/fecha/hash y política de gestión pertenecen a la integración del 
 El motor recibe bytes o una ruta local y verifica el contenido, sin confiar en nombres.
 
 Antes de invocarlo desde HTTP deben comprobarse autenticación y autorización
-vigente. El contrato disponible de Paul (`app/analyzer.py` en su rama) espera
-`analyze(path, sha256)` y sólo CLEAN/SUSPICIOUS/INCONCLUSIVE, sin indicadores.
-Se requiere acordar un adaptador o ampliar ese contrato para preservar los cuatro
-estados, técnica, métricas, política y limitaciones. No traducir SIN_INDICIOS a una
-garantía de seguridad ni liberar automáticamente archivos; ERROR y NO_CONCLUYENTE
-deben conservarse como tales. Esta integración queda pendiente, sin modificar AUTH/RBAC.
+vigente (pendiente en los endpoints actuales). El contrato original de Paul
+(`app/analyzer.py`) esperaba `analyze(path, sha256)` y sólo
+CLEAN/SUSPICIOUS/INCONCLUSIVE, sin indicadores.
+El contrato ahora incluye `analysis` opcional para preservar los cuatro estados
+originales, técnica, métricas, política y limitaciones. El adaptador no traduce
+SIN_INDICIOS a una garantía de seguridad ni libera archivos; ERROR y NO_CONCLUYENTE
+permanecen visibles en el informe. AUTH/RBAC no se modifican.
 
 ## Técnica y parámetros
 
@@ -86,10 +87,10 @@ python -m venv .venv
 .venv/Scripts/python.exe tools/stego_samples.py muestras-lsb
 ```
 
-En Linux usar `.venv/bin/python`. Las dependencias están separadas para evitar
-conflictos con las de Paul; el Dockerfile existente todavía no las instala.
-Para producción habrá que añadir `requirements-stego.txt` a su instalación al
-integrar el motor. No se necesita FastAPI ni el módulo de carga para estas pruebas.
+En Linux usar `.venv/bin/python`. `requirements-stego.txt` permite instalar el motor
+independiente. El `requirements.txt` del servicio ahora lo incluye y el Dockerfile
+copia ambos manifiestos. No se necesita FastAPI ni el módulo de carga para estas
+31 pruebas independientes.
 
 ```python
 import json

@@ -8,7 +8,7 @@ from uuid import uuid4
 
 from fastapi.testclient import TestClient
 
-from app.analyzer import AnalysisResult
+from app.analyzer import AnalysisResult, UnconfiguredAnalyzer
 from app.main import create_app
 from app.storage import Storage
 
@@ -70,7 +70,8 @@ def check_non_clean_results_are_quarantined(tmp_path, classification):
 
 
 def check_no_analyzer_never_approves(tmp_path):
-    with TestClient(create_app(tmp_path)) as client:
+    # La instancia real usa LSB; se conserva la prueba del fallback explícito.
+    with TestClient(create_app(tmp_path, UnconfiguredAnalyzer())) as client:
         file_id = upload(client).json()["id"]
         record = client.get(f"/files/{file_id}/status").json()
         assert record["status"] == "QUARANTINED"

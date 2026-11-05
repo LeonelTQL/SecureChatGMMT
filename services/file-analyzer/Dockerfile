@@ -1,7 +1,7 @@
 FROM python:3.12-slim
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 WORKDIR /app
-COPY requirements.txt .
+COPY requirements.txt requirements-stego.txt ./
 RUN pip install --no-cache-dir -r requirements.txt && useradd -r -u 10001 analyzer
 RUN mkdir -p /app/storage && chown analyzer:analyzer /app/storage && chmod 700 /app/storage
 COPY app ./app

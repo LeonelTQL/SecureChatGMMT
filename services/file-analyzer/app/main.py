@@ -8,12 +8,13 @@ from uuid import UUID, uuid4
 from fastapi import BackgroundTasks, FastAPI, HTTPException, Request
 from fastapi.exception_handlers import http_exception_handler
 from fastapi.responses import JSONResponse, Response
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, JsonValue
 from starlette.datastructures import UploadFile
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.formparsers import MultiPartException
 
-from .analyzer import Analyzer, Classification, UnconfiguredAnalyzer
+from .analyzer import Analyzer, Classification
+from .stego_adapter import StegoAnalyzer
 from .storage import Storage
 
 
@@ -62,6 +63,7 @@ class FileStatus(BaseModel):
     status: Literal["PENDING", "ANALYZING", "APPROVED", "QUARANTINED"]
     classification: Classification | None
     reason: str | None
+    analysis: dict[str, JsonValue] | None = None
     created_at: str
     updated_at: str
 
@@ -72,7 +74,7 @@ def create_app(storage_root: Path | None = None, analyzer: Analyzer | None = Non
     limit = max_file_bytes if max_file_bytes is not None else int(os.getenv("MAX_FILE_BYTES", "10485760"))
     if limit <= 0:
         raise ValueError("MAX_FILE_BYTES must be positive")
-    engine = analyzer if analyzer is not None else UnconfiguredAnalyzer()
+    engine = analyzer if analyzer is not None else StegoAnalyzer()
 
     @asynccontextmanager
     async def lifespan(application):

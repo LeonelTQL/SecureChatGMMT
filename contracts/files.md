@@ -8,7 +8,7 @@ El servicio NestJS `apps/file-service` sigue siendo una plantilla para fases fut
 
 - `POST /files/upload`: multipart con un único campo `file`. Responde **202**
   con `id`, `filename`, `size`, `sha256`, `status`, `classification`, `reason`,
-  `created_at`, `updated_at`. La respuesta inicial es `PENDING`; el análisis
+  `created_at`, `updated_at` y `analysis` opcional. La respuesta inicial es `PENDING`; el análisis
   se ejecuta después de responder. `Location` indica la consulta de estado.
 - `GET /files/{id}/status`: **200**, mismo esquema actualizado; **404** si no existe.
 - `GET /files/{id}/content`: descarga binaria **200** únicamente si está
@@ -42,7 +42,19 @@ Implementar `Analyzer.analyze(path: Path, sha256: str) -> AnalysisResult` en
 `classification`: `CLEAN | SUSPICIOUS | INCONCLUSIVE`. `reason`: código
 no sensible, máximo 200 caracteres. El hash debe coincidir con los bytes recibidos.
 Se verifica integridad antes y después de analizar y antes de descargar.
-El adaptador predeterminado devuelve `INCONCLUSIVE / analyzer_not_configured`.
+El adaptador predeterminado `app/stego_adapter.py` ejecuta el detector LSB real.
+`SOSPECHOSO` se traduce a `SUSPICIOUS`; `NO_CONCLUYENTE` y `ERROR` a `INCONCLUSIVE`.
+`SIN_INDICIOS` también permanece `INCONCLUSIVE` con motivo
+`additional_security_checks_required`: el análisis LSB no completa todas las
+verificaciones de seguridad. El adaptador nunca emite `CLEAN`.
+
+`AnalysisResult` admite además `analysis: object | null` (opcional, por defecto
+null), persistido en SQLite y visible en la consulta de estado. Contiene el informe
+original completo: `technique`, `classification`, `reason`, `channels`, `policy`,
+`width`, `height` y `limitations`. Un error del detector conserva `ERROR` con
+motivo controlado; una excepción inesperada se registra como `detector_failed`,
+sin texto de la excepción. Los analizadores de prueba sin este campo siguen
+siendo compatibles. No se altera el contrato de llamada `analyze(path, sha256)`.
 Los resultados simulados existen únicamente en las pruebas; ninguna opción de
 entorno permite aprobar archivos sin un analizador real. No hay callback público
 para cambiar estados ni aprobar archivos desde Postman.
