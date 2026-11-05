@@ -10,11 +10,18 @@ async function seed() {
     const password = typeof config.password === 'string' ? config.password : '';
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !password || password.length < 16 || password.length > 128 || !/\S/.test(password)) throw new Error('Configura ADMIN_EMAIL y ADMIN_PASSWORD (16–128 caracteres)');
     await db.$transaction(async tx => {
+      for (const name of ['ADMIN', 'ANALYST', 'USER']) await tx.role.upsert({ where: { name }, update: {}, create: { name, description: `Rol ${name}` } });
       const existing = await tx.user.findUnique({ where: { email } });
-      if (existing) return;
-      await tx.user.create({ data: { username: 'bootstrap_admin', email, passwordHash: await argon2.hash(password, { type: argon2.argon2id, memoryCost: 65536, timeCost: 3, parallelism: 1 }) } });
+      if (existing) {
+        const assignment = await tx.userRole.findFirst({ where: { userId: existing.id, role: { name: 'ADMIN' } } });
+        if (!assignment) throw new Error('La cuenta ya existe sin ADMIN; el seed no eleva cuentas existentes');
+        return;
+      }
+      const role = await tx.role.findUniqueOrThrow({ where: { name: 'ADMIN' } });
+      const user = await tx.user.create({ data: { username: 'bootstrap_admin', email, passwordHash: await argon2.hash(password, { type: argon2.argon2id, memoryCost: 65536, timeCost: 3, parallelism: 1 }) } });
+      await tx.userRole.create({ data: { userId: user.id, roleId: role.id } });
     }, { timeout: 15000 });
-    console.log('Usuario inicial preparado sin asignar roles; no se imprimen credenciales');
+    console.log('Roles y administrador preparados; no se imprimen credenciales');
   } finally { await db.$disconnect(); }
 }
 seed().catch(() => { console.error('No se pudo preparar el administrador. Revisa configuración, duplicados y conexión'); process.exitCode = 1; });

@@ -4,4 +4,5 @@ export interface AuthenticatedUser {
   username: string;
   jti: string;
   exp: number;
+  roles: string[];
 }

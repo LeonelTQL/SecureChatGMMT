@@ -37,10 +37,10 @@ export class AuthService implements OnModuleInit {
       if (typeof p.sub !== 'string' || !uuid.test(p.sub) || typeof p.jti !== 'string' || !uuid.test(p.jti) ||
           typeof p.exp !== 'number' || typeof p.iat !== 'number' || p.exp - p.iat > 900 || typeof p.email !== 'string') throw new Error('Invalid claims');
     } catch { throw new UnauthorizedException('Token inválido o expirado'); }
-    const session = await this.prisma.session.findUnique({ where: { id: p.jti }, include: { user: true } });
+    const session = await this.prisma.session.findUnique({ where: { id: p.jti }, include: { user: { include: { userRoles: { include: { role: true } } } } } });
     if (!session || session.revoked || session.expiresAt <= new Date() || session.userId !== p.sub || !session.user.status) throw new UnauthorizedException('Sesión no vigente');
     return { sub: session.user.id, email: session.user.email, username: session.user.username, jti: session.id,
-      exp: p.exp as number };
+      exp: p.exp as number, roles: session.user.userRoles.filter(a => a.role.status).map(a => a.role.name) };
   }
   async logout(jti: string) { await this.prisma.session.update({ where: { id: jti }, data: { revoked: true } }); }
 }

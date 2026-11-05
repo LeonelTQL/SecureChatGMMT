@@ -1,9 +1,5 @@
 # AUTH — Leonel y Alejandro
 
-**Estado actual:** solo está disponible la autenticación de Leonel. Los módulos y guards RBAC de Alejandro fueron retirados para que los incorpore posteriormente. `users` conserva su código y estructura, pero sus rutas administrativas están bloqueadas con 503 por un guard temporal. Registro público, login, perfil, verificación de JWT y logout continúan disponibles. Los apartados que describen roles/autorización corresponden al diseño de integración pendiente. El seed prepara una cuenta sin crear ni asignar roles.
-
-Tras fusionar `main`, la entrega original `src/rbac/` y `test/rbac.test.cjs` vuelve a estar disponible como código aportado por su autor. Sus pruebas aisladas utilizan HS256 con un rol dentro del JWT; el módulo no se importa en `app.module.ts` y no se considera autorización vigente del PDF. `src/module.ts` reexporta el AppModule actual para conservar compatibilidad del punto de entrada anterior.
-
 Aplicación independiente NestJS. Prisma administra PostgreSQL y aplica migraciones antes de arrancar. Consulta el README raíz para Docker, certificados y bootstrap.
 
 ## Estructura por módulos

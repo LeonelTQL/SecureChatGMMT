@@ -30,9 +30,16 @@ export const authOpenApi: any = {
       Register: object({ username, email, password }, ['username', 'email', 'password']),
       User: object({ id: uuid, username, email, status: { type: 'boolean' }, createdAt: timestamp, updatedAt: timestamp }),
       UserPatch: object({ username, email, status: { type: 'boolean' } }),
+      RoleCreate: object({ name: { type: 'string', enum: ['ADMIN', 'ANALYST', 'USER'] }, description: { type: 'string', minLength: 1, maxLength: 250 } }, ['name', 'description']),
+      Role: object({ id: uuid, name: text, description: text, status: { type: 'boolean' }, createdAt: timestamp, updatedAt: timestamp }),
+      RolePatch: object({ description: { type: 'string', minLength: 1, maxLength: 250 }, status: { type: 'boolean' } }),
+      AssignmentCreate: object({ user_id: uuid, role_id: uuid }, ['user_id', 'role_id']),
+      Assignment: object({ id: uuid, userId: uuid, roleId: uuid, assignedAt: timestamp }),
       Token: object({ access_token: text, token_type: { type: 'string', enum: ['Bearer'] }, expires_in: { type: 'integer', enum: [900] } }),
-      Profile: object({ id: uuid, username, email,  }),
-      Identity: object({ sub: uuid, username, email, jti: uuid, exp: { type: 'integer' },  }),
+      Profile: object({ id: uuid, username, email, roles: { type: 'array', items: text } }),
+      Identity: object({ sub: uuid, username, email, jti: uuid, exp: { type: 'integer' }, roles: { type: 'array', items: text } }),
+      Check: object({ subject_token: { type: 'string', maxLength: 4096 }, action: { type: 'string', enum: ['steganography.analyze', 'steganography.results.read'] }, resource_id: { ...uuid, nullable: true } }, ['subject_token', 'action']),
+      Decision: object({ subject_id: uuid, action: text, resource_id: { ...uuid, nullable: true }, allowed: { type: 'boolean' }, reason: text, scope: { type: 'string', enum: ['own', 'all'] } }),
     },
   },
   paths: {
@@ -42,13 +49,13 @@ export const authOpenApi: any = {
     '/api/auth/profile': { get: operation('Perfil de la sesión y roles actuales', { result: ref('Profile') }) },
     '/api/auth/logout': { post: operation('Revocar la sesión actual inmediatamente', { status: 204 }) },
     '/api/auth/verify': { post: operation('Verificar JWT, sesión, usuario y roles vigentes', { result: ref('Identity') }) },
-    '/api/users': { post: operation('Bloqueado hasta integrar autorizaci?n: crear usuario sin roles', { body: 'Register', status: 201, result: ref('User') }), get: operation('Bloqueado hasta integrar autorizaci?n: listar hasta 100 usuarios', { result: array('User'), list: true }) },
-    '/api/users/{id}': { patch: operation('Bloqueado hasta integrar autorizaci?n: actualizar o deshabilitar usuario; deshabilitar revoca sus sesiones', { body: 'UserPatch', id: true, result: ref('User') }) },
+    '/api/users': { post: operation('ADMIN: crear usuario sin roles', { body: 'Register', status: 201, result: ref('User') }), get: operation('ADMIN: listar hasta 100 usuarios', { result: array('User'), list: true }) },
+    '/api/users/{id}': { patch: operation('ADMIN: actualizar o deshabilitar usuario; deshabilitar revoca sus sesiones', { body: 'UserPatch', id: true, result: ref('User') }) },
+    '/api/roles': { post: operation('ADMIN: crear rol', { body: 'RoleCreate', status: 201, result: ref('Role') }), get: operation('ADMIN: listar roles', { result: array('Role') }) },
+    '/api/roles/{id}': { patch: operation('ADMIN: actualizar descripción o estado', { body: 'RolePatch', id: true, result: ref('Role') }) },
+    '/api/user-roles': { post: operation('ADMIN: asignar rol; relación N:M única', { body: 'AssignmentCreate', status: 201, result: ref('Assignment') }), get: operation('ADMIN: listar asignaciones', { result: array('Assignment'), list: true }) },
+    '/api/user-roles/{id}': { delete: operation('ADMIN: retirar asignación; efecto en próximas operaciones', { id: true, status: 204 }) },
+    '/api/admin/protected': { get: operation('ADMIN: demostración de RBAC') },
+    '/internal/authorization/check': { post: operation('Solo STEGO: consultar autorización vigente; STEGO aplica propiedad usando su base', { service: true, body: 'Check', result: ref('Decision') }) },
   },
 };
-
-for (const [path, methods] of Object.entries(authOpenApi.paths)) {
-  if (path.startsWith('/api/users')) for (const endpoint of Object.values(methods as Record<string, any>)) {
-    endpoint.responses = { 401: { description: 'Autenticaci?n requerida' }, 503: { description: 'Autorizaci?n de Alejandro pendiente; operaci?n bloqueada' } };
-  }
-}

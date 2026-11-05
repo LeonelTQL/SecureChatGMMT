@@ -1,10 +1,10 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Patch, Post, Query, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { AuthorizationPendingGuard } from '../common/guards/authorization-pending.guard';
+import { Roles } from '../auth/decorators/roles/roles.decorator';
 import { audit } from '../common/audit/audit';
-@UseGuards(AuthorizationPendingGuard) @Controller('users')
+@Roles('ADMIN') @Controller('users')
 export class UsersController {
   constructor(private readonly users: UsersService) {}
   @Post() async create(@Body() dto: CreateUserDto, @Req() req: any) {

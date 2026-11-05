@@ -11,9 +11,12 @@ const argon2 = require('argon2');
 const { AuthService } = require('../dist/auth/auth.service');
 const { AuthController } = require('../dist/auth/auth.controller');
 const { UsersService } = require('../dist/users/users.service');
-const { AuthenticationGuard } = require('../dist/auth/guards/authentication.guard');
-const { UsersController } = require('../dist/users/users.controller');
+const { JwtAuthGuard } = require('../dist/auth/guards/jwt-auth/jwt-auth.guard');
+const { RolesGuard } = require('../dist/auth/guards/roles/roles.guard');
 const { LoginRateGuard } = require('../dist/common/guards/login-rate/login-rate.guard');
+const { AuthorizationController } = require('../dist/authorization/authorization.controller');
+const { AuthorizationService } = require('../dist/authorization/authorization.service');
+const { AdminController } = require('../dist/admin/admin.controller');
 const { SafeErrors } = require('../dist/common/filters/all-exceptions/all-exceptions.filter');
 const keys = generateKeyPairSync('rsa', { modulusLength: 2048 });
 const privateKey = keys.privateKey.export({ type: 'pkcs8', format: 'pem' });
@@ -35,9 +38,8 @@ async function fixture() {
     findUnique: async ({ where }) => { const s = sessions.get(where.id); return s ? { ...s, user } : null; },
     update: async ({ where, data }) => Object.assign(sessions.get(where.id), data),
   } };
-  const users = new UsersService(db);
-  const auth = new AuthService(users, db, jwt); await auth.onModuleInit();
-  return { auth, users, get user() { return user; }, sessions };
+  const auth = new AuthService(new UsersService(db), db, jwt); await auth.onModuleInit();
+  return { auth, get user() { return user; }, sessions };
 }
 test('registro: hash Argon2id, sin secretos, duplicado 409', async () => {
   const f = await fixture(); const result = await f.auth.register(credentials);
@@ -69,6 +71,16 @@ test('JWT inválido, expirado, audiencia/emisor/firma incorrectos y claims ausen
     await assert.rejects(f.auth.verify(token), e => e.getStatus() === 401);
   }
 });
+test('revocación de rol inmediata con el mismo JWT y roles desactivados', async () => {
+  const f = await fixture(); await f.auth.register(credentials);
+  f.user.userRoles = [{ role: { name: 'ANALYST', status: true } }];
+  const { access_token } = await f.auth.login(loginDto);
+  assert.deepEqual((await f.auth.verify(access_token)).roles, ['ANALYST']);
+  f.user.userRoles[0].role.status = false;
+  assert.deepEqual((await f.auth.verify(access_token)).roles, []);
+  f.user.userRoles = [];
+  assert.deepEqual((await f.auth.verify(access_token)).roles, []);
+});
 test('logout revoca JWT y usuario inactivo rechaza sesión', async () => {
   const f = await fixture(); await f.auth.register(credentials);
   const { access_token } = await f.auth.login(loginDto);
@@ -80,10 +92,11 @@ test('logout revoca JWT y usuario inactivo rechaza sesión', async () => {
 async function httpFixture() {
   const f = await fixture();
   class TestModule {}
-  Module({ controllers: [AuthController, UsersController], providers: [
-    { provide: AuthService, useValue: f.auth }, { provide: UsersService, useValue: f.users },
+  Module({ controllers: [AuthController, AuthorizationController, AdminController], providers: [
+    { provide: AuthService, useValue: f.auth }, AuthorizationService,
     { provide: APP_GUARD, useClass: LoginRateGuard },
-    { provide: APP_GUARD, useClass: AuthenticationGuard },
+    { provide: APP_GUARD, useClass: JwtAuthGuard },
+    { provide: APP_GUARD, useClass: RolesGuard },
   ] })(TestModule);
   const app = await NestFactory.create(TestModule, { logger: false });
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true }));
@@ -101,12 +114,29 @@ test('HTTP: validación, normalización, perfil y logout', async () => {
     const token = login.body.access_token;
     await client.get('/auth/profile').expect(401);
     await client.get('/auth/profile').set('Authorization', `Bearer ${token}`).expect(200);
-    await client.get('/users').set('Authorization', `Bearer ${token}`).expect(503);
-    await client.post('/users').set('Authorization', `Bearer ${token}`).send(credentials).expect(503);
-    await client.patch('/users/' + registered.body.id).set('Authorization', `Bearer ${token}`).send({status: false}).expect(503);
+    await client.get('/admin/protected').set('Authorization', `Bearer ${token}`).expect(403);
+    f.user.userRoles = [{ role: { name: 'ADMIN', status: true } }];
+    await client.get('/admin/protected').set('Authorization', `Bearer ${token}`).expect(200);
     await client.post('/auth/logout').set('Authorization', `Bearer ${token}`).expect(204);
     await client.post('/auth/verify').set('Authorization', `Bearer ${token}`).expect(401);
   } finally { await app.close(); }
+});
+test('endpoint interno: exige identidad de STEGO y decide sobre roles actuales', async () => {
+  process.env.STEGO_SERVICE_TOKEN = 'test-service-token-only-01234567890123456789';
+  const { app, f, client } = await httpFixture();
+  try {
+    await f.auth.register(credentials);
+    const { access_token } = await f.auth.login(loginDto);
+    const body = { subject_token: access_token, action: 'steganography.analyze', resource_id: null };
+    await client.post('/internal/authorization/check').send(body).expect(401);
+    await client.post('/internal/authorization/check').set('X-Service-Token', 'wrong').send(body).expect(401);
+    const check = () => client.post('/internal/authorization/check').set('X-Service-Token', process.env.STEGO_SERVICE_TOKEN).send(body).expect(200);
+    assert.equal((await check()).body.allowed, false);
+    f.user.userRoles = [{ role: { name: 'ANALYST', status: true } }];
+    assert.equal((await check()).body.allowed, true);
+    f.user.userRoles = [];
+    assert.equal((await check()).body.allowed, false);
+  } finally { await app.close(); delete process.env.STEGO_SERVICE_TOKEN; }
 });
 test('login tiene límite de intentos y no confía en X-Forwarded-For del cliente', async () => {
   const { app, client } = await httpFixture();
