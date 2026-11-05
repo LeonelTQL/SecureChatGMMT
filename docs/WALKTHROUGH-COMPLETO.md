@@ -229,7 +229,12 @@ docker compose -f compose.yaml start auth-service
 docker compose -f compose.yaml ps
 ```
 
-Espera health correcto y repite con el mismo token aún vigente. Debe volver al flujo normal: sin detector, 503 con analysis_id/error/cuarentena. El 503 durante la caída no debe contener un nuevo registro de análisis generado por esa petición.
+Espera health correcto y repite con el mismo token aún vigente. Con el detector
+integrado debe volver al flujo normal de clasificación real; una imagen pequeña
+sin evidencia suficiente queda no_concluyente y en cuarentena. Un motor ausente
+mantiene el bloqueo. El 503 durante la caída de AUTH no debe contener un nuevo
+registro de análisis generado por esa petición. Ver la evidencia actual en
+`services/stego/VALIDACION_DIANA.md`.
 
 Detén STEGO y confirma que AUTH sigue dando health/perfil; vuelve a iniciar STEGO. Estas pruebas cambian disponibilidad temporalmente, no borran datos.
 

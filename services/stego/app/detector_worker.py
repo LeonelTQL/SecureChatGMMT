@@ -7,10 +7,11 @@ from pathlib import Path
 def main():
     try:
         import resource
-        resource.setrlimit(resource.RLIMIT_CPU, (8, 8))
-        resource.setrlimit(resource.RLIMIT_AS, (384 * 1024 * 1024, 384 * 1024 * 1024))
+        resource.setrlimit(resource.RLIMIT_CPU, (45, 45))
+        resource.setrlimit(resource.RLIMIT_AS, (3 * 1024 ** 3, 3 * 1024 ** 3))
+        resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
     except ImportError:
-        pass  # Windows: timeout del padre; aislamiento completo en el contenedor Linux.
+        raise SystemExit("Se requieren límites Linux")
     from app.detector import analyze
     print(json.dumps(analyze(Path(sys.argv[1])), allow_nan=False))
 

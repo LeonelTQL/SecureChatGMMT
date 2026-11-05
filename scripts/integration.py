@@ -74,9 +74,14 @@ with httpx.Client(verify=context, timeout=15, trust_env=False) as client:
         assert set(profile['roles']) == {'USER', 'ANALYST'}
         buffer = io.BytesIO(); Image.new('RGB', (16, 16), (80, 40, 20)).save(buffer, format='PNG')
         content = buffer.getvalue()
-        record = expect('ANALYST autorizado; sin detector queda en cuarentena', client.post(stego + '/api/steganography/analyze',
-            headers=headers, files={'file': ('reference.png', content, 'image/png')}), 503)
-        assert record['status'] == 'error' and record['action'] == 'cuarentena'
+        record = expect('ANALYST autorizado; detector real sin evidencia suficiente', client.post(stego + '/api/steganography/analyze',
+            headers=headers, files={'file': ('reference.png', content, 'image/png')}, timeout=100), 200)
+        assert record['status'] == 'no_concluyente' and record['action'] == 'cuarentena'
+        assert record['technique'] == 'LSB_POV_CHI_SQUARE_RGB_V1'
+        assert record['indicators']['r_samples'] == 256
+        assert record['reports']['validation']['valid'] is True
+        assert all(report['status'] == 'CLEAR' for report in record['reports']['antimalware'].values())
+        assert record['reports']['metadata']['status'] in {'EXTRACTED', 'ABSENT'}
         assert record['user_id'] == user['id'] and record['sha256'] == hashlib.sha256(content).hexdigest()
         result_path = '/api/steganography/results/' + record['analysis_id']
         expect('Propietario consulta resultado', client.get(stego + result_path, headers=headers), 200)

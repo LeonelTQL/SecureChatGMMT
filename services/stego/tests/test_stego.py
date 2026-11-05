@@ -127,8 +127,11 @@ def test_storage_hash_results_ownership_and_admin(setup, keys, format, mime):
 
 
 def test_missing_detector_quarantines_never_marks_clean(tmp_path, setup, keys):
+    from app.detector_adapter import DetectorUnavailable
     settings, _, _, _, decider = setup
-    app = create_app(replace(settings, storage=tmp_path / "without_detector"), decider)
+    async def unavailable(path):
+        raise DetectorUnavailable("test unavailable")
+    app = create_app(replace(settings, storage=tmp_path / "without_detector"), decider, unavailable)
     with TestClient(app) as client:
         headers = {"Authorization": "Bearer " + token(keys)}
         response = client.post("/api/steganography/analyze", headers=headers, files={"file": ("x.png", image(), "image/png")})

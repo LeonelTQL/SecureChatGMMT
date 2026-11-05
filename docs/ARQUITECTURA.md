@@ -1,6 +1,9 @@
 # Arquitectura y modelo de identidad
 
-**Estado actual:** los modulos RBAC y el endpoint interno estan activos desde la fusion de la entrega en main. La arquitectura descrita se verifica mediante las pruebas de integracion; el algoritmo detector sigue pendiente.
+**Estado actual:** RBAC y la autorización vigente permanecen activos. El detector
+de Diana ya se integra en STEGO: validación, ClamAV/YARA, ExifTool y análisis LSB
+PNG. Ver [evidencia y límites](../services/stego/VALIDACION_DIANA.md); la ejecución
+de toda la pila AUTH/PostgreSQL con este detector aún requiere sustentación.
 
 ## Límites de confianza
 
@@ -16,7 +19,7 @@ flowchart LR
   Public[Clave pública JWT] --> STEGO
   subgraph Files[Zona de procesamiento de archivos]
     STEGO --> Store[(SQLite y cuarentena privada)]
-    STEGO --> Worker[Proceso hijo del detector pendiente de Diana]
+    STEGO --> Worker[Proceso hijo limitado: validación, antimalware, metadatos y LSB]
   end
 ```
 
