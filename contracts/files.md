@@ -80,6 +80,15 @@ indicios sospechosos, que se conservan. Todos esos estados quedan en cuarentena.
 Los JPEG también pasan por antimalware, aunque no exista un detector LSB aplicable.
 Los formatos inválidos no se envían a los motores. No se guardan sus salidas crudas,
 cadenas coincidentes, rutas ni mensajes internos de error.
+`analysis.metadata` conserva el informe ExifTool (`engine`, `status`, `reason`,
+`metadata`, `issues`, `limits`). Sus estados son `EXTRACTED`, `ABSENT`
+(sin campos permitidos), `INCONSISTENT` y `UNAVAILABLE`. Los dos primeros no
+demuestran seguridad ni generan aprobación. Los dos últimos mantienen
+`INCONCLUSIVE / metadata_inconsistent | metadata_unavailable`, salvo que ya
+existan indicios SUSPICIOUS, que se conservan. La indisponibilidad de antimalware
+mantiene su prioridad como motivo global; todos los informes permanecen separados.
+No se devuelve GPS, autores, seriales, texto libre ni salida cruda. Las fechas
+se reducen a día y el software a familias reconocidas o `unrecognized`.
 Los resultados simulados existen únicamente en las pruebas; ninguna opción de
 entorno permite aprobar archivos sin un analizador real. No hay callback público
 para cambiar estados ni aprobar archivos desde Postman.

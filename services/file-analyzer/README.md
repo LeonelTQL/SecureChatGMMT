@@ -28,6 +28,9 @@ Después de validar se ejecutan ClamAV y YARA en procesos Linux limitados; sus
 resultados se conservan en `analysis.antimalware`. Ausencia, fallo o firmas
 vencidas mantienen el bloqueo. Consultar [antimalware](ANTIMALWARE.md) para reglas,
 límites, actualización de firmas y pruebas reales frente a simuladas.
+ExifTool extrae y evalúa campos permitidos en `analysis.metadata`, sin GPS,
+identificadores ni texto libre. Su ausencia o fallo conserva el bloqueo;
+carecer de EXIF no genera sospecha. Ver [metadatos](EXIFTOOL.md).
 No habilitar un resultado simulado CLEAN en despliegues.
 
 ## Verificación

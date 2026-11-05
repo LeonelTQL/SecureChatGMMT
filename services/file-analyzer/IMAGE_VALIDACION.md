@@ -101,8 +101,9 @@ Pillow y las firmas no demuestran ausencia de contenido oculto ni de malware.
 El chequeo JPEG no es una auditoría independiente de cada segmento/coeficiente:
 depende del decodificador, y algunos defectos tolerados por éste pueden pasar.
 Se rechazan bytes posteriores a IEND y EOI; no se eliminan ni sanea el archivo.
-No se extraen metadatos ni se ejecuta contenido. ExifTool no está integrado;
-ClamAV y YARA se incorporaron posteriormente como verificaciones separadas.
+No se ejecuta contenido. ClamAV/YARA y posteriormente ExifTool se incorporaron
+como verificaciones separadas; ExifTool sólo persiste una lista de campos
+permitidos y evaluaciones de consistencia. Ver [metadatos](EXIFTOOL.md).
 
 Persisten los falsos positivos/negativos del detector LSB y falta un detector JPEG.
 JWT/RBAC, autorización por propietario y otras verificaciones obligatorias siguen

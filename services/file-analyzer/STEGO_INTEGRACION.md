@@ -98,7 +98,9 @@ por ello SIN_INDICIOS sigue bloqueado. Se conservan los falsos positivos y
 negativos documentados en `STEGO_LSB_RESULTADOS.md`; no se declara precisión.
 
 Actualización posterior: ClamAV y YARA ya se integraron; sus coincidencias o
-indisponibilidad conservan el bloqueo. Las otras verificaciones pendientes y
+indisponibilidad conservan el bloqueo. ExifTool también se integró con extracción
+restringida y bloqueo ante inconsistencias o indisponibilidad; ver [metadatos](EXIFTOOL.md).
+Las otras verificaciones pendientes y
 la falta de autorización siguen impidiendo considerar el servicio terminado.
 
 No se pudo construir ni ejecutar Docker porque el daemon no estaba disponible.

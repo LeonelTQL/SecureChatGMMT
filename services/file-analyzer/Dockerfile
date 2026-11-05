@@ -2,7 +2,7 @@ FROM python:3.12-slim
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    clamav clamav-freshclam yara util-linux \
+    clamav clamav-freshclam yara util-linux libimage-exiftool-perl \
     && rm -rf /var/lib/apt/lists/*
 # Cambiar este argumento o usar --no-cache para renovar las firmas al reconstruir.
 ARG CLAMAV_DB_REV=initial
