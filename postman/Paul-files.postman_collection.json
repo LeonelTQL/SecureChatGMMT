@@ -1,0 +1,85 @@
+{
+  "info": {
+    "name": "Paul Moreno - Transferencia y cuarentena",
+    "description": "Primera entrega. Incluye postman/fixtures/pixel.png; ejecutar desde la raíz del repositorio o configurar esa carpeta como working directory de Postman. Se puede seleccionar otra imagen JPG/PNG en Upload. El adaptador predeterminado devuelve INCONCLUSIVE y bloquea la descarga. No contiene endpoints para forzar CLEAN. Consultar contracts/files.md. Las pruebas CLEAN y SUSPICIOUS con resultados simulados están en services/file-analyzer/tests.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {"key": "baseUrl", "value": "http://localhost:8080/api"},
+    {"key": "fileId", "value": ""},
+    {"key": "expectedStatus", "value": "QUARANTINED"},
+    {"key": "expectedClassification", "value": "INCONCLUSIVE"}
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {"method": "GET", "url": "{{baseUrl}}/files/health"},
+      "event": [{"listen": "test", "script": {"type": "text/javascript", "exec": [
+        "pm.test('Servicio disponible', () => pm.response.to.have.status(200));",
+        "pm.test('Servicio FastAPI correcto', () => pm.expect(pm.response.json().service).to.eql('file-analyzer'));"
+      ]}}]
+    },
+    {
+      "name": "Upload - seleccionar imagen local",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/files/upload",
+        "body": {"mode": "formdata", "formdata": [{"key": "file", "type": "file", "src": "postman/fixtures/pixel.png"}]}
+      },
+      "event": [{"listen": "test", "script": {"type": "text/javascript", "exec": [
+        "pm.test('Carga aceptada', () => pm.response.to.have.status(202));",
+        "if (pm.response.code === 202) {",
+        "  const body = pm.response.json();",
+        "  pm.test('Archivo pendiente sin clasificación anticipada', () => { pm.expect(body.status).to.eql('PENDING'); pm.expect(body.classification).to.eql(null); });",
+        "  pm.test('SHA-256 y tamaño presentes', () => { pm.expect(body.sha256).to.match(/^[0-9a-f]{64}$/); pm.expect(body.size).to.be.above(0); });",
+        "  pm.test('Consulta indicada en Location', () => pm.expect(pm.response.headers.get('Location')).to.include(body.id + '/status'));",
+        "  pm.collectionVariables.set('fileId', body.id);",
+        "  pm.collectionVariables.set('uploadedHash', body.sha256);",
+        "  pm.collectionVariables.set('uploadedSize', String(body.size));",
+        "}"
+      ]}}]
+    },
+    {
+      "name": "Consultar estado - repetir si el análisis sigue pendiente",
+      "request": {"method": "GET", "url": "{{baseUrl}}/files/{{fileId}}/status"},
+      "event": [{"listen": "test", "script": {"type": "text/javascript", "exec": [
+        "pm.test('Estado disponible', () => pm.response.to.have.status(200));",
+        "if (pm.response.code === 200) {",
+        "  const body = pm.response.json();",
+        "  pm.test('ID e integridad conservados', () => { pm.expect(body.id).to.eql(pm.collectionVariables.get('fileId')); pm.expect(body.sha256).to.eql(pm.collectionVariables.get('uploadedHash')); pm.expect(String(body.size)).to.eql(pm.collectionVariables.get('uploadedSize')); });",
+        "  pm.test('Resultado final esperado', () => { pm.expect(body.status).to.eql(pm.collectionVariables.get('expectedStatus')); pm.expect(body.classification).to.eql(pm.collectionVariables.get('expectedClassification')); });",
+        "}"
+      ]}}]
+    },
+    {
+      "name": "Descarga - bloqueada salvo CLEAN",
+      "request": {"method": "GET", "url": "{{baseUrl}}/files/{{fileId}}/content"},
+      "event": [{"listen": "test", "script": {"type": "text/javascript", "exec": [
+        "const approved = pm.collectionVariables.get('expectedStatus') === 'APPROVED';",
+        "pm.test('Política de acceso aplicada', () => pm.response.to.have.status(approved ? 200 : 423));",
+        "if (!approved) pm.test('Motivo de bloqueo', () => pm.expect(pm.response.json().detail).to.eql('file_blocked'));"
+      ]}}]
+    },
+    {
+      "name": "Carga sin archivo - rechazo",
+      "request": {"method": "POST", "url": "{{baseUrl}}/files/upload"},
+      "event": [{"listen": "test", "script": {"type": "text/javascript", "exec": [
+        "pm.test('Archivo obligatorio', () => pm.response.to.have.status(422));"
+      ]}}]
+    },
+    {
+      "name": "ID inválido - rechazo",
+      "request": {"method": "GET", "url": "{{baseUrl}}/files/invalid/status"},
+      "event": [{"listen": "test", "script": {"type": "text/javascript", "exec": [
+        "pm.test('UUID obligatorio', () => pm.response.to.have.status(422));"
+      ]}}]
+    },
+    {
+      "name": "Archivo inexistente",
+      "request": {"method": "GET", "url": "{{baseUrl}}/files/00000000-0000-0000-0000-000000000000/status"},
+      "event": [{"listen": "test", "script": {"type": "text/javascript", "exec": [
+        "pm.test('No existe', () => pm.response.to.have.status(404));"
+      ]}}]
+    }
+  ]
+}
