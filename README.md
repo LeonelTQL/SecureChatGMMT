@@ -11,4 +11,3 @@
 6. Verifica http://localhost:8080/api/auth/health, /api/chat/health y /api/files/health.
 7. Consulta registros con `docker compose logs -f`.
 8. Para detener: `docker compose down` (sin `-v`, para conservar los datos).
-
