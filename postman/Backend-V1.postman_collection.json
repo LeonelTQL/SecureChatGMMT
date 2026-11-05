@@ -1,8 +1,8 @@
 {
   "info": {
-    "name": "Backend V1 — Leonel y Paul; Alejandro pendiente",
+    "name": "Backend V1 - autenticacion, RBAC y STEGO",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "Importar CA secrets/public/ca.pem. Registrar con contraseña local de 12–128 caracteres. Los endpoints de Alejandro fueron retirados; STEGO no analiza sin autorización."
+    "description": "Importar CA secrets/public/ca.pem. Configurar password local de 12-128 caracteres. RBAC activo: las cuentas nuevas no tienen roles y reciben 403 en administracion y analisis. Detector pendiente."
   },
   "variable": [
     {
@@ -137,7 +137,7 @@
       ]
     },
     {
-      "name": "05 Administración bloqueada hasta integrar Alejandro",
+      "name": "05 Usuario sin ADMIN: administracion denegada",
       "request": {
         "method": "GET",
         "url": "{{auth_url}}/api/users",
@@ -154,14 +154,14 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "pm.test('HTTP 503', () => pm.response.to.have.status(503));"
+              "pm.test('HTTP 403', () => pm.response.to.have.status(403));"
             ]
           }
         }
       ]
     },
     {
-      "name": "06 STEGO bloqueado sin decisión de autorización",
+      "name": "06 Usuario sin ANALYST: analisis denegado",
       "request": {
         "method": "POST",
         "url": "{{stego_url}}/api/steganography/analyze",
@@ -178,7 +178,7 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "pm.test('HTTP 503', () => pm.response.to.have.status(503));"
+              "pm.test('HTTP 403', () => pm.response.to.have.status(403));"
             ]
           }
         }

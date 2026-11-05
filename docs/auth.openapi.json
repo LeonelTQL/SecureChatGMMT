@@ -3,7 +3,7 @@
   "info": {
     "title": "AUTH Backend V1",
     "version": "2.0.0",
-    "description": "JWT RS256, sesiones revocables y autorización sobre asignaciones actuales. ADMIN administra identidad; USER consulta perfil; ANALYST analiza y consulta resultados propios."
+    "description": "JWT RS256, sesiones revocables y autorizaci\u00f3n sobre asignaciones actuales. ADMIN administra identidad; USER consulta perfil; ANALYST analiza y consulta resultados propios."
   },
   "servers": [
     {
@@ -376,13 +376,13 @@
         "security": [],
         "responses": {
           "200": {
-            "description": "Operación completada"
+            "description": "Operaci\u00f3n completada"
           },
           "400": {
-            "description": "Datos inválidos"
+            "description": "Datos inv\u00e1lidos"
           },
           "401": {
-            "description": "Autenticación inválida o sesión revocada"
+            "description": "Autenticaci\u00f3n inv\u00e1lida o sesi\u00f3n revocada"
           },
           "403": {
             "description": "Rol vigente insuficiente"
@@ -391,20 +391,20 @@
             "description": "Recurso inexistente"
           },
           "409": {
-            "description": "Valor único o asignación duplicada"
+            "description": "Valor \u00fanico o asignaci\u00f3n duplicada"
           },
           "429": {
-            "description": "Límite de intentos"
+            "description": "L\u00edmite de intentos"
           },
           "500": {
-            "description": "Error interno sin información sensible"
+            "description": "Error interno sin informaci\u00f3n sensible"
           }
         }
       }
     },
     "/api/auth/register": {
       "post": {
-        "summary": "Registro público sin privilegios",
+        "summary": "Registro p\u00fablico sin privilegios",
         "security": [],
         "requestBody": {
           "required": true,
@@ -418,7 +418,7 @@
         },
         "responses": {
           "201": {
-            "description": "Operación completada",
+            "description": "Operaci\u00f3n completada",
             "content": {
               "application/json": {
                 "schema": {
@@ -428,10 +428,10 @@
             }
           },
           "400": {
-            "description": "Datos inválidos"
+            "description": "Datos inv\u00e1lidos"
           },
           "401": {
-            "description": "Autenticación inválida o sesión revocada"
+            "description": "Autenticaci\u00f3n inv\u00e1lida o sesi\u00f3n revocada"
           },
           "403": {
             "description": "Rol vigente insuficiente"
@@ -440,20 +440,20 @@
             "description": "Recurso inexistente"
           },
           "409": {
-            "description": "Valor único o asignación duplicada"
+            "description": "Valor \u00fanico o asignaci\u00f3n duplicada"
           },
           "429": {
-            "description": "Límite de intentos"
+            "description": "L\u00edmite de intentos"
           },
           "500": {
-            "description": "Error interno sin información sensible"
+            "description": "Error interno sin informaci\u00f3n sensible"
           }
         }
       }
     },
     "/api/auth/login": {
       "post": {
-        "summary": "Credenciales; máximo 10 intentos/correo y 30/IP por minuto",
+        "summary": "Credenciales; m\u00e1ximo 10 intentos/correo y 30/IP por minuto",
         "security": [],
         "requestBody": {
           "required": true,
@@ -467,7 +467,7 @@
         },
         "responses": {
           "200": {
-            "description": "Operación completada",
+            "description": "Operaci\u00f3n completada",
             "content": {
               "application/json": {
                 "schema": {
@@ -477,10 +477,10 @@
             }
           },
           "400": {
-            "description": "Datos inválidos"
+            "description": "Datos inv\u00e1lidos"
           },
           "401": {
-            "description": "Autenticación inválida o sesión revocada"
+            "description": "Autenticaci\u00f3n inv\u00e1lida o sesi\u00f3n revocada"
           },
           "403": {
             "description": "Rol vigente insuficiente"
@@ -489,20 +489,20 @@
             "description": "Recurso inexistente"
           },
           "409": {
-            "description": "Valor único o asignación duplicada"
+            "description": "Valor \u00fanico o asignaci\u00f3n duplicada"
           },
           "429": {
-            "description": "Límite de intentos"
+            "description": "L\u00edmite de intentos"
           },
           "500": {
-            "description": "Error interno sin información sensible"
+            "description": "Error interno sin informaci\u00f3n sensible"
           }
         }
       }
     },
     "/api/auth/profile": {
       "get": {
-        "summary": "Perfil de la sesión y roles actuales",
+        "summary": "Perfil de la sesi\u00f3n y roles actuales",
         "security": [
           {
             "bearer": []
@@ -510,7 +510,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Operación completada",
+            "description": "Operaci\u00f3n completada",
             "content": {
               "application/json": {
                 "schema": {
@@ -520,10 +520,10 @@
             }
           },
           "400": {
-            "description": "Datos inválidos"
+            "description": "Datos inv\u00e1lidos"
           },
           "401": {
-            "description": "Autenticación inválida o sesión revocada"
+            "description": "Autenticaci\u00f3n inv\u00e1lida o sesi\u00f3n revocada"
           },
           "403": {
             "description": "Rol vigente insuficiente"
@@ -532,20 +532,20 @@
             "description": "Recurso inexistente"
           },
           "409": {
-            "description": "Valor único o asignación duplicada"
+            "description": "Valor \u00fanico o asignaci\u00f3n duplicada"
           },
           "429": {
-            "description": "Límite de intentos"
+            "description": "L\u00edmite de intentos"
           },
           "500": {
-            "description": "Error interno sin información sensible"
+            "description": "Error interno sin informaci\u00f3n sensible"
           }
         }
       }
     },
     "/api/auth/logout": {
       "post": {
-        "summary": "Revocar la sesión actual inmediatamente",
+        "summary": "Revocar la sesi\u00f3n actual inmediatamente",
         "security": [
           {
             "bearer": []
@@ -553,13 +553,13 @@
         ],
         "responses": {
           "204": {
-            "description": "Operación completada"
+            "description": "Operaci\u00f3n completada"
           },
           "400": {
-            "description": "Datos inválidos"
+            "description": "Datos inv\u00e1lidos"
           },
           "401": {
-            "description": "Autenticación inválida o sesión revocada"
+            "description": "Autenticaci\u00f3n inv\u00e1lida o sesi\u00f3n revocada"
           },
           "403": {
             "description": "Rol vigente insuficiente"
@@ -568,20 +568,20 @@
             "description": "Recurso inexistente"
           },
           "409": {
-            "description": "Valor único o asignación duplicada"
+            "description": "Valor \u00fanico o asignaci\u00f3n duplicada"
           },
           "429": {
-            "description": "Límite de intentos"
+            "description": "L\u00edmite de intentos"
           },
           "500": {
-            "description": "Error interno sin información sensible"
+            "description": "Error interno sin informaci\u00f3n sensible"
           }
         }
       }
     },
     "/api/auth/verify": {
       "post": {
-        "summary": "Verificar JWT, sesión, usuario y roles vigentes",
+        "summary": "Verificar JWT, sesi\u00f3n, usuario y roles vigentes",
         "security": [
           {
             "bearer": []
@@ -589,7 +589,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Operación completada",
+            "description": "Operaci\u00f3n completada",
             "content": {
               "application/json": {
                 "schema": {
@@ -599,10 +599,10 @@
             }
           },
           "400": {
-            "description": "Datos inválidos"
+            "description": "Datos inv\u00e1lidos"
           },
           "401": {
-            "description": "Autenticación inválida o sesión revocada"
+            "description": "Autenticaci\u00f3n inv\u00e1lida o sesi\u00f3n revocada"
           },
           "403": {
             "description": "Rol vigente insuficiente"
@@ -611,13 +611,13 @@
             "description": "Recurso inexistente"
           },
           "409": {
-            "description": "Valor único o asignación duplicada"
+            "description": "Valor \u00fanico o asignaci\u00f3n duplicada"
           },
           "429": {
-            "description": "Límite de intentos"
+            "description": "L\u00edmite de intentos"
           },
           "500": {
-            "description": "Error interno sin información sensible"
+            "description": "Error interno sin informaci\u00f3n sensible"
           }
         }
       }
@@ -642,7 +642,7 @@
         },
         "responses": {
           "201": {
-            "description": "Operación completada",
+            "description": "Operaci\u00f3n completada",
             "content": {
               "application/json": {
                 "schema": {
@@ -652,10 +652,10 @@
             }
           },
           "400": {
-            "description": "Datos inválidos"
+            "description": "Datos inv\u00e1lidos"
           },
           "401": {
-            "description": "Autenticación inválida o sesión revocada"
+            "description": "Autenticaci\u00f3n inv\u00e1lida o sesi\u00f3n revocada"
           },
           "403": {
             "description": "Rol vigente insuficiente"
@@ -664,13 +664,13 @@
             "description": "Recurso inexistente"
           },
           "409": {
-            "description": "Valor único o asignación duplicada"
+            "description": "Valor \u00fanico o asignaci\u00f3n duplicada"
           },
           "429": {
-            "description": "Límite de intentos"
+            "description": "L\u00edmite de intentos"
           },
           "500": {
-            "description": "Error interno sin información sensible"
+            "description": "Error interno sin informaci\u00f3n sensible"
           }
         }
       },
@@ -694,7 +694,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Operación completada",
+            "description": "Operaci\u00f3n completada",
             "content": {
               "application/json": {
                 "schema": {
@@ -707,10 +707,10 @@
             }
           },
           "400": {
-            "description": "Datos inválidos"
+            "description": "Datos inv\u00e1lidos"
           },
           "401": {
-            "description": "Autenticación inválida o sesión revocada"
+            "description": "Autenticaci\u00f3n inv\u00e1lida o sesi\u00f3n revocada"
           },
           "403": {
             "description": "Rol vigente insuficiente"
@@ -719,13 +719,13 @@
             "description": "Recurso inexistente"
           },
           "409": {
-            "description": "Valor único o asignación duplicada"
+            "description": "Valor \u00fanico o asignaci\u00f3n duplicada"
           },
           "429": {
-            "description": "Límite de intentos"
+            "description": "L\u00edmite de intentos"
           },
           "500": {
-            "description": "Error interno sin información sensible"
+            "description": "Error interno sin informaci\u00f3n sensible"
           }
         }
       }
@@ -761,7 +761,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Operación completada",
+            "description": "Operaci\u00f3n completada",
             "content": {
               "application/json": {
                 "schema": {
@@ -771,10 +771,10 @@
             }
           },
           "400": {
-            "description": "Datos inválidos"
+            "description": "Datos inv\u00e1lidos"
           },
           "401": {
-            "description": "Autenticación inválida o sesión revocada"
+            "description": "Autenticaci\u00f3n inv\u00e1lida o sesi\u00f3n revocada"
           },
           "403": {
             "description": "Rol vigente insuficiente"
@@ -783,13 +783,13 @@
             "description": "Recurso inexistente"
           },
           "409": {
-            "description": "Valor único o asignación duplicada"
+            "description": "Valor \u00fanico o asignaci\u00f3n duplicada"
           },
           "429": {
-            "description": "Límite de intentos"
+            "description": "L\u00edmite de intentos"
           },
           "500": {
-            "description": "Error interno sin información sensible"
+            "description": "Error interno sin informaci\u00f3n sensible"
           }
         }
       }
@@ -814,7 +814,7 @@
         },
         "responses": {
           "201": {
-            "description": "Operación completada",
+            "description": "Operaci\u00f3n completada",
             "content": {
               "application/json": {
                 "schema": {
@@ -824,10 +824,10 @@
             }
           },
           "400": {
-            "description": "Datos inválidos"
+            "description": "Datos inv\u00e1lidos"
           },
           "401": {
-            "description": "Autenticación inválida o sesión revocada"
+            "description": "Autenticaci\u00f3n inv\u00e1lida o sesi\u00f3n revocada"
           },
           "403": {
             "description": "Rol vigente insuficiente"
@@ -836,13 +836,13 @@
             "description": "Recurso inexistente"
           },
           "409": {
-            "description": "Valor único o asignación duplicada"
+            "description": "Valor \u00fanico o asignaci\u00f3n duplicada"
           },
           "429": {
-            "description": "Límite de intentos"
+            "description": "L\u00edmite de intentos"
           },
           "500": {
-            "description": "Error interno sin información sensible"
+            "description": "Error interno sin informaci\u00f3n sensible"
           }
         }
       },
@@ -855,7 +855,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Operación completada",
+            "description": "Operaci\u00f3n completada",
             "content": {
               "application/json": {
                 "schema": {
@@ -868,10 +868,10 @@
             }
           },
           "400": {
-            "description": "Datos inválidos"
+            "description": "Datos inv\u00e1lidos"
           },
           "401": {
-            "description": "Autenticación inválida o sesión revocada"
+            "description": "Autenticaci\u00f3n inv\u00e1lida o sesi\u00f3n revocada"
           },
           "403": {
             "description": "Rol vigente insuficiente"
@@ -880,20 +880,20 @@
             "description": "Recurso inexistente"
           },
           "409": {
-            "description": "Valor único o asignación duplicada"
+            "description": "Valor \u00fanico o asignaci\u00f3n duplicada"
           },
           "429": {
-            "description": "Límite de intentos"
+            "description": "L\u00edmite de intentos"
           },
           "500": {
-            "description": "Error interno sin información sensible"
+            "description": "Error interno sin informaci\u00f3n sensible"
           }
         }
       }
     },
     "/api/roles/{id}": {
       "patch": {
-        "summary": "ADMIN: actualizar descripción o estado",
+        "summary": "ADMIN: actualizar descripci\u00f3n o estado",
         "security": [
           {
             "bearer": []
@@ -922,7 +922,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Operación completada",
+            "description": "Operaci\u00f3n completada",
             "content": {
               "application/json": {
                 "schema": {
@@ -932,10 +932,10 @@
             }
           },
           "400": {
-            "description": "Datos inválidos"
+            "description": "Datos inv\u00e1lidos"
           },
           "401": {
-            "description": "Autenticación inválida o sesión revocada"
+            "description": "Autenticaci\u00f3n inv\u00e1lida o sesi\u00f3n revocada"
           },
           "403": {
             "description": "Rol vigente insuficiente"
@@ -944,20 +944,20 @@
             "description": "Recurso inexistente"
           },
           "409": {
-            "description": "Valor único o asignación duplicada"
+            "description": "Valor \u00fanico o asignaci\u00f3n duplicada"
           },
           "429": {
-            "description": "Límite de intentos"
+            "description": "L\u00edmite de intentos"
           },
           "500": {
-            "description": "Error interno sin información sensible"
+            "description": "Error interno sin informaci\u00f3n sensible"
           }
         }
       }
     },
     "/api/user-roles": {
       "post": {
-        "summary": "ADMIN: asignar rol; relación N:M única",
+        "summary": "ADMIN: asignar rol; relaci\u00f3n N:M \u00fanica",
         "security": [
           {
             "bearer": []
@@ -975,7 +975,7 @@
         },
         "responses": {
           "201": {
-            "description": "Operación completada",
+            "description": "Operaci\u00f3n completada",
             "content": {
               "application/json": {
                 "schema": {
@@ -985,10 +985,10 @@
             }
           },
           "400": {
-            "description": "Datos inválidos"
+            "description": "Datos inv\u00e1lidos"
           },
           "401": {
-            "description": "Autenticación inválida o sesión revocada"
+            "description": "Autenticaci\u00f3n inv\u00e1lida o sesi\u00f3n revocada"
           },
           "403": {
             "description": "Rol vigente insuficiente"
@@ -997,13 +997,13 @@
             "description": "Recurso inexistente"
           },
           "409": {
-            "description": "Valor único o asignación duplicada"
+            "description": "Valor \u00fanico o asignaci\u00f3n duplicada"
           },
           "429": {
-            "description": "Límite de intentos"
+            "description": "L\u00edmite de intentos"
           },
           "500": {
-            "description": "Error interno sin información sensible"
+            "description": "Error interno sin informaci\u00f3n sensible"
           }
         }
       },
@@ -1027,7 +1027,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Operación completada",
+            "description": "Operaci\u00f3n completada",
             "content": {
               "application/json": {
                 "schema": {
@@ -1040,10 +1040,10 @@
             }
           },
           "400": {
-            "description": "Datos inválidos"
+            "description": "Datos inv\u00e1lidos"
           },
           "401": {
-            "description": "Autenticación inválida o sesión revocada"
+            "description": "Autenticaci\u00f3n inv\u00e1lida o sesi\u00f3n revocada"
           },
           "403": {
             "description": "Rol vigente insuficiente"
@@ -1052,20 +1052,20 @@
             "description": "Recurso inexistente"
           },
           "409": {
-            "description": "Valor único o asignación duplicada"
+            "description": "Valor \u00fanico o asignaci\u00f3n duplicada"
           },
           "429": {
-            "description": "Límite de intentos"
+            "description": "L\u00edmite de intentos"
           },
           "500": {
-            "description": "Error interno sin información sensible"
+            "description": "Error interno sin informaci\u00f3n sensible"
           }
         }
       }
     },
     "/api/user-roles/{id}": {
       "delete": {
-        "summary": "ADMIN: retirar asignación; efecto en próximas operaciones",
+        "summary": "ADMIN: retirar asignaci\u00f3n; efecto en pr\u00f3ximas operaciones",
         "security": [
           {
             "bearer": []
@@ -1084,13 +1084,13 @@
         ],
         "responses": {
           "204": {
-            "description": "Operación completada"
+            "description": "Operaci\u00f3n completada"
           },
           "400": {
-            "description": "Datos inválidos"
+            "description": "Datos inv\u00e1lidos"
           },
           "401": {
-            "description": "Autenticación inválida o sesión revocada"
+            "description": "Autenticaci\u00f3n inv\u00e1lida o sesi\u00f3n revocada"
           },
           "403": {
             "description": "Rol vigente insuficiente"
@@ -1099,20 +1099,20 @@
             "description": "Recurso inexistente"
           },
           "409": {
-            "description": "Valor único o asignación duplicada"
+            "description": "Valor \u00fanico o asignaci\u00f3n duplicada"
           },
           "429": {
-            "description": "Límite de intentos"
+            "description": "L\u00edmite de intentos"
           },
           "500": {
-            "description": "Error interno sin información sensible"
+            "description": "Error interno sin informaci\u00f3n sensible"
           }
         }
       }
     },
     "/api/admin/protected": {
       "get": {
-        "summary": "ADMIN: demostración de RBAC",
+        "summary": "ADMIN: demostraci\u00f3n de RBAC",
         "security": [
           {
             "bearer": []
@@ -1120,13 +1120,13 @@
         ],
         "responses": {
           "200": {
-            "description": "Operación completada"
+            "description": "Operaci\u00f3n completada"
           },
           "400": {
-            "description": "Datos inválidos"
+            "description": "Datos inv\u00e1lidos"
           },
           "401": {
-            "description": "Autenticación inválida o sesión revocada"
+            "description": "Autenticaci\u00f3n inv\u00e1lida o sesi\u00f3n revocada"
           },
           "403": {
             "description": "Rol vigente insuficiente"
@@ -1135,20 +1135,20 @@
             "description": "Recurso inexistente"
           },
           "409": {
-            "description": "Valor único o asignación duplicada"
+            "description": "Valor \u00fanico o asignaci\u00f3n duplicada"
           },
           "429": {
-            "description": "Límite de intentos"
+            "description": "L\u00edmite de intentos"
           },
           "500": {
-            "description": "Error interno sin información sensible"
+            "description": "Error interno sin informaci\u00f3n sensible"
           }
         }
       }
     },
     "/internal/authorization/check": {
       "post": {
-        "summary": "Solo STEGO: consultar autorización vigente; STEGO aplica propiedad usando su base",
+        "summary": "Solo STEGO: consultar autorizaci\u00f3n vigente; STEGO aplica propiedad usando su base",
         "security": [
           {
             "service": []
@@ -1166,7 +1166,7 @@
         },
         "responses": {
           "200": {
-            "description": "Operación completada",
+            "description": "Operaci\u00f3n completada",
             "content": {
               "application/json": {
                 "schema": {
@@ -1176,10 +1176,10 @@
             }
           },
           "400": {
-            "description": "Datos inválidos"
+            "description": "Datos inv\u00e1lidos"
           },
           "401": {
-            "description": "Autenticación inválida o sesión revocada"
+            "description": "Autenticaci\u00f3n inv\u00e1lida o sesi\u00f3n revocada"
           },
           "403": {
             "description": "Rol vigente insuficiente"
@@ -1188,13 +1188,13 @@
             "description": "Recurso inexistente"
           },
           "409": {
-            "description": "Valor único o asignación duplicada"
+            "description": "Valor \u00fanico o asignaci\u00f3n duplicada"
           },
           "429": {
-            "description": "Límite de intentos"
+            "description": "L\u00edmite de intentos"
           },
           "500": {
-            "description": "Error interno sin información sensible"
+            "description": "Error interno sin informaci\u00f3n sensible"
           }
         }
       }

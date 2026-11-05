@@ -1,240 +1,269 @@
 [
   {
-    "service": "STEGO",
-    "event": "request.denied",
-    "status": 401
-  },
-  {
-    "service": "STEGO",
-    "event": "request.denied",
-    "status": 401
-  },
-  {
-    "service": "STEGO",
-    "event": "request.denied",
-    "status": 403
-  },
-  {
-    "service": "STEGO",
-    "event": "analysis.failed",
-    "analysis_id": "68b04d12-d123-400a-85ba-6403eda8342a",
-    "user_id": "f7fc4712-831e-49c1-891a-4923af1bb7f7"
-  },
-  {
-    "service": "STEGO",
-    "event": "result.read",
-    "user_id": "f7fc4712-831e-49c1-891a-4923af1bb7f7",
-    "analysis_id": "68b04d12-d123-400a-85ba-6403eda8342a"
-  },
-  {
-    "service": "STEGO",
-    "event": "result.denied",
-    "user_id": "c44970c1-21da-49d2-adc9-5424045f1520",
-    "analysis_id": "68b04d12-d123-400a-85ba-6403eda8342a"
-  },
-  {
-    "service": "STEGO",
-    "event": "result.read",
-    "user_id": "66d97a00-49ca-4632-a7a4-cc2ef67f6a9c",
-    "analysis_id": "68b04d12-d123-400a-85ba-6403eda8342a"
-  },
-  {
-    "service": "STEGO",
-    "event": "request.denied",
-    "status": 403
-  },
-  {
-    "service": "STEGO",
-    "event": "request.denied",
-    "status": 503
-  },
-  {
-    "event": "login.allowed",
-    "user_id": "66d97a00-49ca-4632-a7a4-cc2ef67f6a9c",
-    "timestamp": "2026-11-05T03:37:32.209Z"
-  },
-  {
-    "timestamp": "2026-11-05T03:37:32.375Z",
-    "service": "AUTH",
-    "event": "user.created",
-    "actor_id": "66d97a00-49ca-4632-a7a4-cc2ef67f6a9c",
-    "user_id": "f7fc4712-831e-49c1-891a-4923af1bb7f7"
-  },
-  {
-    "timestamp": "2026-11-05T03:37:32.534Z",
-    "service": "AUTH",
-    "event": "user.created",
-    "actor_id": "66d97a00-49ca-4632-a7a4-cc2ef67f6a9c",
-    "user_id": "c44970c1-21da-49d2-adc9-5424045f1520"
-  },
-  {
-    "timestamp": "2026-11-05T03:37:32.543Z",
-    "service": "AUTH",
-    "event": "role.assigned",
-    "actor_id": "66d97a00-49ca-4632-a7a4-cc2ef67f6a9c",
-    "user_id": "f7fc4712-831e-49c1-891a-4923af1bb7f7",
-    "role_id": "0ed4ad42-e749-45f9-814e-20e49cc102ad"
-  },
-  {
-    "timestamp": "2026-11-05T03:37:32.551Z",
-    "service": "AUTH",
-    "event": "role.assigned",
-    "actor_id": "66d97a00-49ca-4632-a7a4-cc2ef67f6a9c",
-    "user_id": "c44970c1-21da-49d2-adc9-5424045f1520",
-    "role_id": "0ed4ad42-e749-45f9-814e-20e49cc102ad"
-  },
-  {
-    "timestamp": "2026-11-05T03:37:32.558Z",
-    "service": "AUTH",
-    "event": "role.assigned",
-    "actor_id": "66d97a00-49ca-4632-a7a4-cc2ef67f6a9c",
-    "user_id": "f7fc4712-831e-49c1-891a-4923af1bb7f7",
-    "role_id": "a801467c-cf24-4631-aded-32c4719b053c"
-  },
-  {
-    "event": "request.rejected",
-    "status": 409,
-    "timestamp": "2026-11-05T03:37:32.568Z"
-  },
-  {
-    "event": "login.allowed",
-    "user_id": "f7fc4712-831e-49c1-891a-4923af1bb7f7",
-    "timestamp": "2026-11-05T03:37:32.721Z"
-  },
-  {
-    "event": "login.allowed",
-    "user_id": "c44970c1-21da-49d2-adc9-5424045f1520",
-    "timestamp": "2026-11-05T03:37:32.876Z"
-  },
-  {
-    "event": "login.denied",
-    "timestamp": "2026-11-05T03:37:33.022Z"
-  },
-  {
     "event": "request.rejected",
     "status": 401,
-    "timestamp": "2026-11-05T03:37:33.022Z"
+    "timestamp": "2026-11-05T04:52:26.298Z"
   },
   {
-    "timestamp": "2026-11-05T03:37:33.082Z",
+    "timestamp": "2026-11-05T04:52:26.306Z",
     "service": "AUTH",
-    "event": "authorization.decision",
-    "user_id": "c44970c1-21da-49d2-adc9-5424045f1520",
-    "action": "steganography.analyze",
-    "resource_id": null,
-    "allowed": false
+    "event": "access.denied",
+    "user_id": "cbf95ab8-20be-4310-9ad9-065a11c45ba7"
   },
   {
-    "timestamp": "2026-11-05T03:37:33.086Z",
+    "event": "request.rejected",
+    "status": 403,
+    "timestamp": "2026-11-05T04:52:26.306Z"
+  },
+  {
+    "timestamp": "2026-11-05T04:52:26.314Z",
+    "service": "AUTH",
+    "event": "access.denied",
+    "user_id": "cbf95ab8-20be-4310-9ad9-065a11c45ba7"
+  },
+  {
+    "event": "request.rejected",
+    "status": 403,
+    "timestamp": "2026-11-05T04:52:26.315Z"
+  },
+  {
+    "timestamp": "2026-11-05T04:52:26.322Z",
+    "service": "AUTH",
+    "event": "access.denied",
+    "user_id": "cbf95ab8-20be-4310-9ad9-065a11c45ba7"
+  },
+  {
+    "event": "request.rejected",
+    "status": 403,
+    "timestamp": "2026-11-05T04:52:26.322Z"
+  },
+  {
+    "timestamp": "2026-11-05T04:52:26.327Z",
+    "service": "AUTH",
+    "event": "access.denied",
+    "user_id": "cbf95ab8-20be-4310-9ad9-065a11c45ba7"
+  },
+  {
+    "event": "request.rejected",
+    "status": 403,
+    "timestamp": "2026-11-05T04:52:26.327Z"
+  },
+  {
+    "timestamp": "2026-11-05T04:52:26.331Z",
+    "service": "AUTH",
+    "event": "access.denied",
+    "user_id": "cbf95ab8-20be-4310-9ad9-065a11c45ba7"
+  },
+  {
+    "event": "request.rejected",
+    "status": 403,
+    "timestamp": "2026-11-05T04:52:26.332Z"
+  },
+  {
+    "timestamp": "2026-11-05T04:52:26.337Z",
+    "service": "AUTH",
+    "event": "access.denied",
+    "user_id": "cbf95ab8-20be-4310-9ad9-065a11c45ba7"
+  },
+  {
+    "event": "request.rejected",
+    "status": 403,
+    "timestamp": "2026-11-05T04:52:26.337Z"
+  },
+  {
+    "timestamp": "2026-11-05T04:52:26.342Z",
     "service": "AUTH",
     "event": "service.denied"
   },
   {
     "event": "request.rejected",
     "status": 401,
-    "timestamp": "2026-11-05T03:37:33.086Z"
+    "timestamp": "2026-11-05T04:52:26.342Z"
   },
   {
-    "timestamp": "2026-11-05T03:37:33.103Z",
+    "event": "login.allowed",
+    "user_id": "66d97a00-49ca-4632-a7a4-cc2ef67f6a9c",
+    "timestamp": "2026-11-05T04:52:26.572Z"
+  },
+  {
+    "timestamp": "2026-11-05T04:52:26.807Z",
     "service": "AUTH",
-    "event": "authorization.decision",
-    "user_id": "f7fc4712-831e-49c1-891a-4923af1bb7f7",
-    "action": "steganography.analyze",
-    "resource_id": null,
-    "allowed": true
+    "event": "user.created",
+    "actor_id": "66d97a00-49ca-4632-a7a4-cc2ef67f6a9c",
+    "user_id": "e3d47494-715e-460a-ae4a-30c6b38efe93"
   },
   {
-    "timestamp": "2026-11-05T03:37:33.134Z",
-    "service": "AUTH",
-    "event": "authorization.decision",
-    "user_id": "f7fc4712-831e-49c1-891a-4923af1bb7f7",
-    "action": "steganography.results.read",
-    "resource_id": "68b04d12-d123-400a-85ba-6403eda8342a",
-    "allowed": true
-  },
-  {
-    "timestamp": "2026-11-05T03:37:33.144Z",
+    "timestamp": "2026-11-05T04:52:26.822Z",
     "service": "AUTH",
     "event": "role.assigned",
     "actor_id": "66d97a00-49ca-4632-a7a4-cc2ef67f6a9c",
-    "user_id": "c44970c1-21da-49d2-adc9-5424045f1520",
-    "role_id": "a801467c-cf24-4631-aded-32c4719b053c"
+    "user_id": "cbf95ab8-20be-4310-9ad9-065a11c45ba7",
+    "role_id": "0ed4ad42-e749-45f9-814e-20e49cc102ad"
   },
   {
-    "timestamp": "2026-11-05T03:37:33.155Z",
+    "timestamp": "2026-11-05T04:52:26.834Z",
     "service": "AUTH",
-    "event": "authorization.decision",
-    "user_id": "c44970c1-21da-49d2-adc9-5424045f1520",
-    "action": "steganography.results.read",
-    "resource_id": "68b04d12-d123-400a-85ba-6403eda8342a",
-    "allowed": true
-  },
-  {
-    "timestamp": "2026-11-05T03:37:33.168Z",
-    "service": "AUTH",
-    "event": "authorization.decision",
-    "user_id": "66d97a00-49ca-4632-a7a4-cc2ef67f6a9c",
-    "action": "steganography.results.read",
-    "resource_id": "68b04d12-d123-400a-85ba-6403eda8342a",
-    "allowed": true
-  },
-  {
-    "timestamp": "2026-11-05T03:37:33.178Z",
-    "service": "AUTH",
-    "event": "role.unassigned",
+    "event": "role.assigned",
     "actor_id": "66d97a00-49ca-4632-a7a4-cc2ef67f6a9c",
-    "assignment_id": "810b0341-2746-46c4-a70d-0bf1882b92f4"
+    "user_id": "e3d47494-715e-460a-ae4a-30c6b38efe93",
+    "role_id": "0ed4ad42-e749-45f9-814e-20e49cc102ad"
   },
   {
-    "timestamp": "2026-11-05T03:37:33.189Z",
+    "timestamp": "2026-11-05T04:52:26.915Z",
     "service": "AUTH",
     "event": "authorization.decision",
-    "user_id": "f7fc4712-831e-49c1-891a-4923af1bb7f7",
+    "user_id": "cbf95ab8-20be-4310-9ad9-065a11c45ba7",
     "action": "steganography.analyze",
     "resource_id": null,
     "allowed": false
   },
   {
-    "timestamp": "2026-11-05T03:37:33.202Z",
+    "timestamp": "2026-11-05T04:52:26.928Z",
+    "service": "AUTH",
+    "event": "role.assigned",
+    "actor_id": "66d97a00-49ca-4632-a7a4-cc2ef67f6a9c",
+    "user_id": "cbf95ab8-20be-4310-9ad9-065a11c45ba7",
+    "role_id": "a801467c-cf24-4631-aded-32c4719b053c"
+  },
+  {
+    "event": "request.rejected",
+    "status": 409,
+    "timestamp": "2026-11-05T04:52:26.937Z"
+  },
+  {
+    "event": "request.rejected",
+    "status": 400,
+    "timestamp": "2026-11-05T04:52:26.947Z"
+  },
+  {
+    "timestamp": "2026-11-05T04:52:26.992Z",
     "service": "AUTH",
     "event": "authorization.decision",
-    "user_id": "66d97a00-49ca-4632-a7a4-cc2ef67f6a9c",
+    "user_id": "cbf95ab8-20be-4310-9ad9-065a11c45ba7",
     "action": "steganography.analyze",
     "resource_id": null,
     "allowed": true
   },
   {
-    "timestamp": "2026-11-05T03:37:33.239Z",
+    "timestamp": "2026-11-05T04:52:27.036Z",
     "service": "AUTH",
     "event": "authorization.decision",
-    "user_id": "66d97a00-49ca-4632-a7a4-cc2ef67f6a9c",
-    "action": "steganography.analyze",
-    "resource_id": null,
+    "user_id": "cbf95ab8-20be-4310-9ad9-065a11c45ba7",
+    "action": "steganography.results.read",
+    "resource_id": "716620c4-7494-42ac-b4ca-aeca94aa482d",
     "allowed": true
   },
   {
-    "timestamp": "2026-11-05T03:37:33.303Z",
+    "timestamp": "2026-11-05T04:52:27.054Z",
     "service": "AUTH",
-    "event": "session.revoked",
-    "user_id": "c44970c1-21da-49d2-adc9-5424045f1520"
+    "event": "authorization.decision",
+    "user_id": "66d97a00-49ca-4632-a7a4-cc2ef67f6a9c",
+    "action": "steganography.results.read",
+    "resource_id": "716620c4-7494-42ac-b4ca-aeca94aa482d",
+    "allowed": true
+  },
+  {
+    "timestamp": "2026-11-05T04:52:27.064Z",
+    "service": "AUTH",
+    "event": "role.assigned",
+    "actor_id": "66d97a00-49ca-4632-a7a4-cc2ef67f6a9c",
+    "user_id": "e3d47494-715e-460a-ae4a-30c6b38efe93",
+    "role_id": "a801467c-cf24-4631-aded-32c4719b053c"
+  },
+  {
+    "event": "login.allowed",
+    "user_id": "e3d47494-715e-460a-ae4a-30c6b38efe93",
+    "timestamp": "2026-11-05T04:52:27.216Z"
+  },
+  {
+    "timestamp": "2026-11-05T04:52:27.229Z",
+    "service": "AUTH",
+    "event": "authorization.decision",
+    "user_id": "e3d47494-715e-460a-ae4a-30c6b38efe93",
+    "action": "steganography.results.read",
+    "resource_id": "716620c4-7494-42ac-b4ca-aeca94aa482d",
+    "allowed": true
+  },
+  {
+    "timestamp": "2026-11-05T04:52:27.238Z",
+    "service": "AUTH",
+    "event": "role.unassigned",
+    "actor_id": "66d97a00-49ca-4632-a7a4-cc2ef67f6a9c",
+    "assignment_id": "efc53eb9-9d94-4751-b6ad-c13edb844c1b"
+  },
+  {
+    "timestamp": "2026-11-05T04:52:27.249Z",
+    "service": "AUTH",
+    "event": "authorization.decision",
+    "user_id": "cbf95ab8-20be-4310-9ad9-065a11c45ba7",
+    "action": "steganography.analyze",
+    "resource_id": null,
+    "allowed": false
+  },
+  {
+    "timestamp": "2026-11-05T04:52:27.264Z",
+    "service": "AUTH",
+    "event": "authorization.decision",
+    "user_id": "cbf95ab8-20be-4310-9ad9-065a11c45ba7",
+    "action": "steganography.results.read",
+    "resource_id": "716620c4-7494-42ac-b4ca-aeca94aa482d",
+    "allowed": false
+  },
+  {
+    "timestamp": "2026-11-05T04:52:27.279Z",
+    "service": "AUTH",
+    "event": "user.updated",
+    "actor_id": "66d97a00-49ca-4632-a7a4-cc2ef67f6a9c",
+    "user_id": "e3d47494-715e-460a-ae4a-30c6b38efe93"
   },
   {
     "event": "request.rejected",
     "status": 401,
-    "timestamp": "2026-11-05T03:37:33.307Z"
+    "timestamp": "2026-11-05T04:52:27.284Z"
   },
   {
-    "timestamp": "2026-11-05T03:38:07.435Z",
+    "timestamp": "2026-11-05T04:52:27.298Z",
+    "service": "AUTH",
+    "event": "authorization.decision",
+    "user_id": "66d97a00-49ca-4632-a7a4-cc2ef67f6a9c",
+    "action": "steganography.analyze",
+    "resource_id": null,
+    "allowed": true
+  },
+  {
+    "timestamp": "2026-11-05T04:52:27.346Z",
+    "service": "AUTH",
+    "event": "authorization.decision",
+    "user_id": "66d97a00-49ca-4632-a7a4-cc2ef67f6a9c",
+    "action": "steganography.analyze",
+    "resource_id": null,
+    "allowed": true
+  },
+  {
+    "timestamp": "2026-11-05T04:52:27.478Z",
+    "service": "AUTH",
+    "event": "authorization.decision",
+    "user_id": "cbf95ab8-20be-4310-9ad9-065a11c45ba7",
+    "action": "steganography.analyze",
+    "resource_id": null,
+    "allowed": false
+  },
+  {
+    "timestamp": "2026-11-05T04:52:46.436Z",
+    "service": "AUTH",
+    "event": "session.revoked",
+    "user_id": "cbf95ab8-20be-4310-9ad9-065a11c45ba7"
+  },
+  {
+    "event": "request.rejected",
+    "status": 401,
+    "timestamp": "2026-11-05T04:52:46.443Z"
+  },
+  {
+    "timestamp": "2026-11-05T04:52:46.463Z",
     "service": "AUTH",
     "event": "user.updated",
     "actor_id": "66d97a00-49ca-4632-a7a4-cc2ef67f6a9c",
-    "user_id": "f7fc4712-831e-49c1-891a-4923af1bb7f7"
-  },
-  {
-    "timestamp": "2026-11-05T03:38:07.445Z",
-    "service": "AUTH",
-    "event": "user.updated",
-    "actor_id": "66d97a00-49ca-4632-a7a4-cc2ef67f6a9c",
-    "user_id": "c44970c1-21da-49d2-adc9-5424045f1520"
+    "user_id": "cbf95ab8-20be-4310-9ad9-065a11c45ba7"
   }
 ]
