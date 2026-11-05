@@ -75,7 +75,7 @@ with httpx.Client(verify=context, timeout=15, trust_env=False) as client:
         buffer = io.BytesIO(); Image.new('RGB', (16, 16), (80, 40, 20)).save(buffer, format='PNG')
         content = buffer.getvalue()
         record = expect('ANALYST autorizado; detector real sin evidencia suficiente', client.post(stego + '/api/steganography/analyze',
-            headers=headers, files={'file': ('reference.png', content, 'image/png')}, timeout=100), 200)
+            headers=headers, files={'file': ('reference.png', content, 'image/png')}, timeout=150), 200)
         assert record['status'] == 'no_concluyente' and record['action'] == 'cuarentena'
         assert record['technique'] == 'LSB_POV_CHI_SQUARE_RGB_V1'
         assert record['indicators']['r_samples'] == 256

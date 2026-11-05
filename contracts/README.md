@@ -62,12 +62,15 @@ técnica, métricas, clasificación y limitaciones. La integridad se verifica an
 y después del detector. Una verificación obligatoria no disponible produce
 `no_concluyente`, aunque se conserven indicios individuales en los informes.
 JPEG y BMP sin detector aplicable permanecen no concluyentes. El adaptador usa
-proceso hijo sin shell, 90 s de timeout, 64 KiB de salida, 45 s de CPU y 3 GiB de
+proceso hijo sin shell, 120 s de timeout, 64 KiB de salida, 45 s de CPU y 3 GiB de
 espacio virtual Linux; los motores mantienen sus límites propios más restrictivos.
-El contenedor tiene 3 GiB y procesa una imagen a la vez para evitar multiplicar
+ClamAV tiene 75 s totales y 45 s de CPU para cargar las firmas oficiales; YARA
+y ExifTool mantienen sus cotas anteriores. El contenedor tiene 3 GiB y procesa una imagen a la vez para evitar multiplicar
 la memoria de las firmas. No se envían credenciales AUTH al worker.
 
 La evidencia T09 y de regresión está en `services/stego/INTEGRACION_DIANA.md`.
 Las pruebas de decisiones autorizadas usan un decisor de prueba; se conserva
 la comprobación real RS256 y existe una prueba con transporte AUTH inaccesible.
-No sustituye una sustentación completa con AUTH/BD y revocación real de roles.
+La ejecución posterior con AUTH/BD y revocación real de roles está documentada
+en [Backend V1 real](../docs/VALIDACION_BACKEND_V1.md); no debe confundirse con
+las pruebas aisladas que usan dobles.

@@ -32,6 +32,10 @@ clasificaciones oficiales, métricas reales y limitaciones. `reason` y `reports`
 amplían el contrato de manera opcional; los informes excluyen GPS y salida cruda.
 Ver [integración, decisiones y evidencias](INTEGRACION_DIANA.md). Las pruebas con
 dobles no se presentan como evidencia de motores reales.
+La [validación real de Backend V1](../../docs/VALIDACION_BACKEND_V1.md) ya ejecutó
+AUTH, PostgreSQL y STEGO, incluida revocación con el mismo JWT y persistencia.
+ClamAV tiene un perfil centralizado de 75 s/45 s CPU; el worker externo espera
+hasta 120 s. Se conserva el fallo cerrado y el límite de imágenes de 5 MiB.
 
 Docker se construye desde la raíz para reutilizar el código histórico sin iniciar
 otra API. `.dockerignore` admite sólo los archivos necesarios, excluyendo secretos:

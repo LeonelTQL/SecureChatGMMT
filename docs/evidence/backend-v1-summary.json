@@ -1,0 +1,29 @@
+{
+  "branch": "feature/stego-diana",
+  "initial_working_tree_clean": true,
+  "final_verifications": {
+    "auth_automated_tests": {"passed": 9, "failed": 0, "exit_code": 0, "command": "node --test test/auth.test.cjs", "database": "in-memory test double"},
+    "diana_regression_tests": {"passed": 150, "failed": 0, "subtests_passed": 14, "exit_code": 0},
+    "stego_automated_tests": {"passed": 44, "failed": 0, "exit_code": 0},
+    "existing_real_integration_checks": {"passed": 47, "failed": 0, "exit_code": 0},
+    "extended_real_integration_checks": {"passed": 73, "failed": 0, "exit_code": 0},
+    "postman_assertions": {"passed": 9, "failed": 0, "requests": 9, "exit_code": 0},
+    "total_passed": 332,
+    "total_failed": 0
+  },
+  "previous_failed_runs_retained": [
+    "backend-v1-live-first-attempt.json",
+    "backend-v1-live-second-attempt.json",
+    "backend-v1-automated-initial.json"
+  ],
+  "correction": {
+    "clamav_wall_timeout_seconds": 75,
+    "clamav_cpu_limit_seconds": 45,
+    "outer_detector_timeout_seconds": 120,
+    "clamav_memory_bytes_unchanged": 2147483648,
+    "max_image_bytes_unchanged": 5242880,
+    "lsb_algorithm_or_thresholds_changed": false,
+    "authentication_or_rbac_changed": false
+  },
+  "scope_note": "Counts combine test cases and explicit API/Postman assertions. Fourteen subcases are additional and are not included in 332. Real-backend evidence is separate from test doubles."
+}

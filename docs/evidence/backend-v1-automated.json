@@ -1,0 +1,26 @@
+{
+  "suites": [
+    {
+      "suite": "diana",
+      "exit_code": 0,
+      "passed": 150,
+      "failed": 0,
+      "subtests_passed": 14,
+      "elapsed_seconds": 80.735,
+      "real_engines": true,
+      "network": "none",
+      "memory": "3g"
+    },
+    {
+      "suite": "stego",
+      "exit_code": 0,
+      "passed": 44,
+      "failed": 0,
+      "subtests_passed": 0,
+      "elapsed_seconds": 111.468,
+      "real_engines": true,
+      "network": "none",
+      "memory": "3g"
+    }
+  ]
+}

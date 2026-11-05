@@ -1,0 +1,5 @@
+{
+  "files_checked": 19,
+  "findings": [],
+  "scope": "Static heuristic audit; no secret values printed; does not inspect Git history or certify absence of secrets."
+}

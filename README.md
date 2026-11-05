@@ -73,11 +73,17 @@ La integración usa PostgreSQL real, genera usuarios de prueba con nombres únic
 y los deshabilita al terminar. Guarda resultados depurados en
 `docs/evidence/integration.json`. El script ahora exige métricas del detector
 real y verificaciones completas sobre la muestra pequeña, que permanece no
-concluyente. La evidencia previa en ese JSON es histórica; no se reemplazó sin
-ejecutar la pila completa. La validación actual del detector y de Docker está en
-[STEGO](services/stego/VALIDACION_DIANA.md).
+concluyente. La pila completa AUTH/STEGO/PostgreSQL ya se verificó con cuentas
+de prueba, revocación real, fallos de AUTH y motores reales. Los resultados,
+correcciones y límites están en [validación real del Backend V1](docs/VALIDACION_BACKEND_V1.md).
+`scripts/validate-backend-v1.py` reproduce los escenarios ampliados sin borrar datos.
 
-Importa `postman/Backend-V1.postman_collection.json`; introduce contraseñas solo en variables locales no compartidas. Consulta `docs/PRUEBAS.md` para los escenarios del PDF.
+Importa `postman/Backend-V1.postman_collection.json`; introduce contraseñas solo
+en variables locales no compartidas. Sus nueve aserciones se verificaron con TLS
+activo. Consulta `docs/VALIDACION_BACKEND_V1.md` para escenarios y evidencia del PDF.
+La exportación depurada adicional es
+`postman/Backend-V1-demostracion.postman_collection.json`; su alcance y las
+variables privadas se explican en [guía de colecciones](postman/README.md).
 
 ## Operación
 

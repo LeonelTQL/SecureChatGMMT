@@ -1,0 +1,1074 @@
+{
+  "executed_at": "2026-11-05T09:08:35.538812+00:00",
+  "environment": "AUTH/STEGO/PostgreSQL reales en Docker, TLS verificado",
+  "tests": [
+    {
+      "test": "AUTH health con TLS verificado",
+      "passed": true,
+      "expected_http": 200,
+      "actual_http": 200
+    },
+    {
+      "test": "STEGO health con TLS verificado",
+      "passed": true,
+      "expected_http": 200,
+      "actual_http": 200
+    },
+    {
+      "test": "Sólo AUTH y STEGO como aplicaciones backend",
+      "passed": true,
+      "services": [
+        "auth-service",
+        "caddy",
+        "postgres",
+        "stego"
+      ]
+    },
+    {
+      "test": "Endpoint interno exige identidad de servicio",
+      "passed": true,
+      "expected_http": 401,
+      "actual_http": 401
+    },
+    {
+      "test": "Login administrativo para crear cuentas de prueba",
+      "passed": true,
+      "expected_http": 200,
+      "actual_http": 200
+    },
+    {
+      "test": "Roles reales persistidos disponibles",
+      "passed": true,
+      "expected_http": 200,
+      "actual_http": 200
+    },
+    {
+      "test": "Crear cuenta de prueba admin",
+      "passed": true,
+      "expected_http": 201,
+      "actual_http": 201
+    },
+    {
+      "test": "Asignación persistida admin/ADMIN",
+      "passed": true,
+      "expected_http": 201,
+      "actual_http": 201
+    },
+    {
+      "test": "Login real de admin",
+      "passed": true,
+      "expected_http": 200,
+      "actual_http": 200
+    },
+    {
+      "test": "JWT RS256 vigente de admin",
+      "passed": true,
+      "algorithm": "RS256",
+      "lifetime_seconds": 900
+    },
+    {
+      "test": "Crear cuenta de prueba analyst",
+      "passed": true,
+      "expected_http": 201,
+      "actual_http": 201
+    },
+    {
+      "test": "Asignación persistida analyst/ANALYST",
+      "passed": true,
+      "expected_http": 201,
+      "actual_http": 201
+    },
+    {
+      "test": "Asignación persistida analyst/USER",
+      "passed": true,
+      "expected_http": 201,
+      "actual_http": 201
+    },
+    {
+      "test": "Login real de analyst",
+      "passed": true,
+      "expected_http": 200,
+      "actual_http": 200
+    },
+    {
+      "test": "JWT RS256 vigente de analyst",
+      "passed": true,
+      "algorithm": "RS256",
+      "lifetime_seconds": 900
+    },
+    {
+      "test": "Crear cuenta de prueba other",
+      "passed": true,
+      "expected_http": 201,
+      "actual_http": 201
+    },
+    {
+      "test": "Asignación persistida other/ANALYST",
+      "passed": true,
+      "expected_http": 201,
+      "actual_http": 201
+    },
+    {
+      "test": "Login real de other",
+      "passed": true,
+      "expected_http": 200,
+      "actual_http": 200
+    },
+    {
+      "test": "JWT RS256 vigente de other",
+      "passed": true,
+      "algorithm": "RS256",
+      "lifetime_seconds": 900
+    },
+    {
+      "test": "Crear cuenta de prueba user",
+      "passed": true,
+      "expected_http": 201,
+      "actual_http": 201
+    },
+    {
+      "test": "Asignación persistida user/USER",
+      "passed": true,
+      "expected_http": 201,
+      "actual_http": 201
+    },
+    {
+      "test": "Login real de user",
+      "passed": true,
+      "expected_http": 200,
+      "actual_http": 200
+    },
+    {
+      "test": "JWT RS256 vigente de user",
+      "passed": true,
+      "algorithm": "RS256",
+      "lifetime_seconds": 900
+    },
+    {
+      "test": "Sin JWT",
+      "passed": true,
+      "expected_http": 401,
+      "actual_http": 401
+    },
+    {
+      "test": "Sin JWT: ningún registro ni archivo procesado",
+      "passed": true
+    },
+    {
+      "test": "JWT alterado",
+      "passed": true,
+      "expected_http": 401,
+      "actual_http": 401
+    },
+    {
+      "test": "JWT alterado: ningún registro ni archivo procesado",
+      "passed": true
+    },
+    {
+      "test": "USER sin privilegios y cabecera de rol falsificada",
+      "passed": true,
+      "expected_http": 403,
+      "actual_http": 403
+    },
+    {
+      "test": "USER sin privilegios y cabecera de rol falsificada: ningún registro ni archivo procesado",
+      "passed": true
+    },
+    {
+      "test": "ADMIN analiza PNG original",
+      "passed": true,
+      "expected_http": 200,
+      "actual_http": 200
+    },
+    {
+      "test": "ADMIN analiza PNG original: clasificación y política",
+      "passed": true,
+      "classification": "sin_indicios",
+      "action": "advertencia",
+      "elapsed_seconds": 16.922
+    },
+    {
+      "test": "ADMIN analiza PNG original: integridad y propietario",
+      "passed": true
+    },
+    {
+      "test": "ADMIN analiza PNG original: informes reales completos",
+      "passed": true
+    },
+    {
+      "test": "ADMIN analiza PNG original: sin motores indisponibles",
+      "passed": true
+    },
+    {
+      "test": "ANALYST analiza PNG con carga LSB",
+      "passed": true,
+      "expected_http": 200,
+      "actual_http": 200
+    },
+    {
+      "test": "ANALYST analiza PNG con carga LSB: clasificación y política",
+      "passed": true,
+      "classification": "sospechoso",
+      "action": "cuarentena",
+      "elapsed_seconds": 20.406
+    },
+    {
+      "test": "ANALYST analiza PNG con carga LSB: integridad y propietario",
+      "passed": true
+    },
+    {
+      "test": "ANALYST analiza PNG con carga LSB: informes reales completos",
+      "passed": true
+    },
+    {
+      "test": "ANALYST analiza PNG con carga LSB: sin motores indisponibles",
+      "passed": true
+    },
+    {
+      "test": "T09 contraste estadístico real",
+      "passed": true
+    },
+    {
+      "test": "ANALYST consulta resultado propio",
+      "passed": true,
+      "expected_http": 200,
+      "actual_http": 200
+    },
+    {
+      "test": "Métricas y política recuperadas",
+      "passed": true
+    },
+    {
+      "test": "ANALYST ajeno no accede",
+      "passed": true,
+      "expected_http": 403,
+      "actual_http": 403
+    },
+    {
+      "test": "ADMIN accede con autorización por recurso",
+      "passed": true,
+      "expected_http": 200,
+      "actual_http": 200
+    },
+    {
+      "test": "YARA detecta marcador inerte en PNG",
+      "passed": true,
+      "expected_http": 200,
+      "actual_http": 200
+    },
+    {
+      "test": "YARA detecta marcador inerte en PNG: clasificación y política",
+      "passed": true,
+      "classification": "sospechoso",
+      "action": "cuarentena",
+      "elapsed_seconds": 16.547
+    },
+    {
+      "test": "YARA detecta marcador inerte en PNG: integridad y propietario",
+      "passed": true
+    },
+    {
+      "test": "YARA detecta marcador inerte en PNG: informes reales completos",
+      "passed": true
+    },
+    {
+      "test": "YARA detecta marcador inerte en PNG: sin motores indisponibles",
+      "passed": true
+    },
+    {
+      "test": "Coincidencia YARA numérica",
+      "passed": true
+    },
+    {
+      "test": "JPEG con metadatos sin detector LSB",
+      "passed": true,
+      "expected_http": 200,
+      "actual_http": 200
+    },
+    {
+      "test": "JPEG con metadatos sin detector LSB: clasificación y política",
+      "passed": true,
+      "classification": "no_concluyente",
+      "action": "cuarentena",
+      "elapsed_seconds": 16.468
+    },
+    {
+      "test": "JPEG con metadatos sin detector LSB: integridad y propietario",
+      "passed": true
+    },
+    {
+      "test": "JPEG con metadatos sin detector LSB: informes reales completos",
+      "passed": true
+    },
+    {
+      "test": "JPEG con metadatos sin detector LSB: sin motores indisponibles",
+      "passed": true
+    },
+    {
+      "test": "ExifTool extrae software y omite datos sensibles",
+      "passed": true
+    },
+    {
+      "test": "ClamAV real detecta EICAR sin ejecutarlo",
+      "passed": true
+    },
+    {
+      "test": "Límite 5 MiB: exceso rechazado",
+      "passed": true,
+      "expected_http": 413,
+      "actual_http": 413
+    },
+    {
+      "test": "Carga excesiva no creó análisis ni archivo",
+      "passed": true
+    },
+    {
+      "test": "Imagen corrupta rechazada antes del detector",
+      "passed": true,
+      "expected_http": 415,
+      "actual_http": 415
+    },
+    {
+      "test": "Imagen corrupta no creó análisis ni archivo",
+      "passed": true
+    },
+    {
+      "test": "Revocar únicamente ANALYST de cuenta de prueba",
+      "passed": true,
+      "expected_http": 204,
+      "actual_http": 204
+    },
+    {
+      "test": "Mismo JWT sigue vigente al revocar",
+      "passed": true
+    },
+    {
+      "test": "Mismo JWT sin rol ANALYST queda denegado",
+      "passed": true,
+      "expected_http": 403,
+      "actual_http": 403
+    },
+    {
+      "test": "Mismo JWT sin rol ANALYST queda denegado: ningún registro ni archivo procesado",
+      "passed": true
+    },
+    {
+      "test": "Resultado propio también exige permiso vigente",
+      "passed": true,
+      "expected_http": 403,
+      "actual_http": 403
+    },
+    {
+      "test": "AUTH inaccesible deniega ADMIN antes del procesamiento",
+      "passed": true,
+      "expected_http": 503,
+      "actual_http": 503
+    },
+    {
+      "test": "AUTH inaccesible deniega ADMIN antes del procesamiento: ningún registro ni archivo procesado",
+      "passed": true
+    },
+    {
+      "test": "AUTH volvió sin generar análisis denegados",
+      "passed": true
+    },
+    {
+      "test": "Persistencia tras reiniciar STEGO",
+      "passed": true,
+      "expected_http": 200,
+      "actual_http": 200
+    },
+    {
+      "test": "SHA-256, métricas, informes y cuarentena persisten",
+      "passed": true
+    },
+    {
+      "test": "Objeto privado conserva bytes y permisos 0600",
+      "passed": true
+    },
+    {
+      "test": "No hay ruta pública de descarga",
+      "passed": true,
+      "expected_http": 404,
+      "actual_http": 404
+    }
+  ],
+  "analyses": [
+    {
+      "analysis_id": "79754e76-2641-4a3a-be2a-47259e291f58",
+      "user_id": "5078155f-c1d0-493d-a002-b9a3413315b5",
+      "filename": "original.png",
+      "sha256": "b3ce72875128204d384de9e80a1c9d38bbde9ab47080d172bc0e431e9fe0ce7c",
+      "created_at": "2026-11-05T09:09:14.951377Z",
+      "technique": "LSB_POV_CHI_SQUARE_RGB_V1",
+      "indicators": {
+        "input_bytes": 172917.0,
+        "image_width": 256.0,
+        "image_height": 256.0,
+        "r_samples": 65536.0,
+        "r_eligible_pairs": 128.0,
+        "r_coverage": 1.0,
+        "r_chi_square": 65536.0,
+        "r_degrees_of_freedom": 128.0,
+        "r_p_value": 0.0,
+        "r_lsb_one_fraction": 0.0,
+        "g_samples": 65536.0,
+        "g_eligible_pairs": 128.0,
+        "g_coverage": 1.0,
+        "g_chi_square": 65536.0,
+        "g_degrees_of_freedom": 128.0,
+        "g_p_value": 0.0,
+        "g_lsb_one_fraction": 0.0,
+        "b_samples": 65536.0,
+        "b_eligible_pairs": 128.0,
+        "b_coverage": 1.0,
+        "b_chi_square": 65536.0,
+        "b_degrees_of_freedom": 128.0,
+        "b_p_value": 0.0,
+        "b_lsb_one_fraction": 0.0
+      },
+      "status": "sin_indicios",
+      "action": "advertencia",
+      "limitations": "Un p alto indica compatibilidad con pares equiprobables; no probabilidad de esteganografía. Ruido natural, imágenes sintéticas y procesadas pueden producir falsos positivos. Cargas pequeñas, localizadas, sesgadas o métodos adaptativos pueden pasar inadvertidos. Píxeles correlacionados limitan la aproximación Chi-cuadrado; umbrales heurísticos sin calibración poblacional. Sólo RGB/RGBA de 8 bits y un fotograma; no se examinan alfa, metadatos ni contenido del mensaje. SIN_INDICIOS no garantiza ausencia de esteganografía, malware ni seguridad del archivo. La ausencia de coincidencias antimalware no garantiza seguridad. El archivo permanece privado.",
+      "reason": "equiprobabilidad_rechazada_en_tres_canales",
+      "reports": {
+        "validation": {
+          "valid": true,
+          "reason": "image_valid",
+          "policy": {
+            "max_bytes": 5242880,
+            "max_width": 4096,
+            "max_height": 4096,
+            "max_pixels": 4000000
+          },
+          "format": "PNG",
+          "mime": "image/png",
+          "width": 256,
+          "height": 256
+        },
+        "antimalware": {
+          "clamav": {
+            "engine": "clamav",
+            "status": "CLEAR",
+            "reason": "no_known_threats_found",
+            "indicators": {
+              "limits": {
+                "timeout_seconds": 75,
+                "cpu_seconds": 45,
+                "memory_bytes": 2147483648,
+                "max_bytes": 5242880,
+                "output_bytes": 65536
+              },
+              "database_files": [
+                "main.cvd",
+                "daily.cvd"
+              ],
+              "exit_code": 0,
+              "scanned_files": 1,
+              "detections": 0,
+              "known_signatures": 3628165,
+              "engine_version": "1.4.3"
+            }
+          },
+          "yara": {
+            "engine": "yara",
+            "status": "CLEAR",
+            "reason": "no_rule_matches",
+            "indicators": {
+              "limits": {
+                "timeout_seconds": 5,
+                "cpu_seconds": 5,
+                "memory_bytes": 268435456,
+                "max_bytes": 5242880,
+                "output_bytes": 65536
+              },
+              "rules_sha256": "2050eabef2f14f498d51e14a7247a4b595b0a8b0ce7375fd08c4a4a2449d551d",
+              "matched_rules": 0
+            }
+          }
+        },
+        "metadata": {
+          "status": "ABSENT",
+          "reason": "no_allowlisted_metadata",
+          "metadata": {
+            "format": "PNG",
+            "mime": "image/png",
+            "width": 256,
+            "height": 256,
+            "exif": {},
+            "dates": {},
+            "software_families": [],
+            "has_allowlisted_exif": false
+          },
+          "issues": [],
+          "limits": {
+            "timeout_seconds": 5,
+            "cpu_seconds": 3,
+            "memory_bytes": 268435456,
+            "max_bytes": 5242880,
+            "output_bytes": 65536
+          },
+          "engine": "exiftool"
+        },
+        "lsb": {
+          "classification": "SIN_INDICIOS",
+          "reason": "equiprobabilidad_rechazada_en_tres_canales",
+          "policy": {
+            "max_bytes": 10485760,
+            "max_width": 4096,
+            "max_height": 4096,
+            "max_pixels": 4000000,
+            "min_pixels": 4096,
+            "min_pair_count": 10,
+            "min_pairs": 32,
+            "min_coverage": 0.9,
+            "suspicious_p": 0.05,
+            "no_indications_p": 0.001
+          },
+          "channels": [
+            {
+              "channel": "R",
+              "samples": 65536,
+              "eligible_pairs": 128,
+              "coverage": 1.0,
+              "chi_square": 65536.0,
+              "degrees_of_freedom": 128,
+              "p_value": 0.0,
+              "lsb_one_fraction": 0.0,
+              "sufficient": true
+            },
+            {
+              "channel": "G",
+              "samples": 65536,
+              "eligible_pairs": 128,
+              "coverage": 1.0,
+              "chi_square": 65536.0,
+              "degrees_of_freedom": 128,
+              "p_value": 0.0,
+              "lsb_one_fraction": 0.0,
+              "sufficient": true
+            },
+            {
+              "channel": "B",
+              "samples": 65536,
+              "eligible_pairs": 128,
+              "coverage": 1.0,
+              "chi_square": 65536.0,
+              "degrees_of_freedom": 128,
+              "p_value": 0.0,
+              "lsb_one_fraction": 0.0,
+              "sufficient": true
+            }
+          ],
+          "width": 256,
+          "height": 256,
+          "technique": "LSB_POV_CHI_SQUARE_RGB_V1",
+          "limitations": [
+            "Un p alto indica compatibilidad con pares equiprobables; no probabilidad de esteganografía.",
+            "Ruido natural, imágenes sintéticas y procesadas pueden producir falsos positivos.",
+            "Cargas pequeñas, localizadas, sesgadas o métodos adaptativos pueden pasar inadvertidos.",
+            "Píxeles correlacionados limitan la aproximación Chi-cuadrado; umbrales heurísticos sin calibración poblacional.",
+            "Sólo RGB/RGBA de 8 bits y un fotograma; no se examinan alfa, metadatos ni contenido del mensaje.",
+            "SIN_INDICIOS no garantiza ausencia de esteganografía, malware ni seguridad del archivo."
+          ]
+        }
+      }
+    },
+    {
+      "analysis_id": "44bc2456-66ff-4b78-b45c-150a766beb02",
+      "user_id": "c0cfcb58-47bf-41a2-b3d0-e8f3f72e60f9",
+      "filename": "lsb-full.png",
+      "sha256": "91f915f46a4799b256c3111fe8d066b9fe46b0055b9f71df2a962fdb244a8f9e",
+      "created_at": "2026-11-05T09:09:31.821940Z",
+      "technique": "LSB_POV_CHI_SQUARE_RGB_V1",
+      "indicators": {
+        "input_bytes": 197035.0,
+        "image_width": 256.0,
+        "image_height": 256.0,
+        "r_samples": 65536.0,
+        "r_eligible_pairs": 128.0,
+        "r_coverage": 1.0,
+        "r_chi_square": 115.40380489914214,
+        "r_degrees_of_freedom": 128.0,
+        "r_p_value": 0.7801335382780753,
+        "r_lsb_one_fraction": 0.5028839111328125,
+        "g_samples": 65536.0,
+        "g_eligible_pairs": 128.0,
+        "g_coverage": 1.0,
+        "g_chi_square": 107.1651566551289,
+        "g_degrees_of_freedom": 128.0,
+        "g_p_value": 0.9095728096236689,
+        "g_lsb_one_fraction": 0.501739501953125,
+        "b_samples": 65536.0,
+        "b_eligible_pairs": 128.0,
+        "b_coverage": 1.0,
+        "b_chi_square": 114.41665048356907,
+        "b_degrees_of_freedom": 128.0,
+        "b_p_value": 0.7992471888438138,
+        "b_lsb_one_fraction": 0.4989166259765625
+      },
+      "status": "sospechoso",
+      "action": "cuarentena",
+      "limitations": "Un p alto indica compatibilidad con pares equiprobables; no probabilidad de esteganografía. Ruido natural, imágenes sintéticas y procesadas pueden producir falsos positivos. Cargas pequeñas, localizadas, sesgadas o métodos adaptativos pueden pasar inadvertidos. Píxeles correlacionados limitan la aproximación Chi-cuadrado; umbrales heurísticos sin calibración poblacional. Sólo RGB/RGBA de 8 bits y un fotograma; no se examinan alfa, metadatos ni contenido del mensaje. SIN_INDICIOS no garantiza ausencia de esteganografía, malware ni seguridad del archivo. La ausencia de coincidencias antimalware no garantiza seguridad. El archivo permanece privado.",
+      "reason": "pares_equiprobables_en_al_menos_dos_canales",
+      "reports": {
+        "validation": {
+          "valid": true,
+          "reason": "image_valid",
+          "policy": {
+            "max_bytes": 5242880,
+            "max_width": 4096,
+            "max_height": 4096,
+            "max_pixels": 4000000
+          },
+          "format": "PNG",
+          "mime": "image/png",
+          "width": 256,
+          "height": 256
+        },
+        "antimalware": {
+          "clamav": {
+            "engine": "clamav",
+            "status": "CLEAR",
+            "reason": "no_known_threats_found",
+            "indicators": {
+              "limits": {
+                "timeout_seconds": 75,
+                "cpu_seconds": 45,
+                "memory_bytes": 2147483648,
+                "max_bytes": 5242880,
+                "output_bytes": 65536
+              },
+              "database_files": [
+                "main.cvd",
+                "daily.cvd"
+              ],
+              "exit_code": 0,
+              "scanned_files": 1,
+              "detections": 0,
+              "known_signatures": 3628165,
+              "engine_version": "1.4.3"
+            }
+          },
+          "yara": {
+            "engine": "yara",
+            "status": "CLEAR",
+            "reason": "no_rule_matches",
+            "indicators": {
+              "limits": {
+                "timeout_seconds": 5,
+                "cpu_seconds": 5,
+                "memory_bytes": 268435456,
+                "max_bytes": 5242880,
+                "output_bytes": 65536
+              },
+              "rules_sha256": "2050eabef2f14f498d51e14a7247a4b595b0a8b0ce7375fd08c4a4a2449d551d",
+              "matched_rules": 0
+            }
+          }
+        },
+        "metadata": {
+          "status": "ABSENT",
+          "reason": "no_allowlisted_metadata",
+          "metadata": {
+            "format": "PNG",
+            "mime": "image/png",
+            "width": 256,
+            "height": 256,
+            "exif": {},
+            "dates": {},
+            "software_families": [],
+            "has_allowlisted_exif": false
+          },
+          "issues": [],
+          "limits": {
+            "timeout_seconds": 5,
+            "cpu_seconds": 3,
+            "memory_bytes": 268435456,
+            "max_bytes": 5242880,
+            "output_bytes": 65536
+          },
+          "engine": "exiftool"
+        },
+        "lsb": {
+          "classification": "SOSPECHOSO",
+          "reason": "pares_equiprobables_en_al_menos_dos_canales",
+          "policy": {
+            "max_bytes": 10485760,
+            "max_width": 4096,
+            "max_height": 4096,
+            "max_pixels": 4000000,
+            "min_pixels": 4096,
+            "min_pair_count": 10,
+            "min_pairs": 32,
+            "min_coverage": 0.9,
+            "suspicious_p": 0.05,
+            "no_indications_p": 0.001
+          },
+          "channels": [
+            {
+              "channel": "R",
+              "samples": 65536,
+              "eligible_pairs": 128,
+              "coverage": 1.0,
+              "chi_square": 115.40380489914214,
+              "degrees_of_freedom": 128,
+              "p_value": 0.7801335382780753,
+              "lsb_one_fraction": 0.5028839111328125,
+              "sufficient": true
+            },
+            {
+              "channel": "G",
+              "samples": 65536,
+              "eligible_pairs": 128,
+              "coverage": 1.0,
+              "chi_square": 107.1651566551289,
+              "degrees_of_freedom": 128,
+              "p_value": 0.9095728096236689,
+              "lsb_one_fraction": 0.501739501953125,
+              "sufficient": true
+            },
+            {
+              "channel": "B",
+              "samples": 65536,
+              "eligible_pairs": 128,
+              "coverage": 1.0,
+              "chi_square": 114.41665048356907,
+              "degrees_of_freedom": 128,
+              "p_value": 0.7992471888438138,
+              "lsb_one_fraction": 0.4989166259765625,
+              "sufficient": true
+            }
+          ],
+          "width": 256,
+          "height": 256,
+          "technique": "LSB_POV_CHI_SQUARE_RGB_V1",
+          "limitations": [
+            "Un p alto indica compatibilidad con pares equiprobables; no probabilidad de esteganografía.",
+            "Ruido natural, imágenes sintéticas y procesadas pueden producir falsos positivos.",
+            "Cargas pequeñas, localizadas, sesgadas o métodos adaptativos pueden pasar inadvertidos.",
+            "Píxeles correlacionados limitan la aproximación Chi-cuadrado; umbrales heurísticos sin calibración poblacional.",
+            "Sólo RGB/RGBA de 8 bits y un fotograma; no se examinan alfa, metadatos ni contenido del mensaje.",
+            "SIN_INDICIOS no garantiza ausencia de esteganografía, malware ni seguridad del archivo."
+          ]
+        }
+      }
+    },
+    {
+      "analysis_id": "b46de619-e6fc-49e8-b722-a7ed997f3d2e",
+      "user_id": "5078155f-c1d0-493d-a002-b9a3413315b5",
+      "filename": "yara-test.png",
+      "sha256": "287bf1ae0fda56c37798529edf24c42fefc1aa202d6ff0a3f01809373df5c995",
+      "created_at": "2026-11-05T09:09:52.329034Z",
+      "technique": "LSB_POV_CHI_SQUARE_RGB_V1",
+      "indicators": {
+        "input_bytes": 228.0,
+        "image_width": 64.0,
+        "image_height": 64.0,
+        "r_samples": 4096.0,
+        "r_eligible_pairs": 1.0,
+        "r_coverage": 1.0,
+        "r_chi_square": 4096.0,
+        "r_degrees_of_freedom": 1.0,
+        "r_p_value": 0.0,
+        "r_lsb_one_fraction": 0.0,
+        "g_samples": 4096.0,
+        "g_eligible_pairs": 1.0,
+        "g_coverage": 1.0,
+        "g_chi_square": 4096.0,
+        "g_degrees_of_freedom": 1.0,
+        "g_p_value": 0.0,
+        "g_lsb_one_fraction": 0.0,
+        "b_samples": 4096.0,
+        "b_eligible_pairs": 1.0,
+        "b_coverage": 1.0,
+        "b_chi_square": 4096.0,
+        "b_degrees_of_freedom": 1.0,
+        "b_p_value": 0.0,
+        "b_lsb_one_fraction": 1.0
+      },
+      "status": "sospechoso",
+      "action": "cuarentena",
+      "limitations": "Un p alto indica compatibilidad con pares equiprobables; no probabilidad de esteganografía. Ruido natural, imágenes sintéticas y procesadas pueden producir falsos positivos. Cargas pequeñas, localizadas, sesgadas o métodos adaptativos pueden pasar inadvertidos. Píxeles correlacionados limitan la aproximación Chi-cuadrado; umbrales heurísticos sin calibración poblacional. Sólo RGB/RGBA de 8 bits y un fotograma; no se examinan alfa, metadatos ni contenido del mensaje. SIN_INDICIOS no garantiza ausencia de esteganografía, malware ni seguridad del archivo. La ausencia de coincidencias antimalware no garantiza seguridad. El archivo permanece privado.",
+      "reason": "antimalware_detected",
+      "reports": {
+        "validation": {
+          "valid": true,
+          "reason": "image_valid",
+          "policy": {
+            "max_bytes": 5242880,
+            "max_width": 4096,
+            "max_height": 4096,
+            "max_pixels": 4000000
+          },
+          "format": "PNG",
+          "mime": "image/png",
+          "width": 64,
+          "height": 64
+        },
+        "antimalware": {
+          "clamav": {
+            "engine": "clamav",
+            "status": "CLEAR",
+            "reason": "no_known_threats_found",
+            "indicators": {
+              "limits": {
+                "timeout_seconds": 75,
+                "cpu_seconds": 45,
+                "memory_bytes": 2147483648,
+                "max_bytes": 5242880,
+                "output_bytes": 65536
+              },
+              "database_files": [
+                "main.cvd",
+                "daily.cvd"
+              ],
+              "exit_code": 0,
+              "scanned_files": 1,
+              "detections": 0,
+              "known_signatures": 3628165,
+              "engine_version": "1.4.3"
+            }
+          },
+          "yara": {
+            "engine": "yara",
+            "status": "DETECTED",
+            "reason": "yara_indicator_detected",
+            "indicators": {
+              "limits": {
+                "timeout_seconds": 5,
+                "cpu_seconds": 5,
+                "memory_bytes": 268435456,
+                "max_bytes": 5242880,
+                "output_bytes": 65536
+              },
+              "rules_sha256": "2050eabef2f14f498d51e14a7247a4b595b0a8b0ce7375fd08c4a4a2449d551d",
+              "matched_rules": 1
+            }
+          }
+        },
+        "metadata": {
+          "status": "ABSENT",
+          "reason": "no_allowlisted_metadata",
+          "metadata": {
+            "format": "PNG",
+            "mime": "image/png",
+            "width": 64,
+            "height": 64,
+            "exif": {},
+            "dates": {},
+            "software_families": [],
+            "has_allowlisted_exif": false
+          },
+          "issues": [],
+          "limits": {
+            "timeout_seconds": 5,
+            "cpu_seconds": 3,
+            "memory_bytes": 268435456,
+            "max_bytes": 5242880,
+            "output_bytes": 65536
+          },
+          "engine": "exiftool"
+        },
+        "lsb": {
+          "classification": "NO_CONCLUYENTE",
+          "reason": "muestra_o_cobertura_insuficiente",
+          "policy": {
+            "max_bytes": 10485760,
+            "max_width": 4096,
+            "max_height": 4096,
+            "max_pixels": 4000000,
+            "min_pixels": 4096,
+            "min_pair_count": 10,
+            "min_pairs": 32,
+            "min_coverage": 0.9,
+            "suspicious_p": 0.05,
+            "no_indications_p": 0.001
+          },
+          "channels": [
+            {
+              "channel": "R",
+              "samples": 4096,
+              "eligible_pairs": 1,
+              "coverage": 1.0,
+              "chi_square": 4096.0,
+              "degrees_of_freedom": 1,
+              "p_value": 0.0,
+              "lsb_one_fraction": 0.0,
+              "sufficient": false
+            },
+            {
+              "channel": "G",
+              "samples": 4096,
+              "eligible_pairs": 1,
+              "coverage": 1.0,
+              "chi_square": 4096.0,
+              "degrees_of_freedom": 1,
+              "p_value": 0.0,
+              "lsb_one_fraction": 0.0,
+              "sufficient": false
+            },
+            {
+              "channel": "B",
+              "samples": 4096,
+              "eligible_pairs": 1,
+              "coverage": 1.0,
+              "chi_square": 4096.0,
+              "degrees_of_freedom": 1,
+              "p_value": 0.0,
+              "lsb_one_fraction": 1.0,
+              "sufficient": false
+            }
+          ],
+          "width": 64,
+          "height": 64,
+          "technique": "LSB_POV_CHI_SQUARE_RGB_V1",
+          "limitations": [
+            "Un p alto indica compatibilidad con pares equiprobables; no probabilidad de esteganografía.",
+            "Ruido natural, imágenes sintéticas y procesadas pueden producir falsos positivos.",
+            "Cargas pequeñas, localizadas, sesgadas o métodos adaptativos pueden pasar inadvertidos.",
+            "Píxeles correlacionados limitan la aproximación Chi-cuadrado; umbrales heurísticos sin calibración poblacional.",
+            "Sólo RGB/RGBA de 8 bits y un fotograma; no se examinan alfa, metadatos ni contenido del mensaje.",
+            "SIN_INDICIOS no garantiza ausencia de esteganografía, malware ni seguridad del archivo."
+          ]
+        }
+      }
+    },
+    {
+      "analysis_id": "2f3fcb1f-833e-4cda-92d0-2ea1ddbeed20",
+      "user_id": "5078155f-c1d0-493d-a002-b9a3413315b5",
+      "filename": "metadata.jpg",
+      "sha256": "8f31c2bfa540c6e63ceea7a0b896ef6c7a34f9b30b6f645111c81ea3f8370ece",
+      "created_at": "2026-11-05T09:10:08.881930Z",
+      "technique": "IMAGE_VALIDATION_V1",
+      "indicators": {
+        "input_bytes": 889.0,
+        "image_width": 64.0,
+        "image_height": 64.0
+      },
+      "status": "no_concluyente",
+      "action": "cuarentena",
+      "limitations": "La validación de formato no demuestra seguridad ni ausencia de datos ocultos. La ausencia de coincidencias antimalware no garantiza seguridad. El archivo permanece privado.",
+      "reason": "jpeg_detector_not_available",
+      "reports": {
+        "validation": {
+          "valid": true,
+          "reason": "image_valid",
+          "policy": {
+            "max_bytes": 5242880,
+            "max_width": 4096,
+            "max_height": 4096,
+            "max_pixels": 4000000
+          },
+          "format": "JPEG",
+          "mime": "image/jpeg",
+          "width": 64,
+          "height": 64
+        },
+        "antimalware": {
+          "clamav": {
+            "engine": "clamav",
+            "status": "CLEAR",
+            "reason": "no_known_threats_found",
+            "indicators": {
+              "limits": {
+                "timeout_seconds": 75,
+                "cpu_seconds": 45,
+                "memory_bytes": 2147483648,
+                "max_bytes": 5242880,
+                "output_bytes": 65536
+              },
+              "database_files": [
+                "main.cvd",
+                "daily.cvd"
+              ],
+              "exit_code": 0,
+              "scanned_files": 1,
+              "detections": 0,
+              "known_signatures": 3628165,
+              "engine_version": "1.4.3"
+            }
+          },
+          "yara": {
+            "engine": "yara",
+            "status": "CLEAR",
+            "reason": "no_rule_matches",
+            "indicators": {
+              "limits": {
+                "timeout_seconds": 5,
+                "cpu_seconds": 5,
+                "memory_bytes": 268435456,
+                "max_bytes": 5242880,
+                "output_bytes": 65536
+              },
+              "rules_sha256": "2050eabef2f14f498d51e14a7247a4b595b0a8b0ce7375fd08c4a4a2449d551d",
+              "matched_rules": 0
+            }
+          }
+        },
+        "metadata": {
+          "status": "EXTRACTED",
+          "reason": "metadata_extracted",
+          "metadata": {
+            "format": "JPEG",
+            "mime": "image/jpeg",
+            "width": 64,
+            "height": 64,
+            "exif": {},
+            "dates": {
+              "modify_date": "2026-11-04"
+            },
+            "software_families": [
+              "GIMP"
+            ],
+            "has_allowlisted_exif": true
+          },
+          "issues": [],
+          "limits": {
+            "timeout_seconds": 5,
+            "cpu_seconds": 3,
+            "memory_bytes": 268435456,
+            "max_bytes": 5242880,
+            "output_bytes": 65536
+          },
+          "engine": "exiftool"
+        }
+      }
+    }
+  ],
+  "test_accounts_disabled": [
+    "5078155f-c1d0-493d-a002-b9a3413315b5",
+    "c0cfcb58-47bf-41a2-b3d0-e8f3f72e60f9",
+    "b401252e-4445-4e3d-b172-2398033bde5d",
+    "dc2a0987-8947-4606-9e00-d9d8005bdbaf"
+  ],
+  "errors": [],
+  "clamav_eicar_direct_module_test": {
+    "engine": "clamav",
+    "status": "DETECTED",
+    "reason": "clamav_threat_detected",
+    "indicators": {
+      "limits": {
+        "timeout_seconds": 75,
+        "cpu_seconds": 45,
+        "memory_bytes": 2147483648,
+        "max_bytes": 5242880,
+        "output_bytes": 65536
+      },
+      "database_files": [
+        "main.cvd",
+        "daily.cvd"
+      ],
+      "exit_code": 1,
+      "detections": 1
+    }
+  },
+  "bootstrap_test_session_revoked": true,
+  "summary": {
+    "passed": 73,
+    "failed": 0,
+    "errors": 0,
+    "test_accounts_created": 4,
+    "test_accounts_disabled": 4
+  }
+}

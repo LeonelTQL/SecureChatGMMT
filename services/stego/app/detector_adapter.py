@@ -61,7 +61,7 @@ async def analyze(path: Path):
         return bytes(output)
     try:
         # Lectura acotada: un detector defectuoso tampoco puede inundar la memoria con stdout.
-        output = await asyncio.wait_for(read_bounded(), timeout=90)
+        output = await asyncio.wait_for(read_bounded(), timeout=120)
         await asyncio.wait_for(process.wait(), timeout=2)
         if process.returncode != 0: raise ValueError("Error de detector")
         return validate_result(json.loads(output))

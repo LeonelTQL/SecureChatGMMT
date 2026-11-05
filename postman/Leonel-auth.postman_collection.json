@@ -11,6 +11,14 @@
     {
       "key": "access_token",
       "value": ""
+    },
+    {
+      "key": "password",
+      "value": ""
+    },
+    {
+      "key": "invalid_password",
+      "value": ""
     }
   ],
   "item": [
@@ -27,7 +35,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"email\": \"leonel@example.com\",\n  \"password\": \"ClaveDePrueba123!\",\n  \"username\": \"leonel\"\n}"
+          "raw": "{\n  \"email\": \"leonel@example.com\",\n  \"password\": \"{{password}}\",\n  \"username\": \"leonel\"\n}"
         }
       }
     },
@@ -56,7 +64,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\"email\":\"leonel@example.com\",\"password\":\"ClaveDePrueba123!\"}"
+          "raw": "{\n  \"email\": \"leonel@example.com\",\n  \"password\": \"{{password}}\"\n}"
         }
       }
     },
@@ -86,7 +94,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\"email\":\"leonel@example.com\",\"password\":\"Incorrecta12345!\"}"
+          "raw": "{\n  \"email\": \"leonel@example.com\",\n  \"password\": \"{{invalid_password}}\"\n}"
         }
       }
     },

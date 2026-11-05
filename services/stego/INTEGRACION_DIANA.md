@@ -76,8 +76,10 @@ umbrales heurísticos documentados en `services/file-analyzer/STEGO_LSB.md`.
 
 El antiguo worker de 8 s CPU/384 MiB y timeout de 10 s no podía cargar el pipeline
 que incluye ClamAV (hasta 45 s y 2 GiB). Se ajusta a 45 s CPU, 3 GiB de espacio
-virtual y 90 s de tiempo total, manteniendo salida de 64 KiB. Los motores siguen
-limitados por el ejecutor histórico y no se relajan sus límites. El contenedor
+virtual y 120 s de tiempo total, manteniendo salida de 64 KiB. ClamAV dispone
+de 75 s totales/45 s CPU, perfil centralizado tras comprobar insuficiencia de
+45 s/30 s CPU en el despliegue completo. La memoria y las cotas de YARA/ExifTool
+no cambian. Los motores siguen limitados por el ejecutor histórico. El contenedor
 pasa de 768 MiB a 3 GiB y la concurrencia interna de dos a una imagen por worker.
 No se deshabilitan read-only, cap_drop, no-new-privileges, pids_limit ni tmpfs.
 
@@ -90,12 +92,18 @@ vencidas. NumPy/SciPy se añaden con versiones fijadas a ambos manifiestos activ
 
 ## Evidencia y pendientes
 
+Actualización: la [validación real del Backend V1](../../docs/VALIDACION_BACKEND_V1.md)
+ya comprobó la pila AUTH/PostgreSQL, revocación y autorización por recurso. Las
+advertencias siguientes sobre el alcance de pruebas con dobles se conservan
+para distinguirlas de esa evidencia posterior.
+
 Las suites históricas y activas se ejecutan por separado porque ambas usan el
 nombre de paquete app. Las 150 pruebas de Diana usan su entorno original; STEGO
 usa su lock. Las pruebas autorizadas usan JWT RS256 reales y un decisor controlado
 para aislar la integración. También se prueba una conexión HTTPS AUTH realmente
 inaccesible. No equivale a levantar AUTH/PostgreSQL y demostrar revocación real
-de roles persistidos: esa sustentación completa permanece pendiente.
+de roles persistidos. Esa prueba completa ya se realizó en la validación
+Backend V1 enlazada arriba; se conserva la distinción del alcance inicial.
 
 Los resultados finales y comandos se registran en `VALIDACION_DIANA.md`.
 La existencia de herramientas y ausencia de coincidencias no demuestra cobertura

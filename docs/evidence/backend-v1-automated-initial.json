@@ -1,0 +1,13 @@
+{
+  "suite": "Diana historical tests in final Docker image before resource correction",
+  "passed": 149,
+  "failed": 1,
+  "subtests_passed": 14,
+  "elapsed_seconds": 88.78,
+  "failure": "test_real_clamav_eicar_and_clean_image",
+  "observed_status": "UNAVAILABLE",
+  "reason": "clamav_failed",
+  "exit_code": -9,
+  "previous_limits": {"timeout_seconds": 45, "cpu_seconds": 30, "memory_bytes": 2147483648},
+  "note": "Failure retained; original statistical indicators and expected classifications were not changed."
+}

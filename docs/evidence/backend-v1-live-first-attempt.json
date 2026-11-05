@@ -1,0 +1,277 @@
+{
+  "executed_at": "2026-11-05T07:44:31.451398+00:00",
+  "environment": "AUTH/STEGO/PostgreSQL reales en Docker, TLS verificado",
+  "tests": [
+    {
+      "test": "AUTH health con TLS verificado",
+      "passed": true,
+      "expected_http": 200,
+      "actual_http": 200
+    },
+    {
+      "test": "STEGO health con TLS verificado",
+      "passed": true,
+      "expected_http": 200,
+      "actual_http": 200
+    },
+    {
+      "test": "Sólo AUTH y STEGO como aplicaciones backend",
+      "passed": true,
+      "services": [
+        "auth-service",
+        "caddy",
+        "postgres",
+        "stego"
+      ]
+    },
+    {
+      "test": "Endpoint interno exige identidad de servicio",
+      "passed": true,
+      "expected_http": 401,
+      "actual_http": 401
+    },
+    {
+      "test": "Login administrativo para crear cuentas de prueba",
+      "passed": true,
+      "expected_http": 200,
+      "actual_http": 200
+    },
+    {
+      "test": "Roles reales persistidos disponibles",
+      "passed": true,
+      "expected_http": 200,
+      "actual_http": 200
+    },
+    {
+      "test": "Crear cuenta de prueba admin",
+      "passed": true,
+      "expected_http": 201,
+      "actual_http": 201
+    },
+    {
+      "test": "Asignación persistida admin/ADMIN",
+      "passed": true,
+      "expected_http": 201,
+      "actual_http": 201
+    },
+    {
+      "test": "Login real de admin",
+      "passed": true,
+      "expected_http": 200,
+      "actual_http": 200
+    },
+    {
+      "test": "JWT RS256 vigente de admin",
+      "passed": true,
+      "algorithm": "RS256",
+      "lifetime_seconds": 900
+    },
+    {
+      "test": "Crear cuenta de prueba analyst",
+      "passed": true,
+      "expected_http": 201,
+      "actual_http": 201
+    },
+    {
+      "test": "Asignación persistida analyst/ANALYST",
+      "passed": true,
+      "expected_http": 201,
+      "actual_http": 201
+    },
+    {
+      "test": "Asignación persistida analyst/USER",
+      "passed": true,
+      "expected_http": 201,
+      "actual_http": 201
+    },
+    {
+      "test": "Login real de analyst",
+      "passed": true,
+      "expected_http": 200,
+      "actual_http": 200
+    },
+    {
+      "test": "JWT RS256 vigente de analyst",
+      "passed": true,
+      "algorithm": "RS256",
+      "lifetime_seconds": 900
+    },
+    {
+      "test": "Crear cuenta de prueba other",
+      "passed": true,
+      "expected_http": 201,
+      "actual_http": 201
+    },
+    {
+      "test": "Asignación persistida other/ANALYST",
+      "passed": true,
+      "expected_http": 201,
+      "actual_http": 201
+    },
+    {
+      "test": "Login real de other",
+      "passed": true,
+      "expected_http": 200,
+      "actual_http": 200
+    },
+    {
+      "test": "JWT RS256 vigente de other",
+      "passed": true,
+      "algorithm": "RS256",
+      "lifetime_seconds": 900
+    },
+    {
+      "test": "Crear cuenta de prueba user",
+      "passed": true,
+      "expected_http": 201,
+      "actual_http": 201
+    },
+    {
+      "test": "Asignación persistida user/USER",
+      "passed": true,
+      "expected_http": 201,
+      "actual_http": 201
+    },
+    {
+      "test": "Login real de user",
+      "passed": true,
+      "expected_http": 200,
+      "actual_http": 200
+    },
+    {
+      "test": "JWT RS256 vigente de user",
+      "passed": true,
+      "algorithm": "RS256",
+      "lifetime_seconds": 900
+    },
+    {
+      "test": "Sin JWT",
+      "passed": true,
+      "expected_http": 401,
+      "actual_http": 401
+    },
+    {
+      "test": "Sin JWT: ningún registro ni archivo procesado",
+      "passed": true
+    },
+    {
+      "test": "JWT alterado",
+      "passed": true,
+      "expected_http": 401,
+      "actual_http": 401
+    },
+    {
+      "test": "JWT alterado: ningún registro ni archivo procesado",
+      "passed": true
+    },
+    {
+      "test": "USER sin privilegios y cabecera de rol falsificada",
+      "passed": true,
+      "expected_http": 403,
+      "actual_http": 403
+    },
+    {
+      "test": "USER sin privilegios y cabecera de rol falsificada: ningún registro ni archivo procesado",
+      "passed": true
+    },
+    {
+      "test": "ADMIN analiza PNG original",
+      "passed": true,
+      "expected_http": 200,
+      "actual_http": 200
+    },
+    {
+      "test": "ADMIN analiza PNG original: clasificación y política",
+      "passed": false,
+      "classification": "no_concluyente",
+      "action": "cuarentena"
+    }
+  ],
+  "analyses": [],
+  "test_accounts_disabled": [
+    "67539a94-5426-4750-b3f4-762653cdd553",
+    "4dda069f-1136-46e2-b6f1-9627e0db2704",
+    "cbff0294-f494-4a90-9fdf-6a62366ba150",
+    "1c4f4e53-efdf-4516-a8b1-649383e77041"
+  ],
+  "errors": [
+    {
+      "type": "AssertionError",
+      "stage": "ADMIN analiza PNG original: clasificación y política"
+    }
+  ],
+  "bootstrap_test_session_revoked": true,
+  "summary": {
+    "passed": 30,
+    "failed": 1,
+    "errors": 1,
+    "test_accounts_created": 4,
+    "test_accounts_disabled": 4
+  },
+  "diagnostic_reports": [
+    {
+      "status": "no_concluyente",
+      "reason": "mandatory_verification_unavailable",
+      "antimalware": {
+        "clamav": {
+          "engine": "clamav",
+          "status": "UNAVAILABLE",
+          "reason": "clamav_failed",
+          "indicators": {
+            "limits": {
+              "timeout_seconds": 45,
+              "cpu_seconds": 30,
+              "memory_bytes": 2147483648,
+              "max_bytes": 5242880,
+              "output_bytes": 65536
+            },
+            "database_files": [
+              "main.cvd",
+              "daily.cvd"
+            ],
+            "exit_code": -9
+          }
+        },
+        "yara": {
+          "engine": "yara",
+          "status": "CLEAR",
+          "reason": "no_rule_matches",
+          "indicators": {
+            "limits": {
+              "timeout_seconds": 5,
+              "cpu_seconds": 5,
+              "memory_bytes": 268435456,
+              "max_bytes": 5242880,
+              "output_bytes": 65536
+            },
+            "rules_sha256": "2050eabef2f14f498d51e14a7247a4b595b0a8b0ce7375fd08c4a4a2449d551d",
+            "matched_rules": 0
+          }
+        }
+      },
+      "metadata": {
+        "status": "ABSENT",
+        "reason": "no_allowlisted_metadata",
+        "metadata": {
+          "format": "PNG",
+          "mime": "image/png",
+          "width": 256,
+          "height": 256,
+          "exif": {},
+          "dates": {},
+          "software_families": [],
+          "has_allowlisted_exif": false
+        },
+        "issues": [],
+        "limits": {
+          "timeout_seconds": 5,
+          "cpu_seconds": 3,
+          "memory_bytes": 268435456,
+          "max_bytes": 5242880,
+          "output_bytes": 65536
+        },
+        "engine": "exiftool"
+      }
+    }
+  ]
+}

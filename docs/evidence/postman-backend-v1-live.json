@@ -1,0 +1,16 @@
+{
+  "target": "Backend V1 real en localhost, CA verificada",
+  "reports_published": false,
+  "exit_code": 0,
+  "requests": {
+    "executed": 9,
+    "failed": 0
+  },
+  "assertions": {
+    "executed": 9,
+    "failed": 0
+  },
+  "expected_requests": 9,
+  "test_account_disabled": true,
+  "admin_test_session_revoked": true
+}

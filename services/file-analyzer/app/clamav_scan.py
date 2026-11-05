@@ -22,7 +22,11 @@ class ScanResult:
 class ClamAVScanner:
     def __init__(self, database: Path = Path("/var/lib/clamav"),
                  limits: ScanLimits | None = None, max_database_age: int = 7 * 86400):
-        self.database, self.limits = database, limits or ScanLimits()
+        # Carga de firmas oficiales comprobada en Backend V1: 45 s totales/
+        # 30 s CPU resultaban insuficientes en arranque frío. Cotas finitas,
+        # sin ampliar memoria ni modificar la política de fallos.
+        self.database = database
+        self.limits = limits or ScanLimits(timeout_seconds=75, cpu_seconds=45)
         if max_database_age <= 0:
             raise ValueError("invalid_database_age")
         self.max_database_age = max_database_age

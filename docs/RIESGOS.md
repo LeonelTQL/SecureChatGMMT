@@ -18,7 +18,7 @@ Escala cualitativa para esta entrega; el riesgo residual requiere revisión al i
 | Resultados | Lectura ajena | Alto | Decisión por recurso y propietario leído de SQLite | T11 | ADMIN puede leer todos por política explícita |
 | Auditoría | Fuga de secretos o falta de trazabilidad | Medio | JSON con sujeto/acción/recurso, sin JWT ni contraseñas | T12 | Logs locales requieren retención y centralización operativa |
 | Dependencias | Vulnerabilidades conocidas | Alto | Lockfiles, Prisma 6.19.3, override acotado de deepmerge-ts 8 y pruebas de CLI/migración | npm audit sin alertas conocidas en la revisión | Repetir auditoría y aplicar parches; no afirmar riesgo cero |
-| Detector | Clasificación ficticia, incompleta o evasión | Alto | LSB real, ClamAV/YARA y ExifTool; fallos/incompletos conservan cuarentena | [T09 y regresiones reales](../services/stego/VALIDACION_DIANA.md) | Falsos positivos/negativos, dos reglas YARA de prueba y técnicas JPEG/BMP no disponibles; falta demostración con toda la pila AUTH/BD |
+| Detector | Clasificación ficticia, incompleta o evasión | Alto | LSB real, ClamAV/YARA y ExifTool; fallos/incompletos conservan cuarentena | [T09 y pila AUTH/BD real](VALIDACION_BACKEND_V1.md) | Falsos positivos/negativos, dos reglas YARA de prueba, técnicas JPEG/BMP no disponibles y actualización operativa del motor/firmas |
 
 Zero Trust: el origen de red no concede permisos; cada operación pide decisión vigente y una falla deniega. Secure by Design: identidad separada, mínimo privilegio, almacenamiento privado y contratos estrictos. Shift Left Security: pruebas automáticas, validaciones, revisión de dependencias y riesgos documentados antes de integrar el detector.
 

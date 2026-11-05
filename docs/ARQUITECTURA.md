@@ -2,8 +2,9 @@
 
 **Estado actual:** RBAC y la autorización vigente permanecen activos. El detector
 de Diana ya se integra en STEGO: validación, ClamAV/YARA, ExifTool y análisis LSB
-PNG. Ver [evidencia y límites](../services/stego/VALIDACION_DIANA.md); la ejecución
-de toda la pila AUTH/PostgreSQL con este detector aún requiere sustentación.
+PNG. La [validación real completa](VALIDACION_BACKEND_V1.md) comprobó AUTH,
+PostgreSQL y STEGO, incluida revocación vigente y motores reales. La sustentación
+y las limitaciones de cobertura siguen documentadas, sin afirmar seguridad total.
 
 ## Límites de confianza
 
