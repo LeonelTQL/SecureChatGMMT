@@ -68,6 +68,18 @@ siendo compatibles. No se altera el contrato de llamada `analyze(path, sha256)`.
 El campo adicional `analysis.validation` conserva resultado, motivo, formato,
 MIME por contenido, dimensiones y límites de validación. Si no se ejecutó LSB,
 la técnica informada es `IMAGE_VALIDATION_V1`, sin indicadores LSB ficticios.
+
+Después de validar PNG/JPEG se ejecutan ClamAV y YARA. `analysis.antimalware`
+conserva un informe por motor con `engine`, `status`, `reason` e `indicators`.
+Los estados son `CLEAR` (escaneo completado sin coincidencias), `DETECTED`
+(firma/indicador detectado) y `UNAVAILABLE` (ausente, incompleto, error o límite).
+`CLEAR` se refiere sólo a esa verificación; no equivale a clasificación `CLEAN`.
+Una detección produce `SUSPICIOUS / antimalware_detected`. Si hay indisponibilidad,
+se mantiene `INCONCLUSIVE / antimalware_unavailable`, salvo que LSB ya aporte
+indicios sospechosos, que se conservan. Todos esos estados quedan en cuarentena.
+Los JPEG también pasan por antimalware, aunque no exista un detector LSB aplicable.
+Los formatos inválidos no se envían a los motores. No se guardan sus salidas crudas,
+cadenas coincidentes, rutas ni mensajes internos de error.
 Los resultados simulados existen únicamente en las pruebas; ninguna opción de
 entorno permite aprobar archivos sin un analizador real. No hay callback público
 para cambiar estados ni aprobar archivos desde Postman.

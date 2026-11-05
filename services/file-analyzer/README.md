@@ -24,6 +24,10 @@ La validación previa comprueba contenido PNG/JPEG, extensión coherente,
 decodificación y límites de recursos. El MIME del cliente no determina el formato.
 El máximo de imágenes es 5 MiB (`IMAGE_MAX_BYTES`), separado de `MAX_FILE_BYTES`.
 Ver [validación de imágenes](IMAGE_VALIDACION.md) para parámetros y resultados.
+Después de validar se ejecutan ClamAV y YARA en procesos Linux limitados; sus
+resultados se conservan en `analysis.antimalware`. Ausencia, fallo o firmas
+vencidas mantienen el bloqueo. Consultar [antimalware](ANTIMALWARE.md) para reglas,
+límites, actualización de firmas y pruebas reales frente a simuladas.
 No habilitar un resultado simulado CLEAN en despliegues.
 
 ## Verificación

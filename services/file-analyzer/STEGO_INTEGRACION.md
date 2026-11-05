@@ -11,6 +11,8 @@ analizadores de prueba. El detector, umbrales y muestras originales no se cambia
 2. La tarea existente reclama `ANALYZING` y verifica el hash antes de analizar.
 3. `ValidatedImageAnalyzer` valida extensión/contenido, firma, MIME real,
    estructura, decodificación y límites; sólo un PNG válido pasa al adaptador.
+   ClamAV y YARA examinan las imágenes válidas antes del detector; los informes
+   se conservan por separado en `analysis.antimalware`. Ver [antimalware](ANTIMALWARE.md).
    Los JPEG válidos se conservan como no concluyentes. Ver [validación](IMAGE_VALIDACION.md).
    El adaptador llama a `stego_lsb.analyze_png(path, config)`. La ruta del objeto
    no tiene extensión; la firma, CRC, dimensiones y decodificación validan el contenido.
@@ -94,6 +96,10 @@ para producción y no cumple aún esos requisitos de integración de la consigna
 No se implementaron aquí las otras verificaciones obligatorias de seguridad;
 por ello SIN_INDICIOS sigue bloqueado. Se conservan los falsos positivos y
 negativos documentados en `STEGO_LSB_RESULTADOS.md`; no se declara precisión.
+
+Actualización posterior: ClamAV y YARA ya se integraron; sus coincidencias o
+indisponibilidad conservan el bloqueo. Las otras verificaciones pendientes y
+la falta de autorización siguen impidiendo considerar el servicio terminado.
 
 No se pudo construir ni ejecutar Docker porque el daemon no estaba disponible.
 Se verificó la instancia ASGI real con TestClient, no un contenedor desplegado.

@@ -44,6 +44,9 @@ continúa al detector LSB original; sus valores, umbrales y clasificaciones no s
 modifican. Su comprobación interna se conserva para uso independiente del detector,
 aunque implique una segunda decodificación acotada en el flujo integrado.
 `SIN_INDICIOS` sigue sin ser suficiente para aprobar.
+La etapa [antimalware](ANTIMALWARE.md) posterior puede elevar el resultado final
+a SUSPICIOUS o mantenerlo INCONCLUSIVE por indisponibilidad. El informe original
+de validación/LSB se conserva; los JPEG válidos también se escanean con ambos motores.
 
 El informe persistente `analysis.validation` contiene `valid`, `reason`, `format`,
 `mime`, `width`, `height` y `policy`. En errores muy tempranos puede faltar formato
@@ -98,7 +101,8 @@ Pillow y las firmas no demuestran ausencia de contenido oculto ni de malware.
 El chequeo JPEG no es una auditoría independiente de cada segmento/coeficiente:
 depende del decodificador, y algunos defectos tolerados por éste pueden pasar.
 Se rechazan bytes posteriores a IEND y EOI; no se eliminan ni sanea el archivo.
-No se extraen metadatos, ejecuta contenido, ni se incorporan ClamAV, YARA o ExifTool.
+No se extraen metadatos ni se ejecuta contenido. ExifTool no está integrado;
+ClamAV y YARA se incorporaron posteriormente como verificaciones separadas.
 
 Persisten los falsos positivos/negativos del detector LSB y falta un detector JPEG.
 JWT/RBAC, autorización por propietario y otras verificaciones obligatorias siguen

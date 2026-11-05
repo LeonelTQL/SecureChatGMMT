@@ -54,6 +54,9 @@ def test_real_upload_analysis_persistence_and_blocking(tmp_path, corpus, name, c
         assert record["reason"] == reason
         report = dict(record["analysis"])
         validation = report.pop("validation")
+        if name != "corrupt":
+            checks = report.pop("antimalware")
+            assert all(r["status"] == "CLEAR" for r in checks.values())
         assert validation["valid"] is (name != "corrupt")
         if name not in {"corrupt", "jpeg"}:
             assert report == expected

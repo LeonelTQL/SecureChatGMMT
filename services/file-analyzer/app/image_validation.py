@@ -8,6 +8,7 @@ import warnings
 from PIL import Image, ImageFile
 
 from .analyzer import AnalysisResult, Analyzer, Classification
+from .antimalware import MalwareChecks
 from .stego_lsb import LSBConfig, _validate_png
 
 
@@ -107,19 +108,36 @@ def validate_image(path: Path, filename: str, limits: ImageLimits) -> ImageValid
 
 class ValidatedImageAnalyzer:
     """Puerta previa compatible con Analyzer; no cambia almacenamiento ni hashes."""
-    def __init__(self, analyzer: Analyzer, filename: str, limits: ImageLimits):
+    def __init__(self, analyzer: Analyzer, filename: str, limits: ImageLimits,
+                 antimalware: MalwareChecks | None = None):
         self.analyzer, self.filename, self.limits = analyzer, filename, limits
+        self.antimalware = antimalware if antimalware is not None else MalwareChecks()
 
     def analyze(self, path: Path, sha256: str) -> AnalysisResult:
         validation = validate_image(path, self.filename, self.limits)
         details = validation.to_dict()
         if not validation.valid or validation.format == "JPEG":
             reason = validation.reason if not validation.valid else "jpeg_detector_not_available"
-            return AnalysisResult(sha256=sha256, classification=Classification.INCONCLUSIVE,
+            result = AnalysisResult(sha256=sha256, classification=Classification.INCONCLUSIVE,
                                   reason=reason, analysis={
                                       "technique": "IMAGE_VALIDATION_V1",
                                       "classification": "ERROR" if not validation.valid else "NO_CONCLUYENTE",
                                       "reason": reason, "channels": [], "validation": details,
                                       "limitations": ["La validación de formato no demuestra seguridad ni ausencia de datos ocultos."]})
-        result = AnalysisResult.model_validate(self.analyzer.analyze(path, sha256))
-        return result.model_copy(update={"analysis": {**(result.analysis or {}), "validation": details}})
+            if not validation.valid:
+                return result
+        checks = self.antimalware.scan(path)
+        if validation.format != "JPEG":
+            try:
+                result = AnalysisResult.model_validate(self.analyzer.analyze(path, sha256))
+            except Exception:
+                result = AnalysisResult(sha256=sha256, classification=Classification.INCONCLUSIVE,
+                                        reason="analysis_failed")
+        classification, reason = result.classification, result.reason
+        if any(r["status"] == "DETECTED" for r in checks.values()):
+            classification, reason = Classification.SUSPICIOUS, "antimalware_detected"
+        elif (classification != Classification.SUSPICIOUS
+              and any(r["status"] != "CLEAR" for r in checks.values())):
+            classification, reason = Classification.INCONCLUSIVE, "antimalware_unavailable"
+        return result.model_copy(update={"classification": classification, "reason": reason,
+            "analysis": {**(result.analysis or {}), "validation": details, "antimalware": checks}})

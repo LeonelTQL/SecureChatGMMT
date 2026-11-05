@@ -16,6 +16,7 @@ from starlette.formparsers import MultiPartException
 from .analyzer import Analyzer, Classification
 from .stego_adapter import StegoAnalyzer
 from .image_validation import ImageLimits, ValidatedImageAnalyzer
+from .antimalware import MalwareChecks
 from .storage import Storage
 
 
@@ -70,7 +71,8 @@ class FileStatus(BaseModel):
 
 
 def create_app(storage_root: Path | None = None, analyzer: Analyzer | None = None,
-               max_file_bytes: int | None = None, image_limits: ImageLimits | None = None) -> FastAPI:
+               max_file_bytes: int | None = None, image_limits: ImageLimits | None = None,
+               antimalware: MalwareChecks | None = None) -> FastAPI:
     root = storage_root if storage_root is not None else Path(os.getenv("FILE_STORAGE_ROOT", "storage"))
     limit = max_file_bytes if max_file_bytes is not None else int(os.getenv("MAX_FILE_BYTES", "10485760"))
     if limit <= 0:
@@ -81,6 +83,7 @@ def create_app(storage_root: Path | None = None, analyzer: Analyzer | None = Non
     @asynccontextmanager
     async def lifespan(application):
         application.state.storage = Storage(root)
+        application.state.antimalware = antimalware if antimalware is not None else MalwareChecks()
         yield
 
     application = FastAPI(title="SecureChat - Transferencia segura de archivos", lifespan=lifespan)
@@ -135,7 +138,8 @@ def create_app(storage_root: Path | None = None, analyzer: Analyzer | None = Non
             except BaseException:
                 path.unlink(missing_ok=True)
                 raise
-        tasks.add_task(store.process, file_id, ValidatedImageAnalyzer(engine, filename, image_policy))
+        tasks.add_task(store.process, file_id, ValidatedImageAnalyzer(
+            engine, filename, image_policy, request.app.state.antimalware))
         # Relativo al path de carga: funciona también tras /api del proxy.
         response.headers["Location"] = f"./{file_id}/status"
         return record
