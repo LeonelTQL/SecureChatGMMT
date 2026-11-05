@@ -1,19 +1,5 @@
 # Chat Seguro — Backend V1
 
-## Estado actual: Alejandro pendiente
-
-Se retiraron del código los módulos roles, user-roles, autorización interna, administración y guards/decoradores RBAC de Alejandro. Registro, login, perfil, verificación JWT y logout de Leonel siguen operativos. La administración de usuarios devuelve 503 a usuarios autenticados hasta reintegrar RBAC. STEGO permanece operativo, pero rechaza procesar archivos con 503 porque AUTH aún no ofrece una decisión de autorización. No se sustituyen permisos por un acceso abierto.
-
-Se conservan el esquema y las migraciones compartidas de PostgreSQL y los datos existentes para la integración posterior; no se ejecuta ni se inicializa RBAC. El seed solo prepara la cuenta inicial sin crear/asignar roles. La colección Postman y `scripts/integration.py` reflejan este estado. Las secciones arquitectónicas siguientes describen la meta del PDF; no implican que RBAC esté disponible en esta revisión.
-
-La fusión con `main` conserva además las entregas originales `src/rbac` y `services/file-analyzer`, sus pruebas y contratos. No se activan en el Compose actual: usan contratos anteriores (HS256 con rol en JWT y carga de archivos sin la decisión vigente de AUTH). Su integración funcional requiere adaptarlos al contrato seguro del PDF; conservar sus archivos no habilita endpoints sin autorización.
-
-Los secretos se montan como archivos individuales de solo lectura. Los directorios locales permanecen privados (0700); montar esos directorios completos impediría que los UIDs sin privilegios de AUTH/STEGO leyeran sus claves en Linux/CI. `scripts/check-container-permissions.py` comprueba esa regresión y la lectura de archivos sin mostrar su contenido. El workflow imprime estado y logs acotados si falla el arranque.
-
-Dos aplicaciones REST: AUTH (NestJS, Prisma, PostgreSQL) y STEGO (FastAPI, SQLite y almacenamiento privado). PostgreSQL y Caddy son infraestructura. Las antiguas carpetas de web/chat/file-service/file-analyzer se conservan como referencia, pero no forman parte del Compose de esta entrega.
-
-**Alcance actual:** autenticación, administración de identidades, RBAC vigente y transferencia/gestión de imágenes. El algoritmo detector de Diana sigue pendiente: una carga autorizada válida queda en cuarentena y responde 503 con un registro `error` hasta integrar su implementación. No se simula detección ni se afirma completar T09 del PDF.
-
 ## Preparación en Windows
 
 Requisitos: Git, Node 22+, Python 3.10+ y Docker Desktop con contenedores Linux; Docker Compose 2.20+ si usas el alias `docker-compose.yml`.
